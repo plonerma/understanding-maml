@@ -1,0 +1,26 @@
+{
+  "name": "understanding-maml",
+  "version": "0.0.1",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/plonerma/understanding-maml.git"
+  },
+  "author": "Luis Müller, Max Ploner",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/plonerma/understanding-maml/issues"
+  },
+  "homepage": "https://github.com/plonerma/understanding-maml#readme",
+  "devDependencies": {
+    "css-loader": "^5.2.4",
+    "style-loader": "^2.0.0",
+    "webpack": "^5.37.0",
+    "webpack-cli": "^4.7.0"
+  }
+}
