@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Visual Comparison of Model-Agnostic Meta-Learning 👩‍🔬</title>
+		<meta charset="UTF-8"/>
+		<link rel="stylesheet" href="build/bundle.css">
+  </head>
+  <body>
+    <script src="https://distill.pub/template.v1.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <script defer src="build/bundle.js"></script>
+
+<script type="text/front-matter">
+  title: "Visual Comparison of Model-Agnostic Meta-Learning"
+  description: "t.b.d."
+  authors:
+  - Luis Müller: https://github.com/pupuis
+  - Max Ploner:
+  affiliations:
+  - NI @ TU Berlin: https://www.ni.tu-berlin.de/menue/neural_information_processing_group/
+  - NI @ TU Berlin: https://www.ni.tu-berlin.de/menue/neural_information_processing_group/
+</script>
+
+<dt-article>
+  <h1>A Visual Comparison of Model-Agnostic Meta-Learning</h1>
+  <h2>Exploring the world of model-agnostic meta-learning and its extensions.</h2>
+  <figure style="display: block; width: 30%;"><img src="https://bair.berkeley.edu/static/blog/maml/maml.png"
+        style=" border: 0px solid rgba(0, 0, 0, 0.2);" />
+        <figcaption>From <a href="https://bair.berkeley.edu/blog/2017/07/18/learning-to-learn/">Learning to Learn - Berkely</a></figcaption>
+  </figure>
+  <dt-byline></dt-byline>
+  <p>In the last years, Meta-learning has aroused the interest of many different research fields in machine learning. Especially model-agnostic meta-learning <dt-cite key="finn2017modelagnostic"></dt-cite> is a fascinating approach. Many different extensions have been proposed to improve training.
+  This project should compare these different approaches. It is the goal of this article to make it visually as understandable as possible.</p>
+  <p>If we want to use equations we can either write inline, e.g. saying that we intitalize \(\alpha = 0.01\), or in its own paragraph, e.g. saying we then learn our updates via
+    \[ \theta_i' = \theta - \alpha \nabla_\theta \mathcal{L}_{\mathcal{T}_i} (f_\theta) .\]
+
+  You can implement this in python as follows:
+  <dt-code block language="python">
+      def step(theta, alpha, model, data):
+          return theta - alpha * model.grad(data)
+    </dt-code>
+  </p>
+
+	<figure>
+	<d-figure id="looking_for_theta"></d-figure>
+	</figure>
+
+</dt-article>
+
+<dt-appendix>
+</dt-appendix>
+
+
+<script type="text/bibliography">
+@misc{finn2017modelagnostic,
+    title={Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks},
+    author={Chelsea Finn and Pieter Abbeel and Sergey Levine},
+    year={2017},
+    eprint={1703.03400},
+    archivePrefix={arXiv},
+    primaryClass={cs.LG}
+}
+</script>
+  </body>
+</html>
