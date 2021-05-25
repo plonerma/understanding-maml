@@ -1,6 +1,4 @@
 
-import * as d3 from 'd3';
-
 export class CoordinateConversions {
     constructor(margin, width, height, xrange, yrange) {
         this.innerWidth = width - margin.left - margin.right
@@ -45,8 +43,10 @@ export class CoordinateConversions {
 
     d3sourceEventToCoordinates = (event) => {
         return {
-            x: this.fromHorizontalAxis(event.sourceEvent.clientX) + this.margin.left,
-            y: this.fromVerticalAxis(event.sourceEvent.clientY) + this.margin.top
+            x: this.fromHorizontalAxis(event.sourceEvent.layerX - this.margin.left),
+            y: this.fromVerticalAxis(event.sourceEvent.layerY - this.margin.top)
         }
     }
+
+    
 }

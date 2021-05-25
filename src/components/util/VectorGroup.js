@@ -7,6 +7,8 @@ export class VectorGroup {
         this.origin = origin
         this.vectors = vectors
         this.coordinateConversions = coordinateConversions
+
+        this.defaultOrigin = origin
     }
 
     declare() {
@@ -19,6 +21,7 @@ export class VectorGroup {
 
     animate() {
         this.animateOriginDrag()
+        return
         this.animateVectorDrag()
 
         this.vectorShadeElements.on("mouseover", (event) => {
@@ -66,16 +69,23 @@ export class VectorGroup {
     }
 
     renderOrigin() {
+        console.log(this.origin)
         this.originElement = this.originAttributes(
             this.svg.selectAll("circle")
-                .datum(this.origin).enter()
+                .data([this.origin]).enter()
                 .append("circle")
         )
     }
 
     animateOriginDrag() {
         d3.drag().on("drag", (event) => {
-            this.origin = this.coordinateConversions.d3eventToCoordinates(event)
+            var [x,y] = d3.pointer(event, this.svg.node())
+            x = xscale.invert(x)
+            y = yscale.invert(y)
+            x = Math.max(Math.min(1, x), 0)
+            y = Math.max(Math.min(1, y), 0)
+            console.log(x, y)
+            this.origin = this.coordinateConversions.d3sourceEventToCoordinates(event)
             var vectorData = this.vectorsWithOriginData()
 
             this.originAttributes(this.originElement.datum(this.origin))
