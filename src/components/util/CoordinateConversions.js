@@ -44,15 +44,9 @@ export class CoordinateConversions {
 
     scaleVectorComponent = (z1, z2, by) => (z2 - z1) * by + z1
 
-    scaleVectorComponent2 = (z1, z2, by) => (z2 - z1) * by + z1
-
     vectorLength = (x1, x2, y1, y2) => Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
-    offsetVectorComponent = (z1, z2, w, l) => {
-        return (z2 - z1) * l / w + z2
-    }
-
-    offsetVectorComponent2 = (z1, z2, by) => z2 + by 
+    offsetVectorComponent = (z1, z2, w, l) => (z2 - z1) * l / w + z2
 
     d3eventToCoordinates = (event) => {
         var [x, y] = d3.pointer(event, this.g.node())
@@ -62,13 +56,5 @@ export class CoordinateConversions {
         y = Math.max(Math.min(this.yrange[1], y), this.yrange[0])
         return { x: x, y: y}
     }
-
-    d3sourceEventToCoordinates = (event) => {
-        return {
-            x: this.fromHorizontalAxis(event.sourceEvent.layerX - this.margin.left),
-            y: this.fromVerticalAxis(event.sourceEvent.layerY - this.margin.top)
-        }
-    }
-
 
 }
