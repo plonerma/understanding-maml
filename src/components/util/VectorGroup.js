@@ -12,8 +12,7 @@ export class VectorGroup {
     }
 
     declare() {
-        this.positionLabels()
-        this.renderVectorsWithShades()
+        this.renderVectorsWithShadesAndLabels()
         this.renderOrigin()
 
         return this 
@@ -21,7 +20,6 @@ export class VectorGroup {
 
     animate() {
         this.animateOriginDrag()
-        return
         this.animateVectorDrag()
 
         this.vectorShadeElements.on("mouseover", (event) => {
@@ -37,15 +35,10 @@ export class VectorGroup {
         return this
     }
 
-    positionLabels() {
-        /*this.vectors.forEach(vector => this.labelAttributes(
-            d3.select(`#${vector.id}`)
-                .datum(vector)
-        ))*/
-    }
-
-    renderVectorsWithShades() {
+    renderVectorsWithShadesAndLabels() {
         var vectorData = this.vectorsWithOriginData()
+
+        this.positionLabels(vectorData)
 
         this.vectorMarkerAttributes(
             this.svg.selectAll("defs")
@@ -66,6 +59,13 @@ export class VectorGroup {
                 .data(vectorData)
                 .enter().append("line")
         )
+    }
+
+    positionLabels(vectorData) {
+        vectorData.forEach(vector => this.labelAttributes(
+            d3.select(`#${vector.id}`)
+                .datum(vector)
+        ))
     }
 
     renderOrigin() {
@@ -93,12 +93,12 @@ export class VectorGroup {
         d3.drag().on("drag", (event) => {
             this.vectors = this.vectors.map(vector => vector.id == event.subject.id ? {
                 ...vector,
-                ...this.coordinateConversions.d3sourceEventToCoordinates(event)
+                ...this.coordinateConversions.d3eventToCoordinates(event)
             } : vector)
 
             var vectorData = this.vectorsWithOriginData()
 
-            this.positionLabels()
+            this.positionLabels(vectorData)
             this.vectorAttributes(this.vectorElements.data(vectorData))
             this.vectorShadeAttributes(this.vectorShadeElements.data(vectorData))
         })(this.vectorShadeElements)
@@ -128,7 +128,7 @@ export class VectorGroup {
         .attr("x2", d => this.coordinateConversions.onHorizontalAxis(d.x))
         .attr("y1", d => this.coordinateConversions.onVerticalAxis(d.origin.y))
         .attr("y2", d => this.coordinateConversions.onVerticalAxis(d.y))
-        .attr("stroke", "#000")
+        .attr("stroke", "black")
         .attr("stroke-width", 2)
         .attr("marker-end", d => `url(#density-marker-${d.id})`)
         .attr("pointer-events", "bounding-box")
@@ -147,12 +147,30 @@ export class VectorGroup {
     originAttributes = (binding) => binding
         .attr("cx", d => this.coordinateConversions.onHorizontalAxis(d.x))
         .attr("cy", d => this.coordinateConversions.onVerticalAxis(d.y))
-        .attr("r", 4)
+        .attr("r", 5)
+        .attr("cursor", "pointer")
+        .attr("fill", "white")
+        .attr("stroke-width", 1.9)
+        .attr("stroke", "black")
 
+    // 30 and 5 are magic numbers to fit the div offset to the label content. Maybe make parameters?
     labelAttributes = (binding) => binding
         .attr("style", d => `
         position: absolute; 
-        left: ${this.coordinateConversions.onHorizontalAxis(d.x) + 15 + "px"};
-        top: ${this.coordinateConversions.onVerticalAxis(d.y) + 30 + "px"};
+        left: ${this.coordinateConversions.onHorizontalAxis(this.coordinateConversions.offsetVectorComponent(
+            d.origin.x, 
+            d.x, 
+            this.coordinateConversions.vectorLength(d.origin.x, d.x, d.origin.y, d.y),
+            .04
+        )) + 30 + "px"};
+        top: ${this.coordinateConversions.onVerticalAxis(this.coordinateConversions.offsetVectorComponent(
+            d.origin.y, 
+            d.y, 
+            this.coordinateConversions.vectorLength(d.origin.x, d.x, d.origin.y, d.y),
+            .04
+        )) + 5 + "px"};
+        color: white;
+        font-size: 16px;
+        text-align: left;
     `)
 }
