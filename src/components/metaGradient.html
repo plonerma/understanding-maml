@@ -5,8 +5,7 @@
 <div id="vector-phi3">\( \phi_3 \)</div>
 
 <script>
-    var d3 = require("d3")
-
+    import * as d3 from 'd3';
     import { onMount } from 'svelte';
     import * as tf from '@tensorflow/tfjs'
     import { CoordinateConversions } from './util/CoordinateConversions.js'
@@ -17,8 +16,6 @@
     const xrange = [1, 4], yrange = [1, 6]
 
     onMount(() => {
-        var coordinateConversions = new CoordinateConversions(margin, width, height, xrange, yrange)
-
         var svg = d3.select('#density').append('svg')
         .attr("style", "border: 1px solid")
             .attr("width", width)
@@ -26,6 +23,7 @@
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
             
+        var coordinateConversions = new CoordinateConversions(svg, margin, width, height, xrange, yrange)
 
         var defaultVectors = [
             { id: "vector-phi1", x: 2.7, y: 3.5 },

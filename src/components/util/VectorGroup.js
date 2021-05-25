@@ -79,13 +79,7 @@ export class VectorGroup {
 
     animateOriginDrag() {
         d3.drag().on("drag", (event) => {
-            var [x,y] = d3.pointer(event, this.svg.node())
-            x = xscale.invert(x)
-            y = yscale.invert(y)
-            x = Math.max(Math.min(1, x), 0)
-            y = Math.max(Math.min(1, y), 0)
-            console.log(x, y)
-            this.origin = this.coordinateConversions.d3sourceEventToCoordinates(event)
+            this.origin = this.coordinateConversions.d3eventToCoordinates(event)
             var vectorData = this.vectorsWithOriginData()
 
             this.originAttributes(this.originElement.datum(this.origin))
