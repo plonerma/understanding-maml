@@ -12,6 +12,8 @@
     import { VectorGroup } from './util/VectorGroup.js'
     import { ContourPlot } from './util/ContourPlot.js'
 
+    import { Random2DLinearRegressionLossSpace } from './util/LossSpace.js'
+
     import { loss_4 as loss_1 } from './util/loss';
 
     const margin = { top: 20, right: 30, bottom: 30, left: 40 }
@@ -27,6 +29,7 @@
 
         var coordinateConversions = new CoordinateConversions(svg, margin, width, height, xrange, yrange)
 
+        var lspace = new Random2DLinearRegressionLossSpace()
 
         var contour = new ContourPlot(loss_1, svg, coordinateConversions)
         contour.render()
