@@ -18,7 +18,7 @@ export class ContourPlot {
             tf.linspace(...this.coordinateConversions.yrange, ny)
         ), -1)
 
-        var lossGrid = Array.from(tf.log(this.loss(grid)).bufferSync().values)
+        var lossGrid = Array.from(this.loss(grid).bufferSync().values)
 
         var contours = d3.contours()
             .size([nx, ny])

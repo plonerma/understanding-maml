@@ -30,17 +30,21 @@
         var coordinateConversions = new CoordinateConversions(svg, margin, width, height, xrange, yrange)
 
         var lspace = new Random2DLinearRegressionLossSpace()
+        var phiOpt = lspace.toArray(lspace.trueParameters)
 
-        var contour = new ContourPlot(loss_1, svg, coordinateConversions)
+        var contour = new ContourPlot(lspace.loss, svg, coordinateConversions)
         contour.render()
 
-        var defaultVectors = [
-            { id: "vector-phi1", x: .7, y: .5 },
-            { id: "vector-phi2", x: .3, y: .5 },
-            { id: "vector-phi3", x: .6, y: .4 }
-        ]
+        var groupCenter = [.9, .9]
 
-        var vectorGroup = new VectorGroup(svg, { x: .5, y: .5 }, defaultVectors, coordinateConversions)
+        var upd = lspace.toArray(lspace.paramUpdate([groupCenter], .1, true))
+
+        var defaultVectors = [
+            { id: "vector-phi1", x: upd[0], y: upd[1] },
+            { id: "vector-phi2", x: phiOpt[0], y: phiOpt[1] }
+        ]
+        
+        var vectorGroup = new VectorGroup(svg, { x: groupCenter[0], y: groupCenter[1] }, defaultVectors, coordinateConversions)
 
         vectorGroup.declare().animate()
 

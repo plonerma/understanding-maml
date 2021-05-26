@@ -1,8 +1,36 @@
 
 import * as tf from '@tensorflow/tfjs'
 
+export const sgd = () => {
+    this.a = tf.scalar(-1).variable()
+    this.b = tf.scalar(1).variable()
+
+    console.log(
+        `a: ${this.a.dataSync()}, b: ${this.b.dataSync()}`)
+
+    var N = 100
+
+    var xs = tf.randomUniform([N])
+    //var z = tf.stack([x, tf.ones([N])])
+    var ys = xs.mul(.5).add(.5)
+
+    const f = x => x.mul(this.a).add(this.b)
+
+    const loss = (pred, label) => pred.sub(label).square().mean()
+
+    const learningRate = 0.9
+    const optimizer = tf.train.sgd(learningRate)
+
+    // Train the model.
+    for (let i = 0; i < 10; i++) {
+        optimizer.minimize(() => loss(f(xs), ys))
+        console.log(
+            `a: ${this.a.dataSync()}, b: ${this.b.dataSync()}`)
+    }   
+}
+
 export class Random2DLinearRegressionLossSpace {
-    
+
     /**
      * Generate a random 2D linear regression task and compute its loss space w.r.t to two free parameters a and b in:
      * 
@@ -11,19 +39,32 @@ export class Random2DLinearRegressionLossSpace {
      * where loss({a, b}) = .5 * (y_true - ax - b)**2, summed over all samples. Note that the input is 1D but the parameter space is 2D.
      */
     constructor() {
-        this.trueParameters = tf.randomUniform([2])
-        this.trueParameters.print()
-        
-        var x = tf.randomUniform([10])
-        var z = tf.stack([x, tf.ones([10])])
-
-        z.print() 
+        this.trueParameters = tf.randomUniform([2], 0.2, 0.8)
+        var N = 10
+        var x = tf.randomUniform([N])
+        var z = tf.stack([x, tf.ones([N])])
         var y = tf.dot(this.trueParameters, z)
 
-        var loss = parameters => (y.sub(tf.dot(parameters, z))).square().mul(tf.scalar(.5))
+        this.loss = tf.tidy(() => parameters => {
+            var estimates = tf.matMul(parameters, z)
+            var squaredError = estimates.squaredDifference(y)
+            var sumOfSquares = squaredError.sum(-1)
+            return sumOfSquares.div(tf.scalar(2 * N))
+        })
 
-        var lossGrad = tf.grad(loss)
+        this.lossGrad = tf.grad(this.loss)
+    }
+
+    paramUpdate(input, lr = 0.05, makeTensor = false) {
+        if(makeTensor){
+            input = tf.tensor(input)
+        }
         
-        lossGrad(tf.tensor1d([.5, .5])).print()
+        lr = tf.scalar(lr)
+        return tf.tidy(() => input.sub(lr.mul(this.lossGrad(input))))
+    }
+
+    toArray(tensor) {
+        return tensor.bufferSync().values
     }
 }
