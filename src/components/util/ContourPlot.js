@@ -38,7 +38,7 @@ export class ContourPlot {
             .append("path")
             .attr("fill", d => color_map(color_scale(d.value)))
             .attr("stroke", "#white")
-            .attr("transform", `translate(0,${this.coordinateConversions.height}), scale(${(this.coordinateConversions.width / nx)}, ${(-this.coordinateConversions.height / ny)})`)
+            .attr("transform", `translate(0,${this.coordinateConversions.innerHeight}), scale(${(this.coordinateConversions.innerWidth / nx)}, ${(-this.coordinateConversions.innerHeight / ny)})`)
             .attr("d", d3.geoPath(d3.geoIdentity()))
     }
 }

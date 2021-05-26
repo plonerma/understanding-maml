@@ -20,5 +20,8 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack",
     "dev": "webpack serve --content-base public"
+  },
+  "dependencies": {
+    "plotly.js": "^1.58.4"
   }
 }
