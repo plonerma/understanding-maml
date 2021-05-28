@@ -29,6 +29,8 @@ export const sgd = () => {
     }   
 }
 
+import { sampleIndependentMultivariateGaussian } from './Sampling.js'
+
 export class Random2DLinearRegressionLossSpace {
 
     /**
@@ -38,8 +40,9 @@ export class Random2DLinearRegressionLossSpace {
      * 
      * where loss({a, b}) = .5 * (y_true - ax - b)**2, summed over all samples. Note that the input is 1D but the parameter space is 2D.
      */
-    constructor() {
-        this.trueParameters = tf.randomUniform([2], 0.2, 0.8)
+    constructor(mean = [.5, .5], variance = [.1, .1]) {
+        this.trueParameters = sampleIndependentMultivariateGaussian(mean, variance)
+        this.trueParameters.print()
         var N = 10
         var x = tf.randomUniform([N])
         var z = tf.stack([x, tf.ones([N])])

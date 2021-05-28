@@ -52,6 +52,7 @@ export class VectorGroup {
                 .data(vectorData)
                 .enter().append("line")
         )
+        this.vectorElements.exit().remove()
 
         this.vectorShadeElements = this.vectorShadeAttributes(
             this.svg.append("g")
@@ -59,6 +60,7 @@ export class VectorGroup {
                 .data(vectorData)
                 .enter().append("line")
         )
+        this.vectorShadeElements.exit().remove()
     }
 
     positionLabels(vectorData) {
@@ -69,12 +71,12 @@ export class VectorGroup {
     }
 
     renderOrigin() {
-        console.log(this.origin)
         this.originElement = this.originAttributes(
             this.svg.selectAll("circle")
                 .data([this.origin]).enter()
                 .append("circle")
-        )
+        )   
+        this.originElement.exit().remove()
     }
 
     animateOriginDrag() {

@@ -1,3 +1,9 @@
+<div id="densitySelect">
+    <input type="radio" id="loss1" name="loss" checked>
+    <label for="loss1">\( \mathcal L_1 \)</label>
+    <input type="radio" id="loss2" name="loss">
+    <label for="loss2">\( \mathcal L_2  \)</label>
+</div>
 <div id="density"></div>
 
 <div id="vector-phi1">\( \phi_1 \)</div>
@@ -8,13 +14,15 @@
     import * as d3 from 'd3';
     import { onMount } from 'svelte';
     import * as tf from '@tensorflow/tfjs'
+
     import { CoordinateConversions } from './util/CoordinateConversions.js'
     import { VectorGroup } from './util/VectorGroup.js'
     import { ContourPlot } from './util/ContourPlot.js'
 
     import { Random2DLinearRegressionLossSpace } from './util/LossSpace.js'
+    import { Regression2DTaskGroup } from './util/TaskGroup.js'
 
-    import { loss_4 as loss_1 } from './util/loss';
+    import { loss_4 as loss_1 } from './util/loss'
 
     const margin = { top: 20, right: 30, bottom: 30, left: 40 }
     const width = 600, height = 400
@@ -29,24 +37,34 @@
 
         var coordinateConversions = new CoordinateConversions(svg, margin, width, height, xrange, yrange)
 
-        var lspace = new Random2DLinearRegressionLossSpace()
-        var phiOpt = lspace.toArray(lspace.trueParameters)
+        var taskGroup = new Regression2DTaskGroup(svg, [.5, .5], [[.1, .1], [.7, .7]], .3, coordinateConversions)
 
-        var contour = new ContourPlot(lspace.loss, svg, coordinateConversions)
-        contour.render()
+        /*var densitySelect = d3.select('#densitySelect').append('select')
+        densitySelect
+            .selectAll('option')
+            .data(taskGroup.getLossData())
+            .enter()
+            .append('option')
+            .html(d => `\\( \\mathcal{L}_${d.index} \\)`)
+        */
 
-        var groupCenter = [.9, .9]
+        var contour = new ContourPlot(svg, coordinateConversions)
+        contour.prerender(taskGroup.tasks.map(t => t.loss))
+        contour.render(0)
 
-        var upd = lspace.toArray(lspace.paramUpdate([groupCenter], .1, true))
+        var options = ["loss1", "loss2"]
+        options.forEach((id, i) => {
+            document.getElementById(id).onchange = () => {
+                if (document.getElementById(id).value == "on") {
+                    contour.rerender(i)
+                }
+            }
+        })
 
-        var defaultVectors = [
-            { id: "vector-phi1", x: upd[0], y: upd[1] },
-            { id: "vector-phi2", x: phiOpt[0], y: phiOpt[1] }
-        ]
-        
-        var vectorGroup = new VectorGroup(svg, { x: groupCenter[0], y: groupCenter[1] }, defaultVectors, coordinateConversions)
-
-        vectorGroup.declare().animate()
+        taskGroup.declare([
+            'vector-phi1',
+            'vector-phi2'
+        ]).animate()
 
         coordinateConversions.displayAxes()
     })
