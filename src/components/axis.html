@@ -1,0 +1,43 @@
+<script>
+  import * as d3 from 'd3';
+  import { onMount, getContext, setContext } from 'svelte';
+
+  export let groupElement;
+
+  let [width, height] = getContext("size")
+
+  export let margin = { top: 20, right: 30, bottom: 30, left: 40 }
+
+  export let xDomain = [0, 1]
+  export let yDomain = [0, 1]
+
+  let transform = `translate(${margin.left}, ${margin.top})`
+
+  let innerWidth = width - margin.left - margin.right;
+  let innerHeight = height - margin.top - margin.bottom;
+
+  setContext("size", [innerWidth, innerHeight])
+
+  let xScale = d3.scaleLinear().domain(xDomain).range([0, innerWidth])
+  let yScale = d3.scaleLinear().domain(yDomain).range([innerHeight, 0])
+
+  setContext("scales", [xScale, yScale]);
+
+  setContext("axisGroup", () => groupElement)
+
+  onMount(() => {
+    let axisGroup = d3.select(groupElement)
+
+
+    console.log('domain', xScale.domain())
+
+    axisGroup.append("g").attr("transform", `translate(0, ${innerHeight})`)
+                         .call(d3.axisBottom(xScale))
+
+    axisGroup.append("g").call(d3.axisLeft(yScale))
+  })
+</script>
+
+<g bind:this={groupElement} transform={transform}>
+  <slot></slot>
+</g>

@@ -1,0 +1,18 @@
+<script>
+  import { setContext } from 'svelte';
+
+  export let width = 200
+  export let height = 200
+
+  setContext("size", [width, height]);
+
+  export let viewBox
+
+  $: {
+    viewBox = `0 0 ${width} ${height}`
+  }
+</script>
+
+<svg preserveAspectRatio="xMinYMin meet" viewBox={viewBox}>
+  <slot></slot>
+</svg>
