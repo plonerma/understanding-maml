@@ -3,12 +3,10 @@ import { Random2DLinearRegressionLossSpace } from './LossSpace.js'
 import { VectorGroup } from './VectorGroup.js'
 
 export class Regression2DTaskGroup {
-    constructor(svg, initialParams, optimals, lr, coordinateConversions) {
-        this.svg = svg
+    constructor(initialParams, optimals, lr) {
         this.center = initialParams
         this.tasks = this.createTasks(optimals)
         this.lr = lr
-        this.coordinateConversions = coordinateConversions
     }
 
     declare(labelIds) {

@@ -1,71 +1,64 @@
-<div id="densitySelect">
-    <input type="radio" id="loss1" name="loss" checked>
-    <label for="loss1">\( \mathcal L_1 \)</label>
-    <input type="radio" id="loss2" name="loss">
-    <label for="loss2">\( \mathcal L_2  \)</label>
-</div>
-<div id="density"></div>
 
-<div id="vector-phi1">\( \phi_1 \)</div>
-<div id="vector-phi2">\( \phi_2 \)</div>
-<div id="vector-phi3">\( \phi_3 \)</div>
+<div>
+    {#each tasks as task, i}
+      <input type="radio" bind:group={selected_task} value={i} id={`loss_${i+1}`}>
+      <label for={`loss_${i+1}`}>
+        \( \mathcal L_{i+1} \)
+      </label>
+    {/each}
+</div>
+
+
+<Chart width=600 height=400>
+  <defs>
+    <marker id="arrowhead" fill="#fff" markerWidth="10" markerHeight="10" refX="8.7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" />
+    </marker>
+  </defs>
+  <Axis>
+    {#each tasks as task, i}
+      <ContourPlot lossFunc={task.loss} logScale=true opacity={i == selected_task ? 1 : 0} />
+    {/each}
+
+    {#each tasks as task, i}
+      <ContourPlot lossFunc={task.loss} logScale=true opacity={i == selected_task ? 1 : 0} />
+    {/each}
+
+    {#each tasks as task, i}
+      <Line origin={theta} target={task.phi}
+            stroke="#fff" fill="#fff" stroke-width="1" marker-end="url(#arrowhead)" />
+    {/each}
+
+    <VariableHandle bind:position={theta} value="\theta" />
+
+    {#each tasks as task, i}
+      <VariableHandle bind:position={task.phi} value="\phi_{i}" />
+    {/each}
+  </Axis>
+</Chart>
+
 
 <script>
+    import Chart from './chart.html'
+    import ContourPlot from './contourPlot.html'
+    import Axis from './axis.html'
+    import Line from './line.html'
+    import VariableHandle from './variableHandle.html'
+
+
     import * as d3 from 'd3';
-    import { onMount } from 'svelte';
+    import { onMount, getContext } from 'svelte';
     import * as tf from '@tensorflow/tfjs'
 
-    import { CoordinateConversions } from './util/CoordinateConversions.js'
-    import { VectorGroup } from './util/VectorGroup.js'
-    import { ContourPlot } from './util/ContourPlot.js'
-
-    import { Random2DLinearRegressionLossSpace } from './util/LossSpace.js'
-    import { Regression2DTaskGroup } from './util/TaskGroup.js'
-
     import { loss_4 as loss_1 } from './util/loss'
+    import { loss_3 as loss_2 } from './util/loss'
 
-    const margin = { top: 20, right: 30, bottom: 30, left: 40 }
-    const width = 600, height = 400
-    const xrange = [0, 1], yrange = [0, 1]
+    let tasks = [
+      {loss: loss_1, phi: [0.1, 0.2]},
+      {loss: loss_2, phi: [0.3, 0.8]}
+    ]
 
-    onMount(() => {
-        var svg = d3.select('#density').append('svg')
-            .attr("width", width)
-            .attr("height", height)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    let theta = [0.5, 0.5]
 
-        var coordinateConversions = new CoordinateConversions(svg, margin, width, height, xrange, yrange)
-
-        var taskGroup = new Regression2DTaskGroup(svg, [.5, .5], [[.1, .1], [.7, .7]], .3, coordinateConversions)
-
-        /*var densitySelect = d3.select('#densitySelect').append('select')
-        densitySelect
-            .selectAll('option')
-            .data(taskGroup.getLossData())
-            .enter()
-            .append('option')
-            .html(d => `\\( \\mathcal{L}_${d.index} \\)`)
-        */
-
-        var contour = new ContourPlot(svg, coordinateConversions)
-        contour.prerender(taskGroup.tasks.map(t => t.loss))
-        contour.render(0)
-
-        var options = ["loss1", "loss2"]
-        options.forEach((id, i) => {
-            document.getElementById(id).onchange = () => {
-                if (document.getElementById(id).value == "on") {
-                    contour.rerender(i)
-                }
-            }
-        })
-
-        taskGroup.declare([
-            'vector-phi1',
-            'vector-phi2'
-        ]).animate()
-
-        coordinateConversions.displayAxes()
-    })
+    let selected_task = 0
 </script>

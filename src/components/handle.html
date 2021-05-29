@@ -6,12 +6,11 @@
   export let lines = true
 
   export let circleRadius = 3, circleRadius_hover = 5
-  export let lineOpacity = .1, lineOpacity_hover = .5
+  export let lineOpacity = 0, lineOpacity_hover = .5
 
-  export let isHovered = false
+  let isHovered = false
 
-
-  let handleElement, lineHor, lineVer, circle
+  let handleElement, handleGroupElement
 
   let [xScale, yScale] = getContext("scales");
 
@@ -34,60 +33,61 @@
 
   let axisGroup = getContext("axisGroup")
 
+
   onMount(() => {
     var handle = d3.select(handleElement);
+    var handleGroup = d3.select(handleGroupElement).raise()
+
+    isHovered = false
 
     handle.call(d3.drag().container(axisGroup()).on("drag", function(event) {
+      isHovered = true
+      /* Raise this handle to the top, so other handles aren't hovered while
+         dragging */
+      handleGroup.raise()
       position = [
         Math.max(Math.min(xmax, xScale.invert(event.x)), xmin),
         Math.max(Math.min(ymax, yScale.invert(event.y)), ymin)
       ]
     }));
 
-    isHovered = false
-
     handle.on("mouseover", function (d) {
       isHovered = true
-
-      d3.select(circle).transition().duration(100).attr("r", circleRadius_hover);
-
-      if (lines) {
-        d3.select(lineHor).transition().duration(100).style("opacity", lineOpacity_hover);
-        d3.select(lineVer).transition().duration(100).style("opacity", lineOpacity_hover);
-      }
+      /* Raise this handle to the top, so other handles aren't hovered while
+         dragging */
+      handleGroup.raise()
     })
     handle.on("mouseout", function (d) {
       isHovered = false
-
-      d3.select(circle).transition().duration(100).attr("r", circleRadius);
-
-      if (lines) {
-        d3.select(lineHor).transition().duration(100).style("opacity", lineOpacity);
-        d3.select(lineVer).transition().duration(100).style("opacity", lineOpacity);
-      }
     })
 
   })
 </script>
 
-<g>
+<g bind:this={handleGroupElement}>
   {#if lines}
-    <line stroke="white" stroke-width="1" opacity={lineOpacity} bind:this={lineHor}
+    <line class="handleLine"
+          stroke="white" stroke-width="1"
+          opacity="{isHovered ? lineOpacity_hover : lineOpacity}"
           x1={xScale(xmin)} x2={xScale(xmax)}
           y1={yScale(y)} y2={yScale(y)} />
 
-    <line stroke="white" stroke-width="1" opacity={lineOpacity} bind:this={lineVer}
+    <line class="handleLine"
+          stroke="white" stroke-width="1"
+          opacity="{isHovered ? lineOpacity_hover : lineOpacity}"
           x1={xScale(x)} x2={xScale(x)}
           y1={yScale(ymin)} y2={yScale(ymax)} />
   {/if}
   <g transform={handleTransform}>
-    <slot>
-      <circle stroke="none" fill="white" r="{circleRadius}" bind:this={circle}
+    <slot {isHovered}>
+      <circle stroke="none" fill="white" class="circleMarker"
+              r="{isHovered ? circleRadius_hover : circleRadius}"
               cx=0 cy=0 />
     </slot>
   </g>
 
-  <circle class="handleInvisible" cx={xScale(x)} cy={yScale(y)} r="20" bind:this={handleElement} />
+  <circle bind:this={handleElement} class="handleInvisible"
+          cx={xScale(x)} cy={yScale(y)} r="20"  />
 </g>
 
 
@@ -96,5 +96,13 @@
     opacity: 0;
     color: rgba(255, 255, 255, 0);
     cursor: grab;
+  }
+
+  .circleMarker {
+    transition: r .2s;
+  }
+
+  .handleLine {
+    transition: opacity .2s;
   }
 </style>

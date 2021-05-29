@@ -2,7 +2,7 @@
   import * as d3 from 'd3';
   import { onMount, getContext, setContext } from 'svelte';
 
-  export let groupElement;
+  let groupElement;
 
   let [width, height] = getContext("size")
 
@@ -22,6 +22,7 @@
   let yScale = d3.scaleLinear().domain(yDomain).range([innerHeight, 0])
 
   setContext("scales", [xScale, yScale]);
+  export const scales = [xScale, yScale]
 
   setContext("axisGroup", () => groupElement)
 

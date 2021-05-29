@@ -4,12 +4,15 @@
   import * as tf from '@tensorflow/tfjs'
 
   export let lossFunc
-  export let groupElement
+
+  export let opacity = 1
 
   export let logScale = false
 
   let [width, height] = getContext("size")
   let [xScale, yScale] = getContext("scales")
+
+  let groupElement
 
   export let nx = 256, ny = 256;
   export let n_thresholds = 20;
@@ -51,6 +54,6 @@
 </script>
 
 
-<g fill="none" stroke="#fff" stroke-opacity="0.3" bind:this={groupElement}>
+<g fill="none" stroke="#fff" stroke-opacity="0.3" bind:this={groupElement} opacity={opacity}>
 
 </g>

@@ -4,10 +4,7 @@
       <Chart width=300 height=300>
         <Axis>
           <ContourPlot lossFunc={plot.loss} logScale={plot.logScale} />
-          <Handle bind:position={theta} bind:isHovered={plot.hovered}>
-            <Latex value="\theta" style="color: white; font-size:1em; opacity: {plot.hovered ? '0' : '1'}" />
-            <Latex value="\theta" style="color: white; font-size:1.4em; opacity: {plot.hovered ? '1' : '0'}" />
-          </Handle>
+          <VariableHandle bind:position={theta} value="\theta" withPoint={false} />
         </Axis>
       </Chart>
     </div>
@@ -30,15 +27,14 @@
   import Chart from './chart.html'
   import ContourPlot from './contourPlot.html'
   import Axis from './axis.html'
-  import Handle from './handle.html'
-  import Latex from './latex.html'
+  import VariableHandle from './variableHandle.html'
 
   export let theta = [0.5, 0.5]
 
   let plots = [
-    {loss: loss_1, hovered: false, logScale: false},
-    {loss: loss_2, hovered: false, logScale: true},
-    {loss: loss_3, hovered: false, logScale: true},
-    {loss: loss_4, hovered: false, logScale: true},
+    {loss: loss_1, logScale: false},
+    {loss: loss_2, logScale: true},
+    {loss: loss_3, logScale: true},
+    {loss: loss_4, logScale: true},
   ]
 </script>
