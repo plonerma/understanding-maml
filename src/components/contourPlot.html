@@ -11,15 +11,13 @@
   let [width, height] = getContext("size")
   let [xScale, yScale] = getContext("scales")
 
-  console.log(width, height)
-
   export let nx = 256, ny = 256;
   export let n_thresholds = 20;
 
   onMount(() => {
     let grid = tf.stack(tf.meshgrid(
-        tf.linspace(...xScale.range(), nx),
-        tf.linspace(...yScale.range(), ny)
+        tf.linspace(...xScale.domain(), nx),
+        tf.linspace(...yScale.domain(), ny)
     ), -1)
 
     let loss = lossFunc(grid)

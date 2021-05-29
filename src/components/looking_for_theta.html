@@ -1,36 +1,17 @@
 <div class="container">
+  {#each plots as plot}
     <div class="col">
-      <Chart width=400 height=400>
+      <Chart width=300 height=300>
         <Axis>
-          <ContourPlot lossFunc={loss_1} />
-          <Handle bind:position={theta} />
+          <ContourPlot lossFunc={plot.loss} logScale={plot.logScale} />
+          <Handle bind:position={theta} bind:isHovered={plot.hovered}>
+            <Latex value="\theta" style="color: white; font-size:1em; opacity: {plot.hovered ? '0' : '1'}" />
+            <Latex value="\theta" style="color: white; font-size:1.4em; opacity: {plot.hovered ? '1' : '0'}" />
+          </Handle>
         </Axis>
       </Chart>
     </div>
-    <div class="col">
-      <Chart width=400 height=400>
-        <Axis xDomain={[-1, 1]} yDomain={[-1, 1]}>
-          <ContourPlot lossFunc={loss_2} logScale=true />
-          <Handle bind:position={theta} />
-        </Axis>
-      </Chart>
-    </div>
-    <div class="col">
-      <Chart width=400 height=400>
-        <Axis>
-          <ContourPlot lossFunc={loss_3} logScale=true />
-          <Handle bind:position={theta} />
-        </Axis>
-      </Chart>
-    </div>
-    <div class="col">
-      <Chart width=400 height=400>
-        <Axis>
-          <ContourPlot lossFunc={loss_4} logScale=true />
-          <Handle bind:position={theta} />
-        </Axis>
-      </Chart>
-    </div>
+	{/each}
 </div>
 
 <style>
@@ -50,6 +31,14 @@
   import ContourPlot from './contourPlot.html'
   import Axis from './axis.html'
   import Handle from './handle.html'
+  import Latex from './latex.html'
 
   export let theta = [0.5, 0.5]
+
+  let plots = [
+    {loss: loss_1, hovered: false, logScale: false},
+    {loss: loss_2, hovered: false, logScale: true},
+    {loss: loss_3, hovered: false, logScale: true},
+    {loss: loss_4, hovered: false, logScale: true},
+  ]
 </script>

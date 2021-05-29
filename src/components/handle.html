@@ -4,12 +4,11 @@
 
 
   export let lines = true
-  export let visible = true
 
   export let circleRadius = 3, circleRadius_hover = 5
   export let lineOpacity = .1, lineOpacity_hover = .5
 
-
+  export let isHovered = false
 
 
   let handleElement, lineHor, lineVer, circle
@@ -20,10 +19,12 @@
 
   let x, y, xmin, xmax, ymin, ymax;
 
-
+  let handleTransform
 
   $: {
     [x, y] = position
+
+    handleTransform = `translate(${xScale(x)}, ${yScale(y)})`
   }
 
   $: {
@@ -43,44 +44,48 @@
       ]
     }));
 
-    if (visible) {
-      handle.on("mouseover", function (d) {
-        d3.select(circle).transition().duration(100).attr("r", circleRadius_hover);
+    isHovered = false
 
-        if (lines) {
-          d3.select(lineHor).transition().duration(100).style("opacity", lineOpacity_hover);
-          d3.select(lineVer).transition().duration(100).style("opacity", lineOpacity_hover);
-        }
-      })
-      handle.on("mouseout", function (d) {
-        d3.select(circle).transition().duration(100).attr("r", circleRadius);
+    handle.on("mouseover", function (d) {
+      isHovered = true
 
-        if (lines) {
-          d3.select(lineHor).transition().duration(100).style("opacity", lineOpacity);
-          d3.select(lineVer).transition().duration(100).style("opacity", lineOpacity);
-        }
-      })
-    }
+      d3.select(circle).transition().duration(100).attr("r", circleRadius_hover);
 
+      if (lines) {
+        d3.select(lineHor).transition().duration(100).style("opacity", lineOpacity_hover);
+        d3.select(lineVer).transition().duration(100).style("opacity", lineOpacity_hover);
+      }
+    })
+    handle.on("mouseout", function (d) {
+      isHovered = false
+
+      d3.select(circle).transition().duration(100).attr("r", circleRadius);
+
+      if (lines) {
+        d3.select(lineHor).transition().duration(100).style("opacity", lineOpacity);
+        d3.select(lineVer).transition().duration(100).style("opacity", lineOpacity);
+      }
+    })
 
   })
 </script>
 
 <g>
-  {#if visible}
-    {#if lines}
-      <line stroke="white" stroke-width="1" opacity={lineOpacity} bind:this={lineHor}
-            x1={xScale(xmin)} x2={xScale(xmax)}
-            y1={yScale(y)} y2={yScale(y)} />
+  {#if lines}
+    <line stroke="white" stroke-width="1" opacity={lineOpacity} bind:this={lineHor}
+          x1={xScale(xmin)} x2={xScale(xmax)}
+          y1={yScale(y)} y2={yScale(y)} />
 
-      <line stroke="white" stroke-width="1" opacity={lineOpacity} bind:this={lineVer}
-            x1={xScale(x)} x2={xScale(x)}
-            y1={yScale(ymin)} y2={yScale(ymax)} />
-    {/if}
-
-    <circle stroke="none" fill="white" r="{circleRadius}" bind:this={circle}
-            cx={xScale(x)} cy={yScale(y)} />
+    <line stroke="white" stroke-width="1" opacity={lineOpacity} bind:this={lineVer}
+          x1={xScale(x)} x2={xScale(x)}
+          y1={yScale(ymin)} y2={yScale(ymax)} />
   {/if}
+  <g transform={handleTransform}>
+    <slot>
+      <circle stroke="none" fill="white" r="{circleRadius}" bind:this={circle}
+              cx=0 cy=0 />
+    </slot>
+  </g>
 
   <circle class="handleInvisible" cx={xScale(x)} cy={yScale(y)} r="20" bind:this={handleElement} />
 </g>

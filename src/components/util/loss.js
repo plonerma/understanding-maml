@@ -10,10 +10,6 @@ const RBF = (phi, center, factor) => tf.tidy(() => {
   additional_phi_dims.forEach(() => {center = center.expandDims(0)});
   additional_center_dims.forEach(() => {phi = phi.expandDims(-2)});
 
-  console.log(phi.shape)
-  console.log(center.shape)
-  console.log(phi.shape)
-
   return tf.sigmoid(
     tf.sum(
       phi.sub(center).square(),
