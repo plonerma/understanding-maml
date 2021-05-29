@@ -8,7 +8,9 @@
   <body>
     <script src="https://distill.pub/template.v1.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
     <script defer src="build/bundle.js"></script>
 
 <script type="text/front-matter">
@@ -41,10 +43,6 @@
           return theta - alpha * model.grad(data)
     </dt-code>
   </p>
-
-	<figure>
-    <d-figure id="metaGradient"></d-figure>
-    </figure>
 
 	<figure>
 	<d-figure id="looking_for_theta"></d-figure>
