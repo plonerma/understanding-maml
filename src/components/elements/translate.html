@@ -1,0 +1,12 @@
+<script>
+  import { getContext } from 'svelte';
+
+  let [xScale, yScale] = getContext("scales")
+
+  export let position = [0, 0]
+
+</script>
+
+<g transform={`translate(${xScale(position[0])}, ${yScale(position[1])})`}>
+  <slot />
+</g>

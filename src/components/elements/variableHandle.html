@@ -9,6 +9,17 @@
 
   export let offset = [-20, -10]
 
+  let otherProps
+
+  $: {
+    ({...otherProps} = $$props)
+
+    delete otherProps["value"]
+    delete otherProps["hovered"]
+    delete otherProps["position"]
+    delete otherProps["withPoint"]
+  }
+
   let transform = ""
 
   $: {
@@ -16,7 +27,7 @@
   }
 </script>
 
-<Handle bind:position={position} let:isHovered={hovered}>
+<Handle bind:position={position} let:isHovered={hovered} {...otherProps}>
   {#if withPoint}
     <g transform={transform}>
       <Latex {value} style="color: white; font-size: {hovered ? '1.2em' : '1em'}" />

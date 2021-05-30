@@ -4,15 +4,24 @@
       <Chart width=300 height=300>
         <Axis>
           <ContourPlot lossFunc={plot.loss} logScale={plot.logScale} />
-          <VariableHandle bind:position={theta} value="\theta" withPoint={false} />
-        </Axis>
+          <VariableHandle bind:position={theta} value="\theta" withPoint={false} onDragEnd={caculateTrajectories} />
+          {#each plot.trajectory as segment}
+            <Arrow origin={segment.origin} target={segment.target} trimStart=0.1 trimEnd=0.1
+                  stroke="#fff" fill="#fff" stroke-width="1" />
+          {/each}
+          {#if plot.phi}
+            <Translate position={plot.phi}>
+              <Latex value="\phi" style="font-size: 0.8em; color:white" />
+            </Translate>
+          {/if}
+      </Axis>
       </Chart>
     </div>
 	{/each}
 
   <div class="col">
     <div class="centered">
-      <input type="range" min="-3" max="0" bind:value={lr_exp} class="slider" id="userOptimizedTheta_lr">
+      <input type="range" min="-4" max="0" bind:value={lr_exp} class="slider" id="userOptimizedTheta_lr">
       <br>
       <label for="userOptimizedTheta_lr">
         Learning Rate: {lr}
@@ -20,9 +29,10 @@
     </div>
   </div>
 
+
   <div class="col">
     <div class="centered">
-      <input type="range" min="1" max="5" bind:value={steps} class="slider" id="userOptimizedTheta_steps">
+      <input type="range" min="1" max="10" bind:value={steps} class="slider" id="userOptimizedTheta_steps" on:change={caculateTrajectories}>
       <br>
       <label for="userOptimizedTheta_steps">
         Inner optimization steps: {steps}
@@ -56,27 +66,90 @@
 <script>
   import * as d3 from 'd3';
   import { onMount } from 'svelte';
-  import {loss_1, loss_2, loss_3, loss_4} from './util/loss';
+  import * as tf from '@tensorflow/tfjs'
 
-  import Chart from './chart.html'
+
+  import {RBFLoss} from './util/loss';
+
+  import {Chart, Axis, VariableHandle, Arrow, Translate, Latex} from './elements'
+
   import ContourPlot from './contourPlot.html'
-  import Axis from './axis.html'
-  import VariableHandle from './variableHandle.html'
+
 
   export let theta = [0.5, 0.5]
 
-  let lr_exp = -3
+  let lr_exp = -2
   let steps = 1
   let lr
+  let optimizer
 
   $: {
-    lr = Math.pow(10, lr_exp)
+    lr = Math.pow(10, lr_exp/2)
+    optimizer = tf.train.sgd(lr)
+    caculateTrajectories()
   }
 
+  const loss_1 = phi => RBFLoss(phi,
+    tf.tensor([[0.5, 0.7], [0.4, 0.2], [0.6, 0.2], [0.9, 0.3]]),
+    tf.tensor([-1, -1.5, 2, -1.5]));
+
+  const loss_2 = phi => RBFLoss(phi,
+    tf.tensor([[0.6, 0.8], [0.2, 0.3], [0.7, 0.1], [0.8, 0.3]]),
+    tf.tensor([-1, -1.5, 2, -1.5]));
+
+  const loss_3 = phi => RBFLoss(phi,
+    tf.tensor([[0.4, 0.7], [0.3, 0.2], [0.8, 0.1], [1.0, 0.3]]),
+    tf.tensor([-1, -1.5, 2, -1.5]));
+
+  const loss_4 = phi => RBFLoss(phi,
+    tf.tensor([[0.6, 0.7], [0.4, 0.2], [0.2, -0.1], [0.9, 0.3]]),
+    tf.tensor([-1, -1.5, 2, -1.5]));
+
+
   let plots = [
-    {loss: loss_1, logScale: false},
-    {loss: loss_2, logScale: true},
-    {loss: loss_3, logScale: true},
-    {loss: loss_4, logScale: true},
+    {loss: loss_1, logScale: false, trajectory: [], phi: null},
+    {loss: loss_2, logScale: false, trajectory: [], phi: null},
+    {loss: loss_3, logScale: false, trajectory: [], phi: null},
+    {loss: loss_4, logScale: false, trajectory: [], phi: null},
   ]
+
+  onMount(() => {
+    caculateTrajectories()
+  })
+
+
+  function caculateTrajectories() {
+    let newPlots = [];
+
+    plots.forEach((plot, i) => {
+      tf.tidy(() => {
+        let x = tf.variable(tf.tensor(theta))
+        let trajectory = []
+        let last = theta, current
+
+        for (var s = 0; s < steps; s++) {
+          optimizer.minimize(() => plot.loss(x).sum(), x)
+
+          current = Array.from(x.bufferSync().values)
+
+          trajectory.push({
+            origin: last,
+            target: current
+          })
+
+          last = current
+
+        }
+        plot.trajectory = trajectory
+        plot.phi = last
+        newPlots.push(plot)
+      })
+    })
+    plots = newPlots
+  }
+
+
+
+
+
 </script>

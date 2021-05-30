@@ -1,5 +1,5 @@
 <script>
-  import { onMount, getContext } from 'svelte';
+  import { onMount, getContext, createEventDispatcher } from 'svelte';
   import * as d3 from 'd3';
 
 
@@ -7,6 +7,8 @@
 
   export let circleRadius = 3, circleRadius_hover = 5
   export let lineOpacity = 0, lineOpacity_hover = .5
+
+  export let onDragStart=null, onDrag=null, onDragEnd=null
 
   let isHovered = false
 
@@ -40,16 +42,31 @@
 
     isHovered = false
 
-    handle.call(d3.drag().container(axisGroup()).on("drag", function(event) {
-      isHovered = true
-      /* Raise this handle to the top, so other handles aren't hovered while
-         dragging */
-      handleGroup.raise()
-      position = [
-        Math.max(Math.min(xmax, xScale.invert(event.x)), xmin),
-        Math.max(Math.min(ymax, yScale.invert(event.y)), ymin)
-      ]
-    }));
+    handle.call(d3.drag().container(axisGroup())
+      .on("start", function(event){
+        isHovered = true
+        /* Raise this handle to the top, so other handles aren't hovered while
+           dragging */
+        handleGroup.raise()
+        if ('function' === typeof onDragStart) {
+          onDragStart();
+        }
+      })
+      .on("drag", function(event) {
+        position = [
+          Math.max(Math.min(xmax, xScale.invert(event.x)), xmin),
+          Math.max(Math.min(ymax, yScale.invert(event.y)), ymin)
+        ]
+        if ('function' === typeof onDrag) {
+          onDrag();
+        }
+      })
+      .on("end", function(event) {
+        if ('function' === typeof onDragEnd) {
+          onDragEnd();
+        }
+      })
+    );
 
     handle.on("mouseover", function (d) {
       isHovered = true
