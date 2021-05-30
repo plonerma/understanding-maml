@@ -1,0 +1,82 @@
+<div class="container">
+  {#each plots as plot}
+    <div class="col">
+      <Chart width=300 height=300>
+        <Axis>
+          <ContourPlot lossFunc={plot.loss} logScale={plot.logScale} />
+          <VariableHandle bind:position={theta} value="\theta" withPoint={false} />
+        </Axis>
+      </Chart>
+    </div>
+	{/each}
+
+  <div class="col">
+    <div class="centered">
+      <input type="range" min="-3" max="0" bind:value={lr_exp} class="slider" id="userOptimizedTheta_lr">
+      <br>
+      <label for="userOptimizedTheta_lr">
+        Learning Rate: {lr}
+      </label>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="centered">
+      <input type="range" min="1" max="5" bind:value={steps} class="slider" id="userOptimizedTheta_steps">
+      <br>
+      <label for="userOptimizedTheta_steps">
+        Inner optimization steps: {steps}
+      </label>
+    </div>
+  </div>
+</div>
+
+<style>
+  .container {
+    display: flex;
+    flex-flow: row;
+    flex-wrap: wrap;
+  }
+  .container .col {
+      text-align: center;
+      min-width: 50%;
+
+  }
+  .container .col .centered {
+        margin: 0 auto;
+        display: inline-block;
+  }
+
+  label {
+    font-size: .8em;
+  }
+</style>
+
+
+<script>
+  import * as d3 from 'd3';
+  import { onMount } from 'svelte';
+  import {loss_1, loss_2, loss_3, loss_4} from './util/loss';
+
+  import Chart from './chart.html'
+  import ContourPlot from './contourPlot.html'
+  import Axis from './axis.html'
+  import VariableHandle from './variableHandle.html'
+
+  export let theta = [0.5, 0.5]
+
+  let lr_exp = -3
+  let steps = 1
+  let lr
+
+  $: {
+    lr = Math.pow(10, lr_exp)
+  }
+
+  let plots = [
+    {loss: loss_1, logScale: false},
+    {loss: loss_2, logScale: true},
+    {loss: loss_3, logScale: true},
+    {loss: loss_4, logScale: true},
+  ]
+</script>

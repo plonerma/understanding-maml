@@ -1,0 +1,59 @@
+<script>
+  import { onMount, getContext } from 'svelte';
+  import * as d3 from 'd3';
+  import * as tf from '@tensorflow/tfjs'
+
+  export let lossFunc
+
+  export let opacity = 1
+
+  export let logScale = false
+
+  let [width, height] = getContext("size")
+  let [xScale, yScale] = getContext("scales")
+
+  let groupElement
+
+  export let nx = 256, ny = 256;
+  export let n_thresholds = 20;
+
+  onMount(() => {
+    let grid = tf.stack(tf.meshgrid(
+        tf.linspace(...xScale.domain(), nx),
+        tf.linspace(...yScale.domain(), ny)
+    ), -1)
+
+    let loss = lossFunc(grid)
+
+    if (logScale) {
+      loss = tf.log(loss)
+    }
+
+    let lossGrid = Array.from(loss.bufferSync().values)
+
+    let contours = d3.contours()
+        .size([nx, ny])
+        .thresholds(n_thresholds)
+        (lossGrid)
+
+    let color_map = d3.interpolateViridis
+    let color_scale = d3.scaleLinear().domain(d3.extent(lossGrid)).range([0, 1])
+
+    let ge = d3.select(groupElement)
+
+    ge.selectAll("path")
+      .data(contours)
+      .enter()
+      .append("path")
+      .attr("fill", d => color_map(color_scale(d.value)))
+      .attr("stroke", "#white")
+      .attr("transform", `translate(0,${height}), scale(${(width / nx)}, ${(-height / ny)})`)
+      .attr("d", d3.geoPath(d3.geoIdentity()))
+
+  })
+</script>
+
+
+<g fill="none" stroke="#fff" stroke-opacity="0.3" bind:this={groupElement} opacity={opacity}>
+
+</g>

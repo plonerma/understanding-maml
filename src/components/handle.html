@@ -1,0 +1,108 @@
+<script>
+  import { onMount, getContext } from 'svelte';
+  import * as d3 from 'd3';
+
+
+  export let lines = true
+
+  export let circleRadius = 3, circleRadius_hover = 5
+  export let lineOpacity = 0, lineOpacity_hover = .5
+
+  let isHovered = false
+
+  let handleElement, handleGroupElement
+
+  let [xScale, yScale] = getContext("scales");
+
+  export let position = [0.5, 0.5]
+
+  let x, y, xmin, xmax, ymin, ymax;
+
+  let handleTransform
+
+  $: {
+    [x, y] = position
+
+    handleTransform = `translate(${xScale(x)}, ${yScale(y)})`
+  }
+
+  $: {
+    [xmin, xmax] = xScale.domain();
+    [ymin, ymax] = yScale.domain();
+  }
+
+  let axisGroup = getContext("axisGroup")
+
+
+  onMount(() => {
+    var handle = d3.select(handleElement);
+    var handleGroup = d3.select(handleGroupElement).raise()
+
+    isHovered = false
+
+    handle.call(d3.drag().container(axisGroup()).on("drag", function(event) {
+      isHovered = true
+      /* Raise this handle to the top, so other handles aren't hovered while
+         dragging */
+      handleGroup.raise()
+      position = [
+        Math.max(Math.min(xmax, xScale.invert(event.x)), xmin),
+        Math.max(Math.min(ymax, yScale.invert(event.y)), ymin)
+      ]
+    }));
+
+    handle.on("mouseover", function (d) {
+      isHovered = true
+      /* Raise this handle to the top, so other handles aren't hovered while
+         dragging */
+      handleGroup.raise()
+    })
+    handle.on("mouseout", function (d) {
+      isHovered = false
+    })
+
+  })
+</script>
+
+<g bind:this={handleGroupElement}>
+  {#if lines}
+    <line class="handleLine"
+          stroke="white" stroke-width="1"
+          opacity="{isHovered ? lineOpacity_hover : lineOpacity}"
+          x1={xScale(xmin)} x2={xScale(xmax)}
+          y1={yScale(y)} y2={yScale(y)} />
+
+    <line class="handleLine"
+          stroke="white" stroke-width="1"
+          opacity="{isHovered ? lineOpacity_hover : lineOpacity}"
+          x1={xScale(x)} x2={xScale(x)}
+          y1={yScale(ymin)} y2={yScale(ymax)} />
+  {/if}
+  <g transform={handleTransform}>
+    <slot {isHovered}>
+      <circle stroke="none" fill="white" class="circleMarker"
+              r="{isHovered ? circleRadius_hover : circleRadius}"
+              cx=0 cy=0 />
+    </slot>
+  </g>
+
+  <circle bind:this={handleElement} class="handleInvisible"
+          cx={xScale(x)} cy={yScale(y)} r="20"  />
+</g>
+
+
+<style>
+  .handleInvisible {
+    opacity: 0;
+    color: rgba(255, 255, 255, 0);
+    cursor: grab;
+  }
+
+  .circleMarker {
+    transition: r .2s;
+  }
+
+  .handleLine {
+    transition: opacity .2s;
+  }
+</style>

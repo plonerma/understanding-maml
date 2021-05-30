@@ -1,0 +1,59 @@
+
+<div>
+    {#each tasks as task, i}
+      <input type="radio" bind:group={selected_task} value={i} id={`loss_${i+1}`}>
+      <label for={`loss_${i+1}`}>
+        \( \mathcal L_{i+1} \)
+      </label>
+    {/each}
+</div>
+
+
+<Chart width=600 height=400>
+  <Axis>
+    {#each tasks as task, i}
+      <ContourPlot lossFunc={task.loss} logScale=true opacity={i == selected_task ? 1 : 0} />
+    {/each}
+
+    {#each tasks as task, i}
+      <ContourPlot lossFunc={task.loss} logScale=true opacity={i == selected_task ? 1 : 0} />
+    {/each}
+
+    {#each tasks as task, i}
+      <Arrow origin={theta} target={task.phi} trimStart=0.1 trimEnd=0.1
+            stroke="#fff" fill="#fff" stroke-width="1" />
+    {/each}
+
+    <VariableHandle bind:position={theta} value="\theta" offset={[0, -15]} />
+
+    {#each tasks as task, i}
+      <VariableHandle bind:position={task.phi} value="\phi_{i}" offset={[0, -15]} />
+    {/each}
+  </Axis>
+</Chart>
+
+
+<script>
+    import Chart from './chart.html'
+    import ContourPlot from './contourPlot.html'
+    import Axis from './axis.html'
+    import Arrow from './arrow.html'
+    import VariableHandle from './variableHandle.html'
+
+
+    import * as d3 from 'd3';
+    import { onMount, getContext } from 'svelte';
+    import * as tf from '@tensorflow/tfjs'
+
+    import { loss_4 as loss_1 } from './util/loss'
+    import { loss_3 as loss_2 } from './util/loss'
+
+    let tasks = [
+      {loss: loss_1, phi: [0.1, 0.2]},
+      {loss: loss_2, phi: [0.3, 0.8]}
+    ]
+
+    let theta = [0.5, 0.5]
+
+    let selected_task = 0
+</script>
