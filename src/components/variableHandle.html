@@ -6,11 +6,19 @@
   export let position
 
   export let withPoint = true
+
+  export let offset = [-20, -10]
+
+  let transform = ""
+
+  $: {
+    transform = `translate(${offset[0]}, ${offset[1]})`
+  }
 </script>
 
 <Handle bind:position={position} let:isHovered={hovered}>
   {#if withPoint}
-    <g transform="translate(-20, -10)">
+    <g transform={transform}>
       <Latex {value} style="color: white; font-size: {hovered ? '1.2em' : '1em'}" />
     </g>
 
