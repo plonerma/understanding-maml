@@ -14,9 +14,6 @@
   let defsElement
 
   setContext("addDef", (id, add) => {
-    console.log(id)
-    console.log(defsElement)
-    console.log(d3.select(defsElement))
     if (!(id in existingDefs)) {
       add(d3.select(defsElement))
       existingDefs.push(id)
