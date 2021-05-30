@@ -1,5 +1,6 @@
 <script>
   import { setContext } from 'svelte';
+  import * as d3 from 'd3';
 
   export let width = 200
   export let height = 200
@@ -8,11 +9,33 @@
 
   export let viewBox
 
+  let existingDefs = []
+
+  let defsElement
+
+  setContext("addDef", (id, add) => {
+    console.log(id)
+    console.log(defsElement)
+    console.log(d3.select(defsElement))
+    if (!(id in existingDefs)) {
+      add(d3.select(defsElement))
+      existingDefs.push(id)
+    }
+  })
+
   $: {
     viewBox = `0 0 ${width} ${height}`
   }
 </script>
 
-<svg preserveAspectRatio="xMinYMin meet" viewBox={viewBox}>
+
+<svg preserveAspectRatio="xMinYMin meet" viewBox={viewBox}
+     xmlns:svg="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns="http://www.w3.org/2000/svg">
+
+  <defs bind:this={defsElement}>
+  </defs>
+
   <slot></slot>
 </svg>

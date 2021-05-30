@@ -10,11 +10,6 @@
 
 
 <Chart width=600 height=400>
-  <defs>
-    <marker id="arrowhead" fill="#fff" markerWidth="10" markerHeight="10" refX="8.7" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L0,6 L9,3 z" />
-    </marker>
-  </defs>
   <Axis>
     {#each tasks as task, i}
       <ContourPlot lossFunc={task.loss} logScale=true opacity={i == selected_task ? 1 : 0} />
@@ -25,8 +20,8 @@
     {/each}
 
     {#each tasks as task, i}
-      <Line origin={theta} target={task.phi}
-            stroke="#fff" fill="#fff" stroke-width="1" marker-end="url(#arrowhead)" />
+      <Arrow origin={theta} target={task.phi} trimStart=0.1 trimEnd=0.1
+            stroke="#fff" fill="#fff" stroke-width="1" />
     {/each}
 
     <VariableHandle bind:position={theta} value="\theta" />
@@ -42,7 +37,7 @@
     import Chart from './chart.html'
     import ContourPlot from './contourPlot.html'
     import Axis from './axis.html'
-    import Line from './line.html'
+    import Arrow from './arrow.html'
     import VariableHandle from './variableHandle.html'
 
 
