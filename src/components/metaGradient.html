@@ -24,10 +24,10 @@
             stroke="#fff" fill="#fff" stroke-width="1" />
     {/each}
 
-    <VariableHandle bind:position={theta} value="\theta" />
+    <VariableHandle bind:position={theta} value="\theta" offset={[0, -15]} />
 
     {#each tasks as task, i}
-      <VariableHandle bind:position={task.phi} value="\phi_{i}" />
+      <VariableHandle bind:position={task.phi} value="\phi_{i}" offset={[0, -15]} />
     {/each}
   </Axis>
 </Chart>
