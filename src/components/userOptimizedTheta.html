@@ -1,23 +1,12 @@
 <div class="container">
-  {#each plots as plot}
-    <div class="col">
-      <Chart width=300 height=300>
-        <Axis>
-          <ContourPlot lossFunc={plot.loss} logScale={plot.logScale} />
-          <VariableHandle bind:position={theta} value="\theta" withPoint={false} onDragEnd={caculateTrajectories} />
-          {#each plot.trajectory as segment}
-            <Arrow origin={segment.origin} target={segment.target} trimStart=0.1 trimEnd=0.1
-                  stroke="#fff" fill="#fff" stroke-width="1" />
-          {/each}
-          {#if plot.phi}
-            <Translate position={plot.phi}>
-              <Latex value="\phi" style="font-size: 0.8em; color:white" />
-            </Translate>
-          {/if}
-      </Axis>
-      </Chart>
-    </div>
-	{/each}
+
+  <div class="col">
+    <Partial loss={loss_functions[0]} trajectory={trajectories[0]} bind:theta={theta} {calculateTrajectories}/>
+  </div>
+
+  <div class="col">
+    <Partial loss={loss_functions[1]} trajectory={trajectories[1]} bind:theta={theta} {calculateTrajectories}/>
+  </div>
 
   <div class="col">
     <div class="centered">
@@ -32,13 +21,22 @@
 
   <div class="col">
     <div class="centered">
-      <input type="range" min="1" max="10" bind:value={steps} class="slider" id="userOptimizedTheta_steps" on:change={caculateTrajectories}>
+      <input type="range" min="1" max="5" bind:value={steps} class="slider" id="userOptimizedTheta_steps" on:change={calculateTrajectories}>
       <br>
       <label for="userOptimizedTheta_steps">
         Inner optimization steps: {steps}
       </label>
     </div>
   </div>
+
+  <div class="col">
+    <Partial loss={loss_functions[2]} trajectory={trajectories[2]} bind:theta={theta} {calculateTrajectories}/>
+  </div>
+
+  <div class="col">
+    <Partial loss={loss_functions[3]} trajectory={trajectories[3]} bind:theta={theta} {calculateTrajectories}/>
+  </div>
+
 </div>
 
 <style>
@@ -69,11 +67,12 @@
   import * as tf from '@tensorflow/tfjs'
 
 
+  import range from 'lodash/range'
+
+
   import {RBFLoss} from './util/loss';
 
-  import {Chart, Axis, VariableHandle, Arrow, Translate, Latex} from './elements'
-
-  import ContourPlot from './contourPlot.html'
+  import Partial from './userOptimizedThetaPartial.html'
 
 
   export let theta = [0.5, 0.5]
@@ -86,7 +85,7 @@
   $: {
     lr = Math.pow(10, lr_exp/2)
     optimizer = tf.train.sgd(lr)
-    caculateTrajectories()
+    calculateTrajectories()
   }
 
   const loss_1 = phi => RBFLoss(phi,
@@ -106,50 +105,41 @@
     tf.tensor([-1, -1.5, 2, -1.5]));
 
 
-  let plots = [
-    {loss: loss_1, logScale: false, trajectory: [], phi: null},
-    {loss: loss_2, logScale: false, trajectory: [], phi: null},
-    {loss: loss_3, logScale: false, trajectory: [], phi: null},
-    {loss: loss_4, logScale: false, trajectory: [], phi: null},
-  ]
+  let loss_functions = [
+    loss_1, loss_2, loss_3, loss_4
+  ];
+
+
+
+  let trajectories = Array(loss_functions.length).fill([{origin:theta, target: theta}])
+
 
   onMount(() => {
-    caculateTrajectories()
+    calculateTrajectories()
   })
 
+  const calculateTrajectories = () => {
+    var t0 = performance.now()
 
-  function caculateTrajectories() {
-    let newPlots = [];
+    tf.tidy(() => {
+      Promise.all(
+        loss_functions.map((loss, i) => {
+          let x = tf.variable(tf.tensor(theta))
 
-    plots.forEach((plot, i) => {
-      tf.tidy(() => {
-        let x = tf.variable(tf.tensor(theta))
-        let trajectory = []
-        let last = theta, current
+          return Promise.all(range(steps).map((s) => {
+            optimizer.minimize(() => loss(x).sum(), x)
+            return x.buffer()
+          }));
+        })
+      ).then((ts) => {
 
-        for (var s = 0; s < steps; s++) {
-          optimizer.minimize(() => plot.loss(x).sum(), x)
+        trajectories = ts.map((t) => range(t.length).map((j) => ({
+          origin: (j == 0 ? theta : Array.from(t[j-1].values)),
+          target: Array.from(t[j].values)
+        })))
 
-          current = Array.from(x.bufferSync().values)
-
-          trajectory.push({
-            origin: last,
-            target: current
-          })
-
-          last = current
-
-        }
-        plot.trajectory = trajectory
-        plot.phi = last
-        newPlots.push(plot)
+        console.log((performance.now() - t0))
       })
     })
-    plots = newPlots
   }
-
-
-
-
-
 </script>

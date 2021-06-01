@@ -1,0 +1,31 @@
+<Chart width=300 height=300>
+  <Axis>
+    <ContourPlot lossFunc={loss} logScale={false} />
+    <VariableHandle bind:position={theta} value="\theta" withPoint={false} onDragEnd={calculateTrajectories} onDrag={calculateTrajectoriesSlow} />
+    {#each trajectory as segment}
+      <Arrow origin={segment.origin} target={segment.target} trimStart=0.1 trimEnd=0.1
+            stroke="#fff" fill="#fff" stroke-width="1" />
+    {/each}
+    <Translate position={trajectory[trajectory.length-1].target}>
+      <Latex value="\phi" style="font-size: 0.8em; color:white" />
+    </Translate>
+</Axis>
+</Chart>
+
+
+<script>
+  import {Chart, Axis, VariableHandle, Arrow, Translate, Latex} from './elements'
+
+  import ContourPlot from './contourPlot.html'
+
+
+  import throttle from 'lodash/throttle'
+
+  export let loss, theta, calculateTrajectories, trajectory
+
+  let calculateTrajectoriesSlow
+
+  $: {
+    calculateTrajectoriesSlow = throttle(calculateTrajectories, 120)
+  }
+</script>
