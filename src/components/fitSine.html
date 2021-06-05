@@ -1,0 +1,38 @@
+<script>
+    import { Chart, Axis, Handle } from './elements'
+    import TensorflowLinePlot from './tensorflowLinePlot.html'
+    import * as d3 from 'd3';
+    import * as tf from '@tensorflow/tfjs'
+
+    const load = async (modelName) => {
+        return await tf.loadLayersModel('http://localhost' + modelName + '/model.json');
+    }
+
+    //export let modelName
+    export let handlePosition
+
+    let model = load('/models/basic') //load(modelName)
+
+    $: {
+        console.log('handle', handlePosition)
+    }
+
+</script>
+
+
+<div class="chart-container">
+    <Chart width=400 height=400>
+        <Axis>
+            <!--<TensorflowLinePlot lineModel={model} />-->
+            <Handle bind:position={handlePosition} />
+        </Axis>
+    </Chart>
+</div>
+
+<style>
+    .chart-container {
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
