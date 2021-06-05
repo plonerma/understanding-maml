@@ -1,29 +1,34 @@
 <script>
     import { Chart, Axis, Handle } from './elements'
     import TensorflowLinePlot from './tensorflowLinePlot.html'
+    import { onMount, getContext } from 'svelte';
     import * as d3 from 'd3';
     import * as tf from '@tensorflow/tfjs'
 
     const load = async (modelName) => {
-        return await tf.loadLayersModel('http://localhost' + modelName + '/model.json');
+        return await tf.loadLayersModel('http://localhost:8080' + modelName + '/model.json');
     }
 
-    //export let modelName
+    export let modelName = '/models/basic'
     export let handlePosition
 
-    let model = load('/models/basic') //load(modelName)
+    //load(modelName)
+    let model = load(modelName)
 
     $: {
         console.log('handle', handlePosition)
     }
 
+    let xDomain = [-2, 2]
+    let yDomain = [-2, 2]
+
 </script>
 
 
 <div class="chart-container">
-    <Chart width=400 height=400>
-        <Axis>
-            <!--<TensorflowLinePlot lineModel={model} />-->
+    <Chart width=800 height=600>
+        <Axis xDomain={xDomain} yDomain={yDomain}>
+            <TensorflowLinePlot lineModel={model} start={xDomain[0]} stop={xDomain[1]} />
             <Handle bind:position={handlePosition} />
         </Axis>
     </Chart>
@@ -31,7 +36,7 @@
 
 <style>
     .chart-container {
-        max-width: 400px;
+        max-width: 800px;
         margin-left: auto;
         margin-right: auto;
     }

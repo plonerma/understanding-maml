@@ -4,8 +4,8 @@
   import * as tf from '@tensorflow/tfjs'
 
   export let lineModel
-  export let start
-  export let stop
+  export let start = -5
+  export let stop = 5
   export let opacity = 1
   export let logScale = false
 
@@ -14,35 +14,37 @@
 
   let groupElement
 
-  onMount(() => {
-    let xs = tf.linspace(start, stop, 1000)
-    debugger;
-    let ys = lineModel.predict(xs)
-    ys = logScale ? tf.log(ys) : ys
+  onMount(async () => {
+      lineModel = await lineModel
+      let xs = tf.linspace(start, stop, 1000)
+      let ys = lineModel.predict(xs)
+      ys = logScale ? tf.log(ys) : ys
 
-    xs = Array.from(xs.bufferSync().values)
-    ys = Array.from(ys.bufferSync().values)
-    
-    let data = xs.map((x, i) => {
-      return { x: x, y: ys[i] }
-    })
+      xs = Array.from(xs.bufferSync().values)
+      ys = Array.from(ys.bufferSync().values)
 
-    let group = d3.select(groupElement)
-    group.selectAll("path")
-      .data(data)
-      .enter()
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 1.5)
-      .attr("d", d3.line()
-        .x(function (d) { return xScale(d.x) })
-        .y(function (d) { return yScale(d.x) })
-      )
-      
+      let data = xs.map((x, i) => {
+        return { x: x, y: ys[i] }
+      })
+
+      let group = d3.select(groupElement)
+      group.selectAll("path")
+        .data([data])
+        .enter()
+        .append("path")
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 1.5)
+        .attr("d", d3.line()
+          .x(function (d) { 
+            return xScale(d.x) })
+          .y(function (d) { 
+            return yScale(d.y) })
+        )
   })
 </script>
 
 
-<g fill="none" stroke="#fff" stroke-opacity="0.3" bind:this={groupElement} opacity={opacity}>
+<g fill="none" stroke="#fff" stroke-opacity="0.9" bind:this={groupElement} opacity={opacity}>
 
 </g>
