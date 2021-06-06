@@ -22,14 +22,17 @@
     let xDomain = [-2, 2]
     let yDomain = [-2, 2]
 
+    let chartElement
+    let margin
+
 </script>
 
 
 <div class="chart-container">
-    <Chart width=800 height=600>
-        <Axis xDomain={xDomain} yDomain={yDomain}>
-            <TensorflowLinePlot lineModel={model} start={xDomain[0]} stop={xDomain[1]} />
-            <Handle bind:position={handlePosition} />
+    <Chart width=800 height=600 bind:chartElement={chartElement}>
+        <Axis xDomain={xDomain} yDomain={yDomain} bind:margin={margin}>
+            <TensorflowLinePlot margin={margin} chartElement={chartElement} lineModel={model} start={xDomain[0]} stop={xDomain[1]} />
+            <Handle bind:mouseoverPosition={handlePosition} />
         </Axis>
     </Chart>
 </div>
