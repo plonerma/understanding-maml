@@ -16,6 +16,30 @@
 
     let groupElement
 
+    export const updateModel = (f) => {
+        let xs = tf.linspace(start, stop, 1000)
+        let ys = f.predict(xs)
+
+        xs = Array.from(xs.bufferSync().values)
+        ys = Array.from(ys.bufferSync().values)
+
+        let data = xs.map((x, i) => {
+            return { x: x, y: ys[i] }
+        })
+
+        d3.select(groupElement)
+            .selectAll("path")
+            .data([data])
+            .attr("d", d3.line()
+                .x(d => {
+                    return xScale(d.x)
+                })
+                .y(d => {
+                    return yScale(d.y)
+                })
+            )
+    }
+
     onMount(async () => {
         lineModel = await lineModel
         let xs = tf.linspace(start, stop, 1000)

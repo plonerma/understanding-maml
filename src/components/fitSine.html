@@ -19,13 +19,14 @@
     }
 
     let xDomain = [-5, 5]
-    let yDomain = [-4.5, 4.5]
+    let yDomain = [-5.5, 5.5]
 
     let chartElement
     let margin
 
     let amplitude = 200
     let phase = 900
+    let gradientSteps = 1
 
     $: amplitudeValue = amplitude / 100
     $: phaseValue = Math.PI * (phase / 10) / 180.0
@@ -59,33 +60,58 @@
         updateSine2(undefined, userSamples)
     }
 
+    let updateModel
+
+    const finetune = async () => {
+        let f = await load(modelName)
+        let xs = tf.tensor2d(userSamples.map(sample => [sample.x]))
+        let ys = tf.tensor2d(userSamples.map(sample => [sample.y]))
+
+        const loss = (pred, label) => pred.sub(label).square().mean();
+        const learningRate = 0.01;
+        const optimizer = tf.train.sgd(learningRate);
+
+        for (let i = 0; i < gradientSteps; i++) {
+            optimizer.minimize(() => loss(f.apply(xs), ys))
+        }
+
+        updateModel(f)
+    }
+
 
 </script>
 
 
 <div class="chart-container">
     <div>
-        <label for="amplitudeSlider" class="slider-label">Amplitude \( A \in [-4, 4] \)</label>
-        <input name="amplitudeSlider" class="slider" type="range" min="-400" max="400" bind:value={amplitude}
+        <label for="amplitudeSlider" class="slider-label">Amplitude \( A \in [0.1, 5] \)</label>
+        <input name="amplitudeSlider" class="slider" type="range" min="10" max="500" bind:value={amplitude}
             on:input={updateSine2} />
         <output class="slider-label" id="amplOut" style="margin-right: 30px">{amplitudeSliderValue}</output>
-
     </div>
+
     <label for="phaseSlider" class="slider-label">Phase \( \varphi \in [0, \pi] \)</label>
     <input name="phaseSlider" class="slider" type="range" min="0" max="1800" bind:value={phase}
         on:input={updateSine2} />
     <output class="slider-label" id="phaseOut">{phaseSliderValue}</output>
 
+    <div>
+        <label for="gradientStepsSlider" class="slider-label">Gradient steps</label>
+        <input name="gradientStepsSlider" class="slider" type="range" min="1" max="10" bind:value={gradientSteps}/>
+        <output class="slider-label" style="margin-right: 30px">{gradientSteps}</output>
+    </div>
     <Chart width=800 height=600 bind:chartElement={chartElement}>
         <Axis xDomain={xDomain} yDomain={yDomain} bind:margin={margin}>
             <TensorflowLinePlot bind:userSamples={userSamples} bind:updateSine={updateSine} margin={margin}
                 chartElement={chartElement} sineModel={sineModel} lineModel={model} start={xDomain[0]}
                 stop={xDomain[1]} />
 
-            <TensorflowFinetunePlot lineModel={model} start={xDomain[0]} stop={xDomain[1]} />
+            <TensorflowFinetunePlot bind:updateModel={updateModel} lineModel={model} start={xDomain[0]}
+                stop={xDomain[1]} />
         </Axis>
     </Chart>
     <button on:click={randomUserSample}>🎲</button>
+    <button on:click={finetune}>Fit Model</button>
 </div>
 
 <style>
