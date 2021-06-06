@@ -1,6 +1,7 @@
 <script>
     import { Chart, Axis, Handle } from './elements'
     import TensorflowLinePlot from './tensorflowLinePlot.html'
+    import TensorflowFinetunePlot from './tensorflowFinetunePlot.html'
     import { onMount, getContext } from 'svelte';
     import * as d3 from 'd3';
     import * as tf from '@tensorflow/tfjs'
@@ -10,31 +11,81 @@
     }
 
     export let modelName = '/models/basic'
-    export let handlePosition
 
-    //load(modelName)
     let model = load(modelName)
 
     $: {
-        console.log('handle', handlePosition)
+        console.log('hello')
     }
 
-    let xDomain = [-2, 2]
-    let yDomain = [-2, 2]
+    let xDomain = [-5, 5]
+    let yDomain = [-4.5, 4.5]
 
     let chartElement
     let margin
+
+    let amplitude = 200
+    let phase = 900
+
+    $: amplitudeValue = amplitude / 100
+    $: phaseValue = Math.PI * (phase / 10) / 180.0
+
+    $: amplitudeSliderValue = amplitudeValue.toFixed(2)
+    $: phaseSliderValue = phaseValue.toFixed(2)
+
+    let sineModel = (x) => {
+        return tf.scalar(amplitudeValue).mul(tf.sin(x.sub(tf.scalar(phaseValue))))
+    }
+
+    let updateSine
+
+    let updateSine2 = (elem, userSamples) => {
+        updateSine((x) => tf.scalar(amplitudeValue).mul(tf.sin(x.sub(tf.scalar(phaseValue)))), userSamples)
+    }
+
+    let userSamples
+
+    const randomUserSample = () => {
+        let xs = tf.randomUniform([5], -5, 5)
+        let ys = sineModel(xs)
+
+        xs = Array.from(xs.bufferSync().values)
+        ys = Array.from(ys.bufferSync().values)
+
+        userSamples = xs.map((x, i) => {
+            return { x: x, y: ys[i] }
+        })
+
+        updateSine2(undefined, userSamples)
+    }
+
 
 </script>
 
 
 <div class="chart-container">
+    <div>
+        <label for="amplitudeSlider" class="slider-label">Amplitude \( A \in [-4, 4] \)</label>
+        <input name="amplitudeSlider" class="slider" type="range" min="-400" max="400" bind:value={amplitude}
+            on:input={updateSine2} />
+        <output class="slider-label" id="amplOut" style="margin-right: 30px">{amplitudeSliderValue}</output>
+
+    </div>
+    <label for="phaseSlider" class="slider-label">Phase \( \varphi \in [0, \pi] \)</label>
+    <input name="phaseSlider" class="slider" type="range" min="0" max="1800" bind:value={phase}
+        on:input={updateSine2} />
+    <output class="slider-label" id="phaseOut">{phaseSliderValue}</output>
+
     <Chart width=800 height=600 bind:chartElement={chartElement}>
         <Axis xDomain={xDomain} yDomain={yDomain} bind:margin={margin}>
-            <TensorflowLinePlot margin={margin} chartElement={chartElement} lineModel={model} start={xDomain[0]} stop={xDomain[1]} />
-            <Handle bind:mouseoverPosition={handlePosition} />
+            <TensorflowLinePlot bind:userSamples={userSamples} bind:updateSine={updateSine} margin={margin}
+                chartElement={chartElement} sineModel={sineModel} lineModel={model} start={xDomain[0]}
+                stop={xDomain[1]} />
+
+            <TensorflowFinetunePlot lineModel={model} start={xDomain[0]} stop={xDomain[1]} />
         </Axis>
     </Chart>
+    <button on:click={randomUserSample}>🎲</button>
 </div>
 
 <style>
@@ -42,5 +93,15 @@
         max-width: 800px;
         margin-left: auto;
         margin-right: auto;
+    }
+
+    .slider-label {
+        font-size: 12px;
+        color: gray;
+        vertical-align: middle;
+    }
+
+    .slider {
+        vertical-align: middle;
     }
 </style>

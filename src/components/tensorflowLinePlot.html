@@ -4,10 +4,10 @@
   import * as tf from '@tensorflow/tfjs'
 
   export let lineModel
+  export let sineModel
   export let start = -5
   export let stop = 5
   export let opacity = 1
-  export let logScale = false
 
   export let nMaxSamples = 5
 
@@ -23,15 +23,13 @@
   export let chartElement
   export let margin
 
-  let userSamples = []
+
+  export let userSamples = []
   let sampleElements
 
-
-  onMount(async () => {
-    lineModel = await lineModel
+  export const updateSine = (model, samples) => {
     let xs = tf.linspace(start, stop, 1000)
-    let ys = lineModel.predict(xs)
-    ys = logScale ? tf.log(ys) : ys
+    let ys = model(xs)
 
     xs = Array.from(xs.bufferSync().values)
     ys = Array.from(ys.bufferSync().values)
@@ -40,13 +38,84 @@
       return { x: x, y: ys[i] }
     })
 
-    let group = d3.select(groupElement)
-    group.selectAll("path")
+    d3.select(groupElement)
+      .selectAll("path")
       .data([data])
+      .attr("d", d3.line()
+        .x(d => {
+          return xScale(d.x)
+        })
+        .y(d => {
+          return yScale(d.y)
+        })
+      )
+
+    if (samples) {
+      userSamples = samples
+    }
+    else {
+      userSamples = userSamples.map(s => {
+        return { x: s.x, y: model(tf.tensor1d([s.x])).bufferSync().values[0] }
+      })
+    }
+
+    var selection = d3.select(groupElement2).selectAll("circle")
+      .data(userSamples)
+      .attr("cx", d => xScale(d.x))
+      .attr("cy", d => yScale(d.y))
+
+    selection
+      .enter()
+      .append("circle")
+      .attr("r", 7)
+      .attr("stroke-width", 4)
+      .attr("stroke", "gray")
+      .attr("fill", "gray")
+      .attr("cx", d => xScale(d.x))
+      .attr("cy", d => yScale(d.y))
+  }
+
+  onMount(async () => {
+    lineModel = await lineModel
+    let xs = tf.linspace(start, stop, 1000)
+    let ys = lineModel.predict(xs)
+    let yss = sineModel(xs)
+
+    xs = Array.from(xs.bufferSync().values)
+    ys = Array.from(ys.bufferSync().values)
+    yss = Array.from(yss.bufferSync().values)
+
+    let data = xs.map((x, i) => {
+      return { x: x, y: ys[i] }
+    })
+
+    let datas = xs.map((x, i) => {
+      return { x: x, y: yss[i] }
+    })
+
+    let group = d3.select(groupElement)
+    /*  group.selectAll("path")
+        .data([data])
+        .enter()
+        .append("path")
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 1.5)
+        .attr("d", d3.line()
+          .x(d => {
+            return xScale(d.x)
+          })
+          .y(d => {
+            return yScale(d.y)
+          })
+        )
+  */
+    group.selectAll("path")
+      .data([datas])
       .enter()
       .append("path")
       .attr("fill", "none")
-      .attr("stroke", "steelblue")
+      .attr("stroke", "red")
       .attr("stroke-width", 1.5)
       .attr("d", d3.line()
         .x(d => {
@@ -93,7 +162,7 @@
         var lineY = c[1] - margin.top
 
         var x = Math.max(Math.min(xDomain[1], xScale.invert(lineX)), xDomain[0])
-        var y = lineModel.predict(tf.tensor1d([x])).bufferSync().values[0]
+        var y = sineModel(tf.tensor1d([x])).bufferSync().values[0]
 
         userSamples.push({ x: x, y: y })
 
@@ -110,21 +179,13 @@
             .attr("cy", d => yScale(d.y))
         }
         else {
-             userSamples.shift()
+          userSamples.shift()
 
-             group2.selectAll("circle")
+          group2.selectAll("circle")
             .data(userSamples)
             .attr("cx", d => xScale(d.x))
             .attr("cy", d => yScale(d.y))
         }
-
-        /* 
-             */
-
-
-
-        //
-
       })
 
       .on("mousemove", event => {
@@ -141,7 +202,7 @@
         var posX = Math.max(Math.min(xScale(xDomain[1]), lineX), xScale(xDomain[0]))
         var posY = Math.max(Math.min(yScale(yDomain[1]), lineY), yScale(yDomain[0]))
 
-        posY = yScale(lineModel.predict(tf.tensor1d([mouseoverPosition[0]])).bufferSync().values[0])
+        posY = yScale(sineModel(tf.tensor1d([mouseoverPosition[0]])).bufferSync().values[0])
         line
           .attr("x1", posX)
           .attr("x2", posX)
