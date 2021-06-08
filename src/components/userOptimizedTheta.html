@@ -13,23 +13,11 @@
 
 
   <div class="column is-half">
-    <div class="centered">
-      <input type="range" min="-4" max="0" bind:value={lr_exp} class="slider" id="userOptimizedTheta_lr">
-      <br>
-      <label for="userOptimizedTheta_lr">
-        Learning Rate: {lr}
-      </label>
-    </div>
+    <Slider min="-4" max="0" bind:value={lr_exp} id="userOptimizedTheta_lr" label={`Learning Rate: ${lr.toPrecision(2)}`} />
   </div>
 
   <div class="column is-half">
-    <div class="centered">
-      <input type="range" min="1" max="5" bind:value={steps} class="slider" id="userOptimizedTheta_steps" on:change={calculateTrajectories}>
-      <br>
-      <label for="userOptimizedTheta_steps">
-        Inner optimization steps: {steps}
-      </label>
-    </div>
+    <Slider min="1" max="5" bind:value={steps} id="userOptimizedTheta_steps" label={`Inner optimization steps: ${steps}`} />
   </div>
 
 </div>
@@ -46,13 +34,13 @@
 </div>
 
 <style>
+  .column {
+    text-align: center;
+  }
+
   .column .centered {
         margin: 0 auto;
         display: inline-block;
-  }
-
-  label {
-    font-size: .8em;
   }
 </style>
 
@@ -67,6 +55,8 @@
 
 
   import {RBFLoss} from './util/loss';
+
+  import {Slider} from './elements'
 
   import Partial from './userOptimizedThetaPartial.html'
 
