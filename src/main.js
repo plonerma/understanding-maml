@@ -1,3 +1,9 @@
+import Teaser from './components/teaser.html';
+const Teaser_Component = new Teaser({
+  target: document.querySelector('#teaser')
+});
+
+
 import UserOptimizedTheta from './components/userOptimizedTheta.html';
 const UserOptimizedTheta_Component = new UserOptimizedTheta({
   target: document.querySelector('#userOptimizedTheta')

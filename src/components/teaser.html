@@ -1,0 +1,175 @@
+<div class="container">
+  <div class="columns is-mobile is-narrow">
+    <div class="column is-narrow">
+      <div class="card current_sample" draggable=true>
+        <div class="card-image">
+          <figure class="image is-square">
+            <img src={filename(current_sample.sample)} alt={current_sample.sample}>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="columns is-mobile is-multiline is-0 is-variable">
+    {#each examples as example}
+      <div class="column is-narrow">
+        <div draggable=false class="card class_card" class:dragover={example.dragover}
+             on:drop={(event) => drop(event, example)}
+             on:click={(event) => drop(event, example)}
+             on:dragenter={(event) => dragEnter(event, example)}
+             on:dragleave={(event) => dragLeave(event, example)}
+             on:dragover={(event) => {event.preventDefault()}}
+             >
+          <div class="card-image" draggable=false>
+            <figure class="image is-square" draggable=false>
+              <img src={filename(example.sample)} alt={example.name} draggable=false>
+            </figure>
+          </div>
+        </div>
+      </div>
+    {/each}
+  </div>
+
+  <div class="columns stats">
+    <div class="column is-narrow">
+      <span>{correct_guesses} out of {guesses}</span>
+    </div>
+    <div class="column is-narrow">
+      <span>
+        {#if guesses > 0}
+          {(100 * correct_guesses / (guesses)).toFixed(1)}% accuracy
+        {:else}
+          drag sample onto one of the classes
+        {/if}
+      </span>
+    </div>
+  </div>
+</div>
+
+
+<style>
+  .container {
+    border-top: 1px solid hsla(0, 0%, 0%, 0.1);
+    text-align: center;
+  }
+
+  .columns {
+    margin-bottom: 0;
+  }
+
+  .column {
+    padding: 0;
+  }
+
+  .class_card {
+    width: 105px;
+    cursor: pointer;
+  }
+
+  .figure.image{
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .class_card.dragover {
+    box-shadow: 0 0.5em 1em -0.125em rgba(68, 1, 84, 0.5), 0 0 0 1px rgba(68, 1, 84, 0.12);
+    background-color: rgba(68, 1, 84, 0.5);
+  }
+
+  .current_sample {
+    width: 210px;
+    background: none;
+    cursor: grab;
+  }
+
+  .columns {
+    justify-content: center;
+  }
+
+  .stats {
+    font-size: 0.8em;
+  }
+
+</style>
+
+
+<script>
+
+  import range from 'lodash/range'
+  import sample from 'lodash/sample'
+  import padStart from 'lodash/padStart'
+  import shuffle from 'lodash/shuffle'
+
+  const num_classes = 964;
+
+  let all_classes = range(1, num_classes + 1)
+  let examples = []
+  let samples = []
+
+  let guesses = 0;
+  let correct_guesses = 0;
+
+  const pickRandom = samples => (
+    samples.splice(
+      // pick a random index, remove from list, and return picked sample
+      Math.floor(Math.random() * samples.length), 1)[0]
+  )
+
+  for (let i=0; i < 5; i++) {
+    // sample one of the remaining classes
+    let c = pickRandom(all_classes)
+    let cls = padStart(c, 4, '0')
+
+    // create a representation for all class members
+    let class_samples = range(1, 20 + 1).map(j => ({
+      cls: cls,
+      sample: `${cls}_${padStart(j, 2, '0')}`
+    }))
+
+    let example = pickRandom(class_samples);
+    example.dragover = false
+    examples.push(example)
+
+    // add remaining samples to list of samples
+    samples.push(...class_samples)
+  }
+
+  const filename = name => `./img/omniglot/all_characters/${name.substr(0,2)}/${name.substr(2,2)}/${name}.png`
+
+  samples = shuffle(samples)
+
+  let current_sample = samples.pop()
+
+  let dragEnter = (event, example) => {
+    event.preventDefault();
+    example.dragover = true
+    console.log("dragenter", example)
+    // mark as dirty
+    examples = [...examples]
+  }
+
+  let dragLeave = (event, example) => {
+    event.preventDefault();
+    example.dragover = false
+    // mark as dirty
+    examples = [...examples]
+  }
+
+  let drop = (event, example) => {
+    event.preventDefault();
+
+    console.log(current_sample.cls == example.cls)
+    guesses += 1
+    if (current_sample.cls == example.cls) {
+      correct_guesses += 1;
+    }
+
+    current_sample = samples.pop()
+
+    example.dragover = false
+    // mark as dirty
+    examples = [...examples]
+  }
+
+</script>
