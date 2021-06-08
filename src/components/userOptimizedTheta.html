@@ -1,14 +1,18 @@
-<div class="container">
+<div class="columns">
 
-  <div class="col">
+  <div class="column is-half">
     <Partial loss={loss_functions[0]} trajectory={trajectories[0]} bind:theta={theta} {calculateTrajectories}/>
   </div>
 
-  <div class="col">
+  <div class="column is-half">
     <Partial loss={loss_functions[1]} trajectory={trajectories[1]} bind:theta={theta} {calculateTrajectories}/>
   </div>
 
-  <div class="col">
+</div>
+<div class="columns">
+
+
+  <div class="column is-half">
     <div class="centered">
       <input type="range" min="-4" max="0" bind:value={lr_exp} class="slider" id="userOptimizedTheta_lr">
       <br>
@@ -18,8 +22,7 @@
     </div>
   </div>
 
-
-  <div class="col">
+  <div class="column is-half">
     <div class="centered">
       <input type="range" min="1" max="5" bind:value={steps} class="slider" id="userOptimizedTheta_steps" on:change={calculateTrajectories}>
       <br>
@@ -29,28 +32,21 @@
     </div>
   </div>
 
-  <div class="col">
+</div>
+<div class="columns">
+
+  <div class="column is-half">
     <Partial loss={loss_functions[2]} trajectory={trajectories[2]} bind:theta={theta} {calculateTrajectories}/>
   </div>
 
-  <div class="col">
+  <div class="column is-half">
     <Partial loss={loss_functions[3]} trajectory={trajectories[3]} bind:theta={theta} {calculateTrajectories}/>
   </div>
 
 </div>
 
 <style>
-  .container {
-    display: flex;
-    flex-flow: row;
-    flex-wrap: wrap;
-  }
-  .container .col {
-      text-align: center;
-      min-width: 50%;
-
-  }
-  .container .col .centered {
+  .column .centered {
         margin: 0 auto;
         display: inline-block;
   }
