@@ -1,3 +1,6 @@
+import './main.scss';
+
+
 import Teaser from './components/teaser.html';
 const Teaser_Component = new Teaser({
   target: document.querySelector('#teaser')
