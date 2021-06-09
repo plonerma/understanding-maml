@@ -1,1 +1,6 @@
 @import "../node_modules/bulma/bulma";
+/* Reset bulma's pre formatting */
+
+dt-article pre {
+  padding: 0;
+}
