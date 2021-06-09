@@ -65,6 +65,8 @@
 
   $: {
     lr = Math.pow(10, lr_exp/2)
+    //mark dirty
+    steps=steps
     optimizer = tf.train.sgd(lr)
     calculateTrajectories()
   }
