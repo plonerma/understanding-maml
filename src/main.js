@@ -15,7 +15,12 @@ const ContourExample_Component = new ContourExample({
   target: document.querySelector('#contourExample')
 })
 
-import FitSine from './components/fitSine.html'
-const FitSine_Component = new FitSine({
-  target: document.querySelector('#fitSine')
+import FitSinePretrained from './components/fitSinePretrained.html'
+const FitSinePretrained_Component = new FitSinePretrained({
+  target: document.querySelector('#fitSinePretrained')
 })
+
+/*import FitSineMaml from './components/fitSineMaml.html'
+const FitSineMaml_Component = new FitSineMaml({
+  target: document.querySelector('#fitSineMaml')
+})*/

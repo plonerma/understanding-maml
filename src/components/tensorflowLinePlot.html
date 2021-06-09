@@ -4,7 +4,6 @@
   import * as tf from '@tensorflow/tfjs'
 
   export let lineModel
-  export let sineModel
   export let start = -5
   export let stop = 5
   export let opacity = 1
@@ -23,20 +22,23 @@
   export let chartElement
   export let margin
 
-
   export let userSamples = []
   let sampleElements
 
-  export const updateSine = (model, samples) => {
+  const sampleFromModel = (model) => {
     let xs = tf.linspace(start, stop, 1000)
     let ys = model(xs)
 
     xs = Array.from(xs.bufferSync().values)
     ys = Array.from(ys.bufferSync().values)
 
-    let data = xs.map((x, i) => {
+    return xs.map((x, i) => {
       return { x: x, y: ys[i] }
     })
+  }
+
+  export const updateSine = (model, samples) => {
+    let data = sampleFromModel(model)
 
     d3.select(groupElement)
       .selectAll("path")
@@ -50,7 +52,7 @@
         })
       )
 
-    if (samples) {
+    if (samples != undefined) {
       userSamples = samples
     }
     else {
@@ -58,7 +60,6 @@
         return { x: s.x, y: model(tf.tensor1d([s.x])).bufferSync().values[0] }
       })
     }
-
     var selection = d3.select(groupElement2).selectAll("circle")
       .data(userSamples)
       .attr("cx", d => xScale(d.x))
@@ -73,20 +74,13 @@
       .attr("fill", "gray")
       .attr("cx", d => xScale(d.x))
       .attr("cy", d => yScale(d.y))
+
+    selection.exit().remove()
   }
 
   onMount(async () => {
     setTimeout(() => {
-      let xs = tf.linspace(start, stop, 1000)
-      let ys = sineModel(xs)
-
-      xs = Array.from(xs.bufferSync().values)
-      ys = Array.from(ys.bufferSync().values)
-
-      let data = xs.map((x, i) => {
-        return { x: x, y: ys[i] }
-      })
-
+      let data = sampleFromModel(lineModel)
       let group = d3.select(groupElement)
       group.selectAll("path")
         .data([data])
@@ -104,8 +98,7 @@
           })
         )
 
-
-        let group2 = d3.select(groupElement2)
+      let group2 = d3.select(groupElement2)
       let line = group
         .append("line")
         .attr("x1", 0)
@@ -135,7 +128,7 @@
           var lineY = c[1] - margin.top
 
           var x = Math.max(Math.min(xDomain[1], xScale.invert(lineX)), xDomain[0])
-          var y = sineModel(tf.tensor1d([x])).bufferSync().values[0]
+          var y = lineModel(tf.tensor1d([x])).bufferSync().values[0]
 
           userSamples.push({ x: x, y: y })
 
@@ -175,7 +168,7 @@
           var posX = Math.max(Math.min(xScale(xDomain[1]), lineX), xScale(xDomain[0]))
           var posY = Math.max(Math.min(yScale(yDomain[1]), lineY), yScale(yDomain[0]))
 
-          posY = yScale(sineModel(tf.tensor1d([mouseoverPosition[0]])).bufferSync().values[0])
+          posY = yScale(lineModel(tf.tensor1d([mouseoverPosition[0]])).bufferSync().values[0])
           line
             .attr("x1", posX)
             .attr("x2", posX)
