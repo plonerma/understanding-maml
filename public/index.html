@@ -37,7 +37,7 @@
   <p>To get familiar with the problem and also to motivate the need for meta-learning we start with something you probably already know
     and develop it to something new. If you have done machine learning before you have probably already solved or attempted to solve a
     trivial special case of meta-learning: Learning a model to solve one specific task, for example to classify images or to teach an agent 
-    to find out of a maze. In those settings, if we are able to define a loss \(\mathcal{L}_\tau\) for our task \(\tau\) which depends on the parameters
+    to find its way through a maze. In those settings, if we are able to define a loss \(\mathcal{L}_\tau\) for our task \(\tau\) which depends on the parameters
     \(\phi\) of a model, we can express our learning objective as 
 
     \[ \underset{\phi}{\text{min}} \, \mathcal{L}_\tau (\phi) .\]
@@ -51,14 +51,15 @@
     controlling the size of the steps we want to take. 
   </p>
   <p>We will now make an additional assumption, namely that \(\tau\) comes from some distribution of tasks \(p(\tau)\) and that we 
-    can sample freely from this distribution. The underlying idea is to learn how to find an 
-    optimization strategy for a randomly sampled task from \(p(\tau)\) while only having to observe a few samples from this task. This way we 
-    would come up with a solution to few-shot learning for tasks from \(p(\tau)\). We 
+    can sample freely from this distribution. We can then generalize the above objective to learn how to find an 
+    optimization strategy for a randomly sampled task from \(p(\tau)\). If we additionally ensure that the optimization strategy requires observing only 
+    a few samples from this task, we 
+    would have come up with a solution to few-shot learning for tasks from \(p(\tau)\). We 
     can express our new learning objective as follows:
     
     \[ \text{min} \, \mathbb{E}_\tau [ \mathcal{L}_\tau (\phi_\tau) ] ,\]
 
-    where \(\tau\) is now a random variable and \(\phi_\tau\) are a set of parameters for task \(\tau\), which is nothing more than a generalization really. 
+    where \(\tau\) is now a random variable and \(\phi_\tau\) are a set of parameters for task \(\tau\), which is nothing more than a practical way to formalize really. 
     We may use different parameters for each task, use the same parameters for every task or something in between. But anyway, how 
     are we actually minimizing this new objective? In the following we will explore two possible answers to this question.
   </p>
