@@ -1,45 +1,48 @@
 <div class="container">
-    <div class="task"
-         in:fly="{{ y: -400, duration: 200, easing: cubicIn }}"
-         out:fly="{{ x: 400, duration: 200, easing: cubicOut }}"
-         >
+  <div class="columns is-mobile tasks">
+    {#each current_task as task (task.id)}
+      <div class="column task is-full"
+           in:fade="{{ duration: 200, easing: cubicIn}}"
+           >
 
-      <div class="columns is-mobile is-narrow">
-        {#each current_sample as sample (sample.name)}
-          <div class="column is-narrow"
-            in:fly="{{ x: 200, duration: 200, easing: cubicIn }}"
-            out:fly="{{ x: -200, duration: 200, easing: cubicOut  }}">
-            <div class="card current_sample" draggable=true>
-              <div class="card-image">
-                <figure class="image is-square">
-                  <img src={filename(sample)} alt={sample.name}>
-                </figure>
+        <div class="columns is-mobile is-narrow">
+          {#each task.current_sample as sample (sample.name)}
+            <div class="column is-narrow"
+              in:fly|local="{{ x: 200, duration: 200, easing: cubicIn}}"
+              out:fly|local="{{ x: -200, duration: 200, easing: cubicOut  }}">
+              <div class="card current_sample" draggable=true>
+                <div class="card-image">
+                  <figure class="image is-square">
+                    <img src={filename(sample)} alt={sample.name}>
+                  </figure>
+                </div>
               </div>
             </div>
-          </div>
-        {/each}
-      </div>
+          {/each}
+        </div>
 
-      <div class="columns is-mobile is-multiline is-0 is-variable">
-        {#each examples as example}
-          <div class="column is-narrow">
-            <div draggable=false class={`card class_card ${example.feedback_class}`} class:dragover={example.dragover}
-                 on:drop={(event) => drop(event, example)}
-                 on:click={(event) => drop(event, example)}
-                 on:dragenter={(event) => dragEnter(event, example)}
-                 on:dragleave={(event) => dragLeave(event, example)}
-                 on:dragover={(event) => {event.preventDefault()}}
-                 >
-              <div class="card-image" draggable=false>
-                <figure class="image is-square" draggable=false>
-                  <img src={filename(example)} alt={example.name} draggable=false>
-                </figure>
+        <div class="columns is-mobile is-multiline is-0 is-variable">
+          {#each task.examples as example}
+            <div class="column is-narrow">
+              <div draggable=false class={`card class_card ${example.feedback_class}`} class:dragover={example.dragover}
+                   on:drop={(event) => drop(event, example)}
+                   on:click={(event) => drop(event, example)}
+                   on:dragenter={(event) => dragEnter(event, example)}
+                   on:dragleave={(event) => dragLeave(event, example)}
+                   on:dragover={(event) => {event.preventDefault()}}
+                   >
+                <div class="card-image" draggable=false>
+                  <figure class="image is-square" draggable=false>
+                    <img src={filename(example)} alt={example.name} draggable=false>
+                  </figure>
+                </div>
               </div>
             </div>
-          </div>
-        {/each}
+          {/each}
+        </div>
       </div>
-    </div>
+    {/each}
+  </div>
 
   <div class="columns stats">
     <div class="column is-narrow">
@@ -50,9 +53,12 @@
         {#if guesses > 0}
           {(100 * correct_guesses / (guesses)).toFixed(1)}% accuracy
         {:else}
-          drag sample onto one of the classes
+          Which of the classes does the character belong to?
         {/if}
       </span>
+    </div>
+    <div class="column is-narrow">
+      <button class="button" on:click={new_task}>New Task</button>
     </div>
   </div>
 </div>
@@ -69,12 +75,11 @@
 
   const num_classes = 964;
 
-  let all_classes = range(1, num_classes + 1)
-  let examples = []
-  let samples = []
-
   let guesses = 0;
   let correct_guesses = 0;
+
+  let current_task = [{id: null}];  // list, so we can fade in and out
+
 
   const pickRandom = samples => (
     samples.splice(
@@ -82,58 +87,75 @@
       Math.floor(Math.random() * samples.length), 1)[0]
   )
 
-  for (let i=0; i < 5; i++) {
-    // sample one of the remaining classes
-    let c = pickRandom(all_classes)
-    let cls = padStart(c, 4, '0')
-
-    // create a representation for all class members
-    let class_samples = range(1, 20 + 1).map(j => ({
-      cls: cls,
-      name: `${cls}_${padStart(j, 2, '0')}`
-    }))
-
-    let example = pickRandom(class_samples);
-    example.dragover = false
-    examples.push({...example, element: null})
-
-    // add remaining samples to list of samples
-    samples.push(...class_samples)
-  }
-
   const filename = (x) => (
     `./img/omniglot/all_characters/${x.name.substr(0,2)}/${x.name.substr(2,2)}/${x.name}.png`
   )
 
-  samples = shuffle(samples)
+  const new_task = () => {
+    let all_classes = range(1, num_classes + 1)
+    let examples = []
+    let remaining_samples = []
+
+    for (let i=0; i < 5; i++) {
+      // sample one of the remaining classes
+      let c = pickRandom(all_classes)
+      let cls = padStart(c, 4, '0')
+
+      // create a representation for all class members
+      let class_samples = range(1, 20 + 1).map(j => ({
+        cls: cls,
+        name: `${cls}_${padStart(j, 2, '0')}`
+      }))
+
+      let example = pickRandom(class_samples);
+      example.dragover = false
+      examples.push({...example, element: null})
+
+      // add remaining samples to list of samples
+      remaining_samples.push(...class_samples)
+    }
+
+    remaining_samples = shuffle(remaining_samples)
+
+    let id = examples.map(s => s.cls).join(',');
+
+    if (id == current_task[0].id){
+      //in the unlikely case that the same list of classes was drawn, redraw
+      new_task()
+
+    } else {
+      current_task = [{
+        examples: examples,
+        remaining_samples: remaining_samples,
+        current_sample: [remaining_samples.pop()],
+        id: examples.map(s => s.cls).join(',')  // so svelte nows when a task is new
+      }]
+    }
+  }
+
+  const mark_dirty = () => {current_task = [...current_task]}
 
 
-  // list allows us to fade out old and fade in new sample
-  let current_sample = [samples.pop()];
-
+  new_task();  // call function once to create initial task
 
 
   let dragEnter = (event, example) => {
     event.preventDefault();
     example.dragover = true
-    console.log("dragenter", example)
-    // mark as dirty
-    examples = [...examples]
+    mark_dirty()
   }
 
   let dragLeave = (event, example) => {
     event.preventDefault();
     example.dragover = false
-    // mark as dirty
-    examples = [...examples]
+    mark_dirty()
   }
 
   let drop = (event, example) => {
     event.preventDefault();
 
-    console.log(current_sample[0].cls == example.cls)
     guesses += 1
-    if (current_sample[0].cls == example.cls) {
+    if (current_task[0].current_sample[0].cls == example.cls) {
       correct_guesses += 1;
       example.feedback_class = "correct"
     } else {
@@ -142,15 +164,19 @@
 
     setTimeout(() => {
       example.feedback_class = ""
-      // mark as dirty
-      examples = [...examples]
+      mark_dirty()
     }, 400)
 
-    current_sample = [samples.pop()]
+
+    if (current_task[0].remaining_samples.length > 0) {
+      current_task[0].current_sample = [current_task[0].remaining_samples.pop()]
+    } else {
+      new_task()
+    }
 
     example.dragover = false
-    // mark as dirty
-    examples = [...examples]
+
+    mark_dirty()
   }
 
 </script>
@@ -159,11 +185,15 @@
 <style>
   .container {
     border-top: 1px solid hsla(0, 0%, 0%, 0.1);
-    text-align: center;
+    /*text-align: center;*/
   }
 
   .columns:first-child {
     margin-top: .75rem;
+  }
+
+  .columns.tasks {
+    text-align: left;
   }
 
   .class_card {
@@ -182,7 +212,7 @@
     left: 0;
 
     /*box-shadow: 0.1em 0.4em 8mm 0.4em RGBA(0,0,0,0), 0 0 0 1px RGBA(0,0,0,0);*/
-
+    transition: opacity .15s ease-in;
     opacity: 0;
   }
 
@@ -196,6 +226,17 @@
     animation: pulse .3s ease-in-out;
   }
 
+  .class_card.dragover::before, .class_card:hover:not(.correct):not(.incorrect)::before {
+    box-shadow: 0 0.5em 1em -0.125em rgba(68, 1, 84, .8), 0 0 0 1px rgba(68, 1, 84, 1);
+    transition: opacity .15s ease-in;
+    opacity: 1;
+    /*background-color: rgba(68, 1, 84, 0.5);*/
+  }
+
+  /*.class_card.dragover, .class_card:hover:not(.correct):not(.incorrect) {
+    background-color: rgba(68, 1, 84, 0.5);
+  }*/
+
   @keyframes pulse {
     0% {opacity: 0}
     50% {opacity: 1}
@@ -206,11 +247,6 @@
   figure.image{
     margin-top: 0;
     margin-bottom: 0;
-  }
-
-  .class_card.dragover {
-    box-shadow: 0 0.5em 1em -0.125em rgba(68, 1, 84, 0.5), 0 0 0 1px rgba(68, 1, 84, 0.12);
-    background-color: rgba(68, 1, 84, 0.5);
   }
 
   .current_sample {
