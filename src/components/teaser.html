@@ -59,6 +59,7 @@
     </div>
     <div class="column is-narrow">
       <button class="button" on:click={new_task}>New Task</button>
+      <button class="button" on:click={() => {guesses=0; correct_guesses=0; new_task()}} style="margin-left: 1em">Reset</button>
     </div>
   </div>
 </div>
@@ -104,12 +105,13 @@
       // create a representation for all class members
       let class_samples = range(1, 20 + 1).map(j => ({
         cls: cls,
-        name: `${cls}_${padStart(j, 2, '0')}`
+        name: `${cls}_${padStart(j, 2, '0')}`,
+        feedback_class: ""
       }))
 
       let example = pickRandom(class_samples);
       example.dragover = false
-      examples.push({...example, element: null})
+      examples.push(example)
 
       // add remaining samples to list of samples
       remaining_samples.push(...class_samples)
@@ -203,39 +205,34 @@
 
 
   /* For fast shadow animation */
-  .class_card::before {
+  .class_card::before, .class_card::after {
     content: ' ';
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-
-    /*box-shadow: 0.1em 0.4em 8mm 0.4em RGBA(0,0,0,0), 0 0 0 1px RGBA(0,0,0,0);*/
-    transition: opacity .15s ease-in;
     opacity: 0;
   }
 
-  .class_card.correct::before {
-    box-shadow: 0.1em 0.4em 8mm 0.4em RGBA(124,210,80,1), 0 0 0 1px RGBA(124,210,80,1);
-    animation: pulse .3s ease-in-out;
-  }
-
-  .class_card.incorrect::before {
-    box-shadow: 0.1em 0.4em 8mm 0.4em RGBA(207,46,46,1), 0 0 0 1px RGBA(207,46,46,1);
-    animation: pulse .3s ease-in-out;
-  }
-
-  .class_card.dragover::before, .class_card:hover:not(.correct):not(.incorrect)::before {
-    box-shadow: 0 0.5em 1em -0.125em rgba(68, 1, 84, .8), 0 0 0 1px rgba(68, 1, 84, 1);
+  .class_card::before {
     transition: opacity .15s ease-in;
-    opacity: 1;
-    /*background-color: rgba(68, 1, 84, 0.5);*/
+    box-shadow: 0 0.5em 1em -0.125em rgba(68, 1, 84, .8), 0 0 0 1px rgba(68, 1, 84, 1);
   }
 
-  /*.class_card.dragover, .class_card:hover:not(.correct):not(.incorrect) {
-    background-color: rgba(68, 1, 84, 0.5);
-  }*/
+  .class_card.correct::after {
+    box-shadow: 0.1em 0.4em 8mm 0.4em RGBA(124,210,80,1), 0 0 0 1px RGBA(124,210,80,1);
+    animation: pulse .3s;
+  }
+
+  .class_card.incorrect::after {
+    box-shadow: 0.1em 0.4em 8mm 0.4em RGBA(207,46,46,1), 0 0 0 1px RGBA(207,46,46,1);
+    animation: pulse .3s;
+  }
+
+  .class_card.dragover::before, .class_card:hover::before {
+    opacity: 1;
+  }
 
   @keyframes pulse {
     0% {opacity: 0}
