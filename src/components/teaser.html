@@ -44,22 +44,29 @@
     {/each}
   </div>
 
-  <div class="columns stats">
-    <div class="column is-narrow">
-      <span>{correct_guesses} out of {guesses}</span>
-    </div>
-    <div class="column is-narrow">
-      <span>
-        {#if guesses > 0}
+  <div class="level stats">
+    <div class="level-left" in:fade={{duration: 200}}>
+      {#if guesses > 0}
+        <div class="level-item">
+          {correct_guesses} out of {guesses}
+        </div>
+        <div class="level-item">
           {(100 * correct_guesses / (guesses)).toFixed(1)}% accuracy
-        {:else}
-          Which of the classes does the character belong to?
-        {/if}
-      </span>
+        </div>
+      {/if}
     </div>
-    <div class="column is-narrow">
-      <button class="button" on:click={new_task}>New Task</button>
-      <button class="button" on:click={() => {guesses=0; correct_guesses=0; new_task()}} style="margin-left: 1em">Reset</button>
+    {#if guesses == 0}
+      <div class="level-item" in:fade={{duration: 200}}>
+        <p style="text-align: center">Which of the classes does the symbol belong to?<br><small>(click or drag and drop)</small></p>
+      </div>
+    {/if}
+    <div class="level-right">
+      <div class="level-item">
+        <button class="button is-small" on:click={new_task}>New Task</button>
+      </div>
+      <div class="level-item">
+        <button class="button is-small" on:click={() => {guesses=0; correct_guesses=0; new_task()}}>Reset</button>
+      </div>
     </div>
   </div>
 </div>
@@ -257,7 +264,11 @@
   }
 
   .stats {
-    font-size: 0.8em;
+    height: 76px;
+  }
+
+  .stats .level-item {
+    font-size: 0.8
   }
 
 </style>
