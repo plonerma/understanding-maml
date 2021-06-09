@@ -9,7 +9,6 @@
     <script src="https://distill.pub/template.v1.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
     <script defer src="build/bundle.js"></script>
 
 <script type="text/front-matter">
@@ -27,7 +26,7 @@
 	<h1>A Visual Comparison of Model-Agnostic Meta-Learning</h1>
 	<h2>Exploring the world of model-agnostic meta-learning and its extensions.</h2>
 	<figure class="l-screen">
-    <d-figure id="teaser"></d-figure>
+    <d-figure id="teaser"><div class="element is-loading" style="height: 400px"></div></d-figure>
   </figure>
 
 	<dt-byline></dt-byline>
@@ -38,18 +37,19 @@
     \[ \theta_i' = \theta - \alpha \nabla_\theta \mathcal{L}_{\mathcal{T}_i} (f_\theta) .\]
 
   You can implement this in python as follows:
+	</p>
   <dt-code block language="python">
       def step(theta, alpha, model, data):
           return theta - alpha * model.grad(data)
-    </dt-code>
-  </p>
+  </dt-code>
+
 
 
 	<p>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eget nisi in tortor maximus feugiat id et massa. In eu pulvinar sapien, eget tincidunt massa. Praesent enim nibh, sagittis nec magna nec, tempus rhoncus metus. Vestibulum rutrum eget tortor sit amet consequat. Curabitur arcu justo, vulputate ut turpis eu, mattis viverra orci. Duis tincidunt ullamcorper mauris ut euismod. Nulla a enim in felis tempus varius. Phasellus sapien sem, viverra sit amet hendrerit a, facilisis a ex. Nulla felis quam, suscipit sed molestie nec, blandit ac ipsum. Quisque viverra tellus nec odio volutpat auctor. Sed sit amet sem luctus sapien efficitur sodales. Quisque dui mi, posuere sed vehicula vel, dapibus quis metus. Integer malesuada tristique massa, nec pellentesque tellus vestibulum sit amet. Donec et bibendum purus, non dignissim magna. Maecenas augue orci, consectetur eu volutpat sed, rutrum id nisl.
 	</p>
 	<figure class="l-page side">
-    <d-figure id="contourExample"></d-figure>
+    <d-figure id="contourExample"><div class="element is-loading" style="height: 400px"></div></d-figure>
   </figure>
 
 	<p>
@@ -57,11 +57,11 @@ Praesent varius ut augue quis commodo. Donec euismod, ligula in porta pulvinar, 
 	</p>
 
 	<figure class="l-body">
-    <d-figure id="metaGradient"></d-figure>
+    <d-figure id="metaGradient"><div class="element is-loading" style="height: 400px"></div></d-figure>
   </figure>
 
 	<figure class="l-body-outset">
-	<d-figure id="userOptimizedTheta"></d-figure>
+	<d-figure id="userOptimizedTheta"><div class="element is-loading" style="height: 400px"></div></d-figure>
 	</figure>
 
 </dt-article>
