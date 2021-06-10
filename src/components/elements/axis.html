@@ -11,6 +11,9 @@
   export let xDomain = [0, 1]
   export let yDomain = [0, 1]
 
+  export let xTicks = null
+  export let yTicks = null
+
   let transform = `translate(${margin.left}, ${margin.top})`
 
   let innerWidth = width - margin.left - margin.right;
@@ -18,22 +21,56 @@
 
   setContext("size", [innerWidth, innerHeight])
 
+
+
   let xScale = d3.scaleLinear().domain(xDomain).range([0, innerWidth])
   let yScale = d3.scaleLinear().domain(yDomain).range([innerHeight, 0])
 
   setContext("scales", [xScale, yScale]);
-  export const scales = [xScale, yScale]
 
   setContext("axisGroup", () => groupElement)
+
+  const makeAxis = () => {
+    let xAxis = d3.axisBottom(xScale)
+    let yAxis = d3.axisLeft(yScale)
+
+    if (xTicks) {
+      xAxis.tickArguments(xTicks)
+    }
+
+    if (yTicks) {
+      yAxis.tickArguments(yTicks)
+    }
+
+    return [xAxis, yAxis]
+  }
 
   onMount(() => {
     let axisGroup = d3.select(groupElement)
 
-    axisGroup.append("g").attr("transform", `translate(0, ${innerHeight})`)
-                         .call(d3.axisBottom(xScale))
+    let [xAxis, yAxis] = makeAxis()
 
-    axisGroup.append("g").call(d3.axisLeft(yScale))
+    axisGroup.append("g").attr("transform", `translate(0, ${innerHeight})`)
+                         .attr("class", "xAxis")
+                         .call(xAxis)
+
+    axisGroup.append("g").attr("class", "yAxis").call(yAxis)
   })
+
+  $: {
+    xScale.domain(xDomain)
+    yScale.domain(yDomain)
+
+    if (groupElement) {
+      let axisGroup = d3.select(groupElement)
+      let [xAxis, yAxis] = makeAxis()
+
+      axisGroup.selectAll('g.xAxis').lower().transition().duration(500)
+                                    .attr("transform", `translate(0, ${innerHeight})`)
+                                    .call(xAxis)
+      axisGroup.selectAll('g.yAxis').lower().transition().duration(500).call(yAxis)
+    }
+  }
 </script>
 
 <g bind:this={groupElement} transform={transform}>
