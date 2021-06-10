@@ -81,6 +81,8 @@
   import padStart from 'lodash/padStart'
   import shuffle from 'lodash/shuffle'
 
+  import {userAccuracy} from './util/store'
+
   const num_classes = 964;
 
   let guesses = 0;
@@ -186,6 +188,15 @@
     example.dragover = false
 
     mark_dirty()
+  }
+
+
+  $: {
+    if (guesses > 0) {
+      userAccuracy.set(correct_guesses / guesses)
+    } else {
+      userAccuracy.set(null)
+    }
   }
 
 </script>
