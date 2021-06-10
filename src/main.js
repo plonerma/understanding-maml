@@ -10,6 +10,14 @@ const Teaser_Component = new Teaser({
   target: target
 });
 
+import FewShotMethods from './components/fewShotMethods.html';
+target = document.querySelector('#fewShotMethods');
+target.innerHTML = '';
+const FewShotMethods_Component = new FewShotMethods({
+  target: target
+});
+
+
 
 import UserOptimizedTheta from './components/userOptimizedTheta.html';
 target = document.querySelector('#userOptimizedTheta');
