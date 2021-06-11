@@ -14,6 +14,10 @@
   export let xTicks = null
   export let yTicks = null
 
+  export let fontSize = "10px"
+  export let axisOpacity = 1
+
+
   let transform = `translate(${margin.left}, ${margin.top})`
 
   let innerWidth = width - margin.left - margin.right;
@@ -30,15 +34,15 @@
 
   setContext("axisGroup", () => groupElement)
 
-  const makeAxis = () => {
-    let xAxis = d3.axisBottom(xScale)
-    let yAxis = d3.axisLeft(yScale)
+  const makeAxis = (xScale, yScale, xTicks, yTicks) => {
+    let xAxis = d3.axisBottom(xScale)//.tickSizeOuter(0)
+    let yAxis = d3.axisLeft(yScale)//.tickSizeOuter(0)
 
-    if (xTicks) {
+    if (xTicks!= null) {
       xAxis.tickArguments(xTicks)
     }
 
-    if (yTicks) {
+    if (yTicks!=null) {
       yAxis.tickArguments(yTicks)
     }
 
@@ -48,13 +52,15 @@
   onMount(() => {
     let axisGroup = d3.select(groupElement)
 
-    let [xAxis, yAxis] = makeAxis()
+    let [xAxis, yAxis] = makeAxis(xScale, yScale, xTicks, yTicks)
 
     axisGroup.append("g").attr("transform", `translate(0, ${innerHeight})`)
                          .attr("class", "xAxis")
-                         .call(xAxis)
+                         .call(xAxis).style('font-size', fontSize)
+                         .selectAll(".domain, g.tick line").attr("opacity", axisOpacity)
 
-    axisGroup.append("g").attr("class", "yAxis").call(yAxis)
+    axisGroup.append("g").attr("class", "yAxis").call(yAxis).style('font-size', fontSize)
+             .selectAll(".domain, g.tick line").attr("opacity", axisOpacity)
   })
 
   $: {
@@ -63,7 +69,7 @@
 
     if (groupElement) {
       let axisGroup = d3.select(groupElement)
-      let [xAxis, yAxis] = makeAxis()
+      let [xAxis, yAxis] = makeAxis(xScale, yScale, xTicks, yTicks)
 
       axisGroup.selectAll('g.xAxis').lower().transition().duration(500)
                                     .attr("transform", `translate(0, ${innerHeight})`)

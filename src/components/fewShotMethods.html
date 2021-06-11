@@ -1,69 +1,88 @@
 <Chart width=350 height=200>
 
-  <Axis xDomain={[min_year-0.75, higher_year]} xTicks={[1+higher_year-min_year, 'd']}
-        yDomain={[lower_accuracy, 1]} yTicks={[5, '%']}>
+  <Axis xDomain={[min_year-0.75, higher_year]} xTicks={[xTicks, 'd']}
+        yDomain={[lower_accuracy, 1]} yTicks={[5, '%']}
+        fontSize="6px" axisOpacity=1>
 
     {#each data as point, i}
       <Translate position={[point.year, point.accuracy]}>
-        <circle cx=0 cy=0 r=2 fill="#689BAE"/>
-        <text x="0" y={(i % 2) == 0 ? "0" : ".5em"} style="font-size: 6px" text-anchor="middle">
-        {#each getLines(point.label, ((i % 2) == 0)) as line}
-           <tspan x="0" dy={(i % 2) == 0 ? "-1.2em" : "1.2em"}>{line}</tspan>
-        {/each}
-        </text>
+        <circle cx=0 cy=0 r=3 fill={point.color ? point.color : tab.blue}
+                style="cursor: pointer;"
+                on:mouseenter={() => {activate(point.ref)}}
+                on:mouseleave={() => {activate(point.ref, false)}} />
+
+        <MultilineText
+          y={(i % 2) == 0 ? "0" : ".5em"}
+          style="font-size: 6px" textAnchor="middle"
+          down={(i % 2) == 1}
+          text={point.label}
+          />
       </Translate>
     {/each}
 
-    {#if user_acc != null}
-      <Translate position={[thisYear, user_acc]}>
-        <g transform="translate(-4, -4) scale(0.016717865)" fill="#f0c000">
-          <path d="M477.795,184.279c-1.765-5.431-6.458-9.389-12.108-10.209l-147.159-21.384l-65.812-133.35
-      			c-2.527-5.12-7.741-8.361-13.451-8.361s-10.924,3.241-13.451,8.361l-65.812,133.35L12.843,174.07
-      			c-5.65,0.82-10.344,4.778-12.108,10.209c-1.765,5.43-0.293,11.391,3.796,15.376l106.484,103.798L85.877,450.018
-      			c-0.965,5.627,1.349,11.314,5.968,14.671c4.618,3.354,10.741,3.799,15.797,1.142l131.623-69.199l131.623,69.199
-      			c2.195,1.153,4.592,1.723,6.979,1.723c3.11,0,6.205-0.966,8.818-2.864c4.619-3.356,6.933-9.044,5.968-14.671l-25.138-146.565
-      			l106.484-103.798C478.088,195.669,479.56,189.708,477.795,184.279z"/>
-        </g>
-        <text x="0" y="0" style="font-size: 6px" text-anchor="middle">
-          <tspan x="0" dy="-1.2em">(5-way)</tspan>
-          <tspan x="0" dy="-1.2em">Your score</tspan>
-        </text>
-      </Translate>
+    {#if userStats != null}
+      {#each Object.keys(userStats) as mode}
+        {#if userStats[mode].total > 0}
+          <Translate position={[thisYear, userStats[mode].correct / userStats[mode].total]}>
+            <g transform="translate(-4, -4) scale(0.016717865)" fill={tab.orange}>
+              <path d="M477.795,184.279c-1.765-5.431-6.458-9.389-12.108-10.209l-147.159-21.384l-65.812-133.35
+          			c-2.527-5.12-7.741-8.361-13.451-8.361s-10.924,3.241-13.451,8.361l-65.812,133.35L12.843,174.07
+          			c-5.65,0.82-10.344,4.778-12.108,10.209c-1.765,5.43-0.293,11.391,3.796,15.376l106.484,103.798L85.877,450.018
+          			c-0.965,5.627,1.349,11.314,5.968,14.671c4.618,3.354,10.741,3.799,15.797,1.142l131.623-69.199l131.623,69.199
+          			c2.195,1.153,4.592,1.723,6.979,1.723c3.11,0,6.205-0.966,8.818-2.864c4.619-3.356,6.933-9.044,5.968-14.671l-25.138-146.565
+          			l106.484-103.798C478.088,195.669,479.56,189.708,477.795,184.279z"/>
+            </g>
+            <MultilineText
+              y={mode=="20" ? ".5em" : "0"}
+              style="font-size: 6px" textAnchor="middle"
+              down={mode=="20"}
+              text={`Your score\n(${mode}-way)`}
+              />
+          </Translate>
+        {/if}
+      {/each}
     {/if}
   </Axis>
 </Chart>
 
 <script>
-  import {Chart, Axis, Translate} from './elements'
-  import {userAccuracy} from './util/store'
+  import {Chart, Axis, Translate, MultilineText} from './elements'
+  import {teaserStats} from './util/store'
+  import {tab} from './util/colors'
+  import * as d3 from 'd3';
 
   const thisYear = new Date().getFullYear()
 
   let data = [
     {
       year: 2011, accuracy: 0.549,
-      label: "Generative\nStroke Model\n(20-way)",
-      href: ""
+      label: "Generative\nStroke\nModel",
+      ref: "#generative_stroke_model"
     },
     {
-      year: 2017, accuracy: .958,
-      label: "MAML\n(20-way)",
-      href: ""
+      year: 2017 + .1, accuracy: .958,
+      label: "MAML",
+      color: tab.purple,
+      ref: ""
+    },
+    {
+      year: 2017-0.05, accuracy: .96,
+      label: "Prototypical\nNetworks"
     },
     {
       year: 2016, accuracy: .958,
-      label: "Matching Nets\n(20-way)",
-      href: ""
+      label: "Matching\nNets",
+      ref: ""
     },
     {
       year: 2015, accuracy: .938,
-      label: "Siamese Nets\n(20-way)",
-      href: ""
+      label: "Siamese Nets",
+      ref: ""
     },
     {
       year: 2013, accuracy: .962,
-      label: "Hierarchial Bayesian\nProgram Learning\n(20-way)",
-      href: ""
+      label: "Hierarchial Bayesian\nProgram Learning",
+      ref: ""
     }
   ]
 
@@ -77,34 +96,83 @@
   let higher_year = max_year
 
 
-  let user_acc = null
+  let userStats = null
 
-  userAccuracy.subscribe((value) => {
-    user_acc = value;
+  let xTicks = 5
 
-    if (user_acc != null) {
-      lower_accuracy = Math.min(min_accuracy, user_acc)
+  teaserStats.subscribe((value) => {
+    userStats = value;
+
+    if (userStats != null) {
+      lower_accuracy = min_accuracy
+      for (let mode in userStats){
+        if (userStats[mode].total > 0) {
+          let acc = userStats[mode].correct / userStats[mode].total
+
+          lower_accuracy = Math.min(lower_accuracy, acc)
+        }
+      }
+
       higher_year = thisYear
 
       // redraw points
       data = [...data]
+      lower_accuracy = lower_accuracy
     } else {
       lower_accuracy = min_accuracy
       higher_year = max_year
 
       // redraw points
       data = [...data]
+      lower_accuracy = lower_accuracy
+    }
+
+    xTicks = 1+higher_year-min_year
+    if (xTicks >= 10){
+      xTicks = Math.floor(xTicks / 2)
     }
   })
 
-
-
-  const getLines = (text, reverse=false) => {
-    let lines = text.split('\n')
-    if (reverse) {
-      lines.reverse()
+  const activate = (ref, active=true) => {
+    if (ref) {
+      if (active) {
+        d3.select(ref).attr('class', 'active fewShotMethods-reference')
+      } else {
+        d3.select(ref).attr('class', 'fewShotMethods-reference')
+      }
     }
-    return lines
   }
 
+
 </script>
+
+
+<style>
+  :global(.fewShotMethods-reference) {
+    position: relative;
+    padding: .2em;
+    transition: color .2s;
+  }
+
+  :global(.fewShotMethods-reference.active) {
+    color: black;
+  }
+
+  :global(.fewShotMethods-reference::before) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: ' ';
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    background-color: #ff7f0e;
+    transition: opacity .2s;
+  }
+
+  :global(.fewShotMethods-reference.active::before) {
+    opacity: 0.4;
+  }
+
+
+</style>

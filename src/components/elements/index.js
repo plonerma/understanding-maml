@@ -4,6 +4,7 @@ import Chart from './chart.html'
 import Handle from './handle.html'
 import Latex from './latex.html'
 import Line from './line.html'
+import MultilineText from './multilineText.html'
 import Slider from './slider.html'
 import Translate from './translate.html'
 import VariableHandle from './variableHandle.html'
@@ -17,6 +18,7 @@ export {
     Handle,
     Latex,
     Line,
+    MultilineText,
     Slider,
     Translate,
     VariableHandle

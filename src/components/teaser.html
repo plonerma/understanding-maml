@@ -1,6 +1,26 @@
 <div class="container">
+  <div class="level top-level">
+    <div class="level-left">
+    </div>
+    <div class="level-right">
+      <div class="level-item">
+        <div class="control has-icons-left">
+          <div class="select is-small">
+            <!-- svelte-ignore a11y-no-onchange -->
+            <select bind:value={selectedMode} on:change={() => {newTask(selectedMode)}}>
+              <option value="5">5-way</option>
+              <option value="20">20-way</option>
+            </select>
+          </div>
+          <div class="icon is-small is-left is-small">
+            <i class="fas fa-th"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="columns is-mobile tasks">
-    {#each current_task as task (task.id)}
+    {#each currentTask as task (task.id)}
       <div class="column task is-full"
            in:fade="{{ duration: 200, easing: cubicIn}}"
            >
@@ -46,26 +66,28 @@
 
   <div class="level stats">
     <div class="level-left" in:fade={{duration: 200}}>
-      {#if guesses > 0}
+      {#if stats[selectedMode].total > 0}
         <div class="level-item">
-          {correct_guesses} out of {guesses}
+          {stats[selectedMode].correct} out of {stats[selectedMode].total}
         </div>
         <div class="level-item">
-          {(100 * correct_guesses / (guesses)).toFixed(1)}% accuracy
+          {(100 * stats[selectedMode].correct / (stats[selectedMode].total)).toFixed(1)}% accuracy
         </div>
       {/if}
     </div>
-    {#if guesses == 0}
+    {#if stats[selectedMode].total == 0}
       <div class="level-item" in:fade={{duration: 200}}>
-        <p style="text-align: center">Which of the classes does the symbol belong to?<br><small>(click or drag and drop)</small></p>
+        <p style="text-align: center">Which of the classes does the symbol (top) belong to?</p>
       </div>
     {/if}
     <div class="level-right">
       <div class="level-item">
-        <button class="button is-small" on:click={new_task}>New Task</button>
+        <button class="button is-small" on:click={newTask}>New Task</button>
       </div>
       <div class="level-item">
-        <button class="button is-small" on:click={() => {guesses=0; correct_guesses=0; new_task()}}>Reset</button>
+        <button class="button is-small" on:click={
+          () => {stats[selectedMode].total=0; stats[selectedMode].correct=0; newTask()}
+        }>Reset</button>
       </div>
     </div>
   </div>
@@ -81,15 +103,17 @@
   import padStart from 'lodash/padStart'
   import shuffle from 'lodash/shuffle'
 
-  import {userAccuracy} from './util/store'
+  import {teaserStats} from './util/store'
 
   const num_classes = 964;
 
-  let guesses = 0;
-  let correct_guesses = 0;
+  let stats = {
+    "5": {correct: 0, total: 0},
+    "20": {correct: 0, total: 0}
+  }
 
-  let current_task = [{id: null}];  // list, so we can fade in and out
-
+  let currentTask = [{id: null}];  // list, so we can fade in and out
+  let selectedMode = "5"
 
   const pickRandom = samples => (
     samples.splice(
@@ -101,12 +125,12 @@
     `./img/omniglot/all_characters/${x.name.substr(0,2)}/${x.name.substr(2,2)}/${x.name}.png`
   )
 
-  const new_task = () => {
+  const newTask = () => {
     let all_classes = range(1, num_classes + 1)
     let examples = []
     let remaining_samples = []
 
-    for (let i=0; i < 5; i++) {
+    for (let i=0; i < parseInt(selectedMode); i++) {
       // sample one of the remaining classes
       let c = pickRandom(all_classes)
       let cls = padStart(c, 4, '0')
@@ -130,12 +154,12 @@
 
     let id = examples.map(s => s.cls).join(',');
 
-    if (id == current_task[0].id){
+    if (id == currentTask[0].id){
       //in the unlikely case that the same list of classes was drawn, redraw
-      new_task()
+      newTask()
 
     } else {
-      current_task = [{
+      currentTask = [{
         examples: examples,
         remaining_samples: remaining_samples,
         current_sample: [remaining_samples.pop()],
@@ -144,10 +168,10 @@
     }
   }
 
-  const mark_dirty = () => {current_task = [...current_task]}
+  const mark_dirty = () => {currentTask = [...currentTask]; stats={...stats}}
 
 
-  new_task();  // call function once to create initial task
+  newTask();  // call function once to create initial task
 
 
   let dragEnter = (event, example) => {
@@ -162,12 +186,15 @@
     mark_dirty()
   }
 
+
+  /* User made a classification. */
   let drop = (event, example) => {
     event.preventDefault();
 
-    guesses += 1
-    if (current_task[0].current_sample[0].cls == example.cls) {
-      correct_guesses += 1;
+    stats[selectedMode].total += 1;
+
+    if (currentTask[0].current_sample[0].cls == example.cls) {
+      stats[selectedMode].correct += 1;
       example.feedback_class = "correct"
     } else {
       example.feedback_class = "incorrect"
@@ -179,10 +206,10 @@
     }, 400)
 
 
-    if (current_task[0].remaining_samples.length > 0) {
-      current_task[0].current_sample = [current_task[0].remaining_samples.pop()]
+    if (currentTask[0].remaining_samples.length > 0) {
+      currentTask[0].current_sample = [currentTask[0].remaining_samples.pop()]
     } else {
-      new_task()
+      newTask()
     }
 
     example.dragover = false
@@ -190,13 +217,8 @@
     mark_dirty()
   }
 
-
   $: {
-    if (guesses > 0) {
-      userAccuracy.set(correct_guesses / guesses)
-    } else {
-      userAccuracy.set(null)
-    }
+    teaserStats.set(stats)
   }
 
 </script>
@@ -205,6 +227,7 @@
 <style>
   .container {
     border-top: 1px solid hsla(0, 0%, 0%, 0.1);
+    padding-top: 10px;
     /*text-align: center;*/
   }
 
@@ -252,6 +275,13 @@
     opacity: 1;
   }
 
+  .task .column {
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-top: 5px;
+    padding-bttom: 5px;
+  }
+
   @keyframes pulse {
     0% {opacity: 0}
     50% {opacity: 1}
@@ -267,7 +297,7 @@
   .current_sample {
     width: 210px;
     background: none;
-    cursor: grab;
+    cursor: move;
   }
 
   .columns {
@@ -280,6 +310,10 @@
 
   .stats .level-item {
     font-size: 0.8
+  }
+
+  .top-level {
+    margin-bottom: 0;
   }
 
 </style>
