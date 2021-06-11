@@ -1,4 +1,6 @@
 import './main.scss';
+import '@fortawesome/fontawesome-free/js/all.js';
+
 
 let target
 
