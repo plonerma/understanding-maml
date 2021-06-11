@@ -26,10 +26,39 @@
 	<h1>A Visual Comparison of Model-Agnostic Meta-Learning</h1>
 	<h2>Exploring the world of model-agnostic meta-learning and its extensions.</h2>
 	<figure class="l-page">
-    <d-figure id="teaser"></d-figure>
+    <d-figure id="teaser">
+			<div class="element is-loading" style="height: 400px"></div>
+		</d-figure>
+		<figcaption>
+			Click button or drag sample onto example to classify the sample.
+		</figcaption>
   </figure>
 
 	<dt-byline></dt-byline>
+
+	<p>
+		If you tried the little exercise above, you probably got a pretty good score.
+		Even though you probably have never seen some of the characters,
+		you are able to compare them to a another one, potentially without realizing
+		that what you are doing is actually pretty impressive!
+	</p>
+
+	<figure class="l-page side">
+    <d-figure id="fewShotMethods">
+			<div class="element is-loading" style="height: 400px"></div>
+		</d-figure>
+		<figcaption>
+			<p>Results of different methods on the omniglot dataset.</p>
+			<ul>
+				<li><span id="generative_stroke_model" class="fewShotMethods-reference">
+						Test
+				</span></li>
+			</ul>
+		</figcaption>
+  </figure>
+
+
+
 
   <p>In the last years, Meta-learning has aroused the interest of many different research fields in machine learning. Especially model-agnostic meta-learning <dt-cite key="finn2017modelagnostic"></dt-cite> is a fascinating approach. Many different extensions have been proposed to improve training.
   This project should compare these different approaches. It is the goal of this article to make it visually as understandable as possible.</p>
@@ -77,7 +106,8 @@ Praesent varius ut augue quis commodo. Donec euismod, ligula in porta pulvinar, 
     year={2017},
     eprint={1703.03400},
     archivePrefix={arXiv},
-    primaryClass={cs.LG}
+    primaryClass={cs.LG},
+		url={https://arxiv.org/abs/1703.03400},
 }
 </script>
   </body>
