@@ -48,16 +48,28 @@
 			<div class="element is-loading" style="height: 400px"></div>
 		</d-figure>
 		<figcaption>
-			<p>Results of different methods on the omniglot dataset.</p>
-			<ul>
-				<li><span id="generative_stroke_model" class="fewShotMethods-reference">
+			<p>Results of different methods on the omniglot dataset
+				(all: 1-shot, 20-way; some differences in the evaluation procedure exist).
+			</p>
+			<p id="caption_generative_stroke_model" class="fewShotMethods-reference">
 						The generative stroke model was introduced in the paper which also
 						introduced omniglot. The model is based on a latent stroke representation
 						(including the number and directions of strokes). While it is an
 						interesting approach, it can hardly be generalized to other
-						few-shot problems.
-				</span></li>
-			</ul>
+						few-shot problems.<dt-cite key="lake_one_2011"></dt-cite>
+			</p>
+			<p id="caption_hierachical_bayesian_program_learning" class="fewShotMethods-reference">
+						[...]<dt-cite key="lake_one-shot_2013"></dt-cite>
+			</p>
+			<p id="caption_siames_nets" class="fewShotMethods-reference">
+						[...]
+			</p>
+			<p id="caption_matching_nets" class="fewShotMethods-reference">
+						[...]
+			</p>
+			<p id="caption_prototypical_networks" class="fewShotMethods-reference">
+						[...]
+			</p>
 		</figcaption>
   </figure>
 
@@ -182,6 +194,17 @@
 	year = {2011},
 	url = {https://cims.nyu.edu/~brenden/LakeEtAl2011CogSci.pdf},
 }
+
+
+@article{lake_one-shot_2013,
+	title = {One-shot learning by inverting a compositional causal process},
+	abstract = {People can learn a new visual class from just one example, yet machine learning algorithms typically require hundreds or thousands of examples to tackle the same problems. Here we present a Hierarchical Bayesian model based on compositionality and causality that can learn a wide range of natural (although simple) visual concepts, generalizing in human-like ways from just one image. We evaluated performance on a challenging one-shot classiﬁcation task, where our model achieved a human-level error rate while substantially outperforming two deep learning models. We also tested the model on another conceptual task, generating new examples, by using a “visual Turing test” to show that our model produces human-like performance.},
+	language = {en},
+	author = {Lake, Brenden M and Salakhutdinov, Ruslan},
+	year = {2013},
+	url = {https://cims.nyu.edu/~brenden/LakeEtAlNips2013.pdf}
+}
+
 
 </script>
   </body>
