@@ -102,7 +102,6 @@
   })
 
   const calculateTrajectories = () => {
-    var t0 = performance.now()
 
     tf.tidy(() => {
       Promise.all(
@@ -121,7 +120,6 @@
           target: Array.from(t[j].values)
         })))
 
-        console.log((performance.now() - t0))
       })
     })
   }
