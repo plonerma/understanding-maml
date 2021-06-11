@@ -43,3 +43,13 @@ target.innerHTML = '';
 const ContourExample_Component = new ContourExample({
   target: target
 })
+
+import FitSinePretrained from './components/fitSinePretrained.html'
+const FitSinePretrained_Component = new FitSinePretrained({
+  target: document.querySelector('#fitSinePretrained')
+})
+
+/*import FitSineMaml from './components/fitSineMaml.html'
+const FitSineMaml_Component = new FitSineMaml({
+  target: document.querySelector('#fitSineMaml')
+})*/

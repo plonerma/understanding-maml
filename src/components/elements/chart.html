@@ -13,6 +13,8 @@
 
   let defsElement
 
+  export let chartElement
+
   setContext("addDef", (id, add) => {
     if (!(id in existingDefs)) {
       add(d3.select(defsElement))
@@ -26,7 +28,7 @@
 </script>
 
 
-<svg preserveAspectRatio="xMinYMin meet" viewBox={viewBox}
+<svg preserveAspectRatio="xMinYMin meet" viewBox={viewBox} bind:this={chartElement}
      xmlns:svg="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink"
      xmlns="http://www.w3.org/2000/svg"

@@ -68,8 +68,9 @@
       })
     );
 
-    handle.on("mouseover", function (d) {
+    handle.on("mouseover", function (event) {
       isHovered = true
+
       /* Raise this handle to the top, so other handles aren't hovered while
          dragging */
       handleGroup.raise()
