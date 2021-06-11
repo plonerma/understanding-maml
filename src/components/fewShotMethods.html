@@ -86,7 +86,7 @@
     }
   ]
 
-  data.sort(p => p.year)
+  data.sort((a, b) => a.year - b.year)
 
   const min_accuracy = 0.5
   const min_year = 2011
