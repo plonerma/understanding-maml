@@ -36,14 +36,6 @@ const MetaGradient_Component = new MetaGradient({
   target: target
 })
 
-
-import ContourExample from './components/contourExample.html'
-target = document.querySelector('#contourExample');
-target.innerHTML = '';
-const ContourExample_Component = new ContourExample({
-  target: target
-})
-
 import FitSinePretrained from './components/fitSinePretrained.html'
 const FitSinePretrained_Component = new FitSinePretrained({
   target: document.querySelector('#fitSinePretrained')

@@ -38,7 +38,7 @@
 
 	<p>
 		If you tried the little exercise above, you probably got a pretty good score.
-		Even though you probably have never seen some of the characters,
+		Even though you likely have never seen some of the characters,
 		you are able to compare them to a another one, potentially without realizing
 		that what you are doing is actually pretty impressive!
 	</p>
@@ -51,7 +51,11 @@
 			<p>Results of different methods on the omniglot dataset.</p>
 			<ul>
 				<li><span id="generative_stroke_model" class="fewShotMethods-reference">
-						Test
+						The generative stroke model was introduced in the paper which also
+						introduced omniglot. The model is based on a latent stroke representation
+						(including the number and directions of strokes). While it is an
+						interesting approach, it can hardly be generalized to other
+						few-shot problems.
 				</span></li>
 			</ul>
 		</figcaption>
@@ -72,20 +76,17 @@
 		This research area is called "few-shot learning". It aims to enable models
 		to classify unseen sampels after training only one a few examples ("shots").
 		The little exercise at the top of the article is an exmaple of such a task.
-		The symbols are part of a dataset called "omniglot" [<b>reference needed</b>].
+		The symbols are part of a dataset called "omniglot". <dt-cite key="lake_one_2011"></dt-cite>
 		It contains 1623 different characters across 50 alphabets and each character
 		has 20 instances drawn by different people. Because of that, the omniglot
 		was described as a "transpose" of the well-known MNIST dataset, by the authors
-		who originally proposed omniglot as a machine learning dataset. [<b>reference needed</b>]
+		who originally proposed omniglot as a machine learning dataset. <dt-cite key="lake_one_2011"></dt-cite>
 		While MNIST contains only a few classes (the digits 0 to 9) and many instances,
 		of each class, with omniglot it is vice-versa.
 	</p>
 
 
-
-
-  <p>In the last years, Meta-learning has aroused the interest of many different research fields in machine learning. Especially model-agnostic meta-learning <dt-cite key="finn2017modelagnostic"></dt-cite> is a fascinating approach. Many different extensions have been proposed to improve training.
-  This project should compare these different approaches. It is the goal of this article to make it visually as understandable as possible.</p>
+	<p><strong>[...]</strong></p>
 
   <h2>Few-shot learning with MAML</h2>
   <p>To get familiar with the problem and also to motivate the need for meta-learning we start with something you probably already know
@@ -147,19 +148,6 @@
           return theta - alpha * model.grad(data)
   </dt-code>
 
-
-
-	<p>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eget nisi in tortor maximus feugiat id et massa. In eu pulvinar sapien, eget tincidunt massa. Praesent enim nibh, sagittis nec magna nec, tempus rhoncus metus. Vestibulum rutrum eget tortor sit amet consequat. Curabitur arcu justo, vulputate ut turpis eu, mattis viverra orci. Duis tincidunt ullamcorper mauris ut euismod. Nulla a enim in felis tempus varius. Phasellus sapien sem, viverra sit amet hendrerit a, facilisis a ex. Nulla felis quam, suscipit sed molestie nec, blandit ac ipsum. Quisque viverra tellus nec odio volutpat auctor. Sed sit amet sem luctus sapien efficitur sodales. Quisque dui mi, posuere sed vehicula vel, dapibus quis metus. Integer malesuada tristique massa, nec pellentesque tellus vestibulum sit amet. Donec et bibendum purus, non dignissim magna. Maecenas augue orci, consectetur eu volutpat sed, rutrum id nisl.
-	</p>
-	<figure class="l-page side">
-    <d-figure id="contourExample"><div class="element is-loading" style="height: 400px"></div></d-figure>
-  </figure>
-
-	<p>
-Praesent varius ut augue quis commodo. Donec euismod, ligula in porta pulvinar, diam metus volutpat libero, a iaculis urna quam quis mauris. Nam mi elit, placerat nec posuere non, posuere a dui. Praesent aliquam lacus dolor, ut vulputate tortor egestas eget. Sed libero sem, ultrices eget arcu et, lobortis dapibus quam. Duis facilisis erat dui, ullamcorper sodales risus placerat id. Cras vel risus scelerisque, blandit sem ac, pharetra urna. Integer eget ipsum vel purus pharetra condimentum. Donec eget quam bibendum metus tincidunt lacinia eget a neque. Nullam faucibus vehicula fringilla. Mauris vitae metus velit. Vivamus at mauris neque. Sed non leo vel dolor finibus blandit.
-	</p>
-
 	<figure class="l-body">
     <d-figure id="metaGradient"><div class="element is-loading" style="height: 400px"></div></d-figure>
   </figure>
@@ -184,6 +172,17 @@ Praesent varius ut augue quis commodo. Donec euismod, ligula in porta pulvinar, 
     primaryClass={cs.LG},
 		url={https://arxiv.org/abs/1703.03400},
 }
+
+
+@article{lake_one_2011,
+	title = {One shot learning of simple visual concepts},
+	abstract = {People can learn visual concepts from just one example, but it remains a mystery how this is accomplished. Many authors have proposed that transferred knowledge from more familiar concepts is a route to one shot learning, but what is the form of this abstract knowledge? One hypothesis is that the sharing of parts is core to one shot learning, and we evaluate this idea in the domain of handwritten characters, using a massive new dataset. These simple visual concepts have a rich internal part structure, yet they are particularly tractable for computational models. We introduce a generative model of how characters are composed from strokes, where knowledge from previous characters helps to infer the latent strokes in novel characters. The stroke model outperforms a competing stateof-the-art character model on a challenging one shot learning task, and it provides a good ﬁt to human perceptual data.},
+	language = {en},
+	author = {Lake, Brenden M and Salakhutdinov, Ruslan and Gross, Jason and Tenenbaum, Joshua B},
+	year = {2011},
+	url = {https://cims.nyu.edu/~brenden/LakeEtAl2011CogSci.pdf},
+}
+
 </script>
   </body>
 </html>
