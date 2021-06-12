@@ -45,11 +45,10 @@
           {#each task.examples as example}
             <div class="column is-narrow">
               <div draggable=false class={`card class_card ${example.feedback_class}`} class:dragover={example.dragover}
-                   on:drop={(event) => drop(event, example)}
+                   on:drop|preventDefault={(event) => drop(event, example)}
                    on:click={(event) => drop(event, example)}
-                   on:dragenter={(event) => dragEnter(event, example)}
-                   on:dragleave={(event) => dragLeave(event, example)}
-                   on:dragover={(event) => {event.preventDefault()}}
+                   on:dragenter|preventDefault={(event) => dragEnter(event, example)}
+                   on:dragleave|preventDefault={(event) => dragLeave(event, example)}
                    >
                 <div class="card-image" draggable=false>
                   <figure class="image is-square" draggable=false>
@@ -175,13 +174,11 @@
 
 
   let dragEnter = (event, example) => {
-    event.preventDefault();
     example.dragover = true
     mark_dirty()
   }
 
   let dragLeave = (event, example) => {
-    event.preventDefault();
     example.dragover = false
     mark_dirty()
   }
@@ -189,7 +186,6 @@
 
   /* User made a classification. */
   let drop = (event, example) => {
-    event.preventDefault();
 
     stats[selectedMode].total += 1;
 

@@ -4,19 +4,35 @@
         yDomain={[lower_accuracy, 1]} yTicks={[5, '%']}
         fontSize="6px" axisOpacity=1>
 
-    {#each data as point, i}
-      <Translate position={[point.year, point.accuracy]}>
-        <circle cx=0 cy=0 r=3 fill={point.color ? point.color : tab.blue}
-                style="cursor: pointer;"
-                on:mouseenter={(event) => {activate(event, point)}}
-                on:mouseleave={(event) => {activate(event, point, false)}} />
+    {#each data as point}
+      <Translate position={[point.year, point.accuracy]}
+        style="cursor: pointer;"
+        on:mouseenter={(event) => {activate(event, point)}}
+        on:mouseleave={(event) => {activate(event, point, false)}}
+        on:click={() => jumpTo(point.ref)} >
 
-        <MultilineText
-          y={(i % 2) == 0 ? "0" : ".5em"}
-          style="font-size: 6px" textAnchor="middle"
-          down={(i % 2) == 1}
-          text={point.label}
-          />
+        {#if point.offset && point.offset.length == 2}
+          <line x1=0 y1=0 style="stroke-width: 1; stroke: black; opacity: 0.5"
+            x2={point.offset[0]} y2={point.offset[1]} />
+
+          <MultilineText
+            x={point.offset[0] + pointRadius/2}
+            y={point.offset[1] + pointRadius/2}
+            style="font-size: 6px" textAnchor="middle"
+            down={point.offset[1] >= 0}
+            text={point.label}
+            />
+
+        {:else}
+          <MultilineText
+            y={pointRadius * (point.offset ? point.offset : -1)}
+            style="font-size: 6px" textAnchor="middle"
+            down={point.offset == 1}
+            text={point.label}
+            />
+        {/if}
+
+        <circle cx=0 cy=0 r={pointRadius} fill={point.color ? point.color : tab.blue} />
       </Translate>
     {/each}
 
@@ -56,43 +72,57 @@
 
   const thisYear = new Date().getFullYear()
 
+  const pointRadius = 3
+
   let tooltip = null
 
   let data = [
     {
       year: 2011, accuracy: 0.549,
       label: "Generative\nStroke\nModel",
-      ref: "#caption_generative_stroke_model"
+      ref: "caption_generative_stroke_model"
     },
     {
       year: 2017 + .1, accuracy: .958,
       label: "MAML",
       color: tab.red,
-      ref: ""
+      ref: "few_shot_maml",
+      offset: [20,-10]
+    },
+    {
+      year: 2017-0.2, accuracy: .97,
+      label: "Meta\nNetworks",
+      ref: "caption_meta_nets",
+      offset: [0, -10]
     },
     {
       year: 2017-0.05, accuracy: .96,
       label: "Prototypical\nNetworks",
-      ref: '#caption_prototypical_networks'
+      ref: 'caption_prototypical_networks',
+      offset: [0, 10]
     },
     {
-      year: 2016, accuracy: .958,
+      year: 2016, accuracy: .828,
+      label: "Memory-\nAugmented\nNeural\nNetworks",
+      ref: "caption_memory_augmented_nets",
+      offset: 1
+    },
+    {
+      year: 2016, accuracy: .938,
       label: "Matching\nNets",
-      ref: "#caption_matching_nets"
+      ref: "caption_matching_nets",
     },
     {
-      year: 2015, accuracy: .938,
-      label: "Siamese Nets",
-      ref: "#caption_siames_nets"
+      year: 2015, accuracy: .881,
+      label: "Siamese\nNets",
+      ref: "caption_siames_nets"
     },
     {
       year: 2013, accuracy: .962,
       label: "Hierarchial Bayesian\nProgram Learning",
-      ref: "#caption_hierachical_bayesian_program_learning"
+      ref: "caption_hierachical_bayesian_program_learning"
     }
   ]
-
-  data.sort((a, b) => a.year - b.year)
 
   const min_accuracy = 0.5
   const min_year = 2011
@@ -142,7 +172,7 @@
   const activate = (event, point, active=true) => {
     if (active) {
       if (point.ref) {
-        d3.select(point.ref).attr('class', 'active fewShotMethods-reference');
+        d3.select(`.fewShotMethods-reference#${point.ref}`).attr('class', 'active fewShotMethods-reference');
       }
 
       tooltip.innerText = (100 * point.accuracy).toFixed(1) + "%"
@@ -153,20 +183,31 @@
         .style("opacity", 1)
     } else {
       if (point.ref) {
-        d3.select(point.ref).attr('class', 'fewShotMethods-reference')
+        d3.select(`.fewShotMethods-reference#${point.ref}`).attr('class', 'fewShotMethods-reference')
       }
       //tooltip.innerText = "";
       d3.select(tooltip).style("opacity", 0)
     }
   }
 
+  const jumpTo = (target) => {
+    target = document.getElementById(target)
+    if (target != null){
+      let offset = 0;
+      while (target) {
+        offset += target.offsetTop;
+        target = target.offsetParent
+      }
+      window.scrollTo(0, offset - 30)
+    }
 
+  }
 </script>
 
 
 <style>
   :global(.fewShotMethods-reference) {
-    transition: color .2s;
+    transition: color .3s;
     position: relative;
   }
 
@@ -189,7 +230,7 @@
     height: 100%;
     opacity: 0;
     background-color: #ff7f0e;
-    transition: opacity .2s;
+    transition: opacity .3s;
     display: inline-block
   }
 
