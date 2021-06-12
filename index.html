@@ -38,24 +38,12 @@
 
 	<p>
 		If you tried the little exercise above, you probably got a pretty good score.
-		Even though you probably have never seen some of the characters,
+		Even though you likely have never seen some of the characters,
 		you are able to compare them to a another one, potentially without realizing
 		that what you are doing is actually pretty impressive!
 	</p>
 
-	<figure class="l-page side">
-    <d-figure id="fewShotMethods">
-			<div class="element is-loading" style="height: 400px"></div>
-		</d-figure>
-		<figcaption>
-			<p>Results of different methods on the omniglot dataset.</p>
-			<ul>
-				<li><span id="generative_stroke_model" class="fewShotMethods-reference">
-						Test
-				</span></li>
-			</ul>
-		</figcaption>
-  </figure>
+	<h3>Few-Shot Learning</h3>
 
 	<p>
 		Typically, in machine learning we need a lot of examples to be able to
@@ -68,26 +56,124 @@
 		datasets.[<b>reference needed</b>]
 	</p>
 
+	<figure class="l-page side">
+    <d-figure id="fewShotMethods">
+			<div class="element is-loading" style="height: 400px"></div>
+		</d-figure>
+		<figcaption>
+			<p>Results of different methods on the omniglot dataset
+				(if not stated differently: 1-shot, 20-way;
+				some differences in the evaluation procedure exist).
+				As usual, accuracy numbers need to be taken with a grain of salt as
+				differences in the evaluation method, implementation, and the model
+				complexity may a have a non-negligible impact on the performance.
+			</p>
+			<p id="caption_generative_stroke_model" class="fewShotMethods-reference">
+						The generative stroke model was introduced in the paper which also
+						introduced omniglot. The model is based on a latent stroke representation
+						(including the number and directions of strokes). While it is an
+						interesting approach, it can hardly be generalized to other
+						few-shot problems.<dt-cite key="lake_one_2011"></dt-cite>
+			</p>
+			<p id="caption_hierachical_bayesian_program_learning" class="fewShotMethods-reference">
+						The same authors improved the model by learning latent
+						primitive motor elements and called this process "Hierarchial
+						Bayesian Program Learning" (HBPL).
+						While the accuracy was greatly increased, it also
+						is focused on symbol learning.
+						<dt-cite key="lake_one-shot_2013"></dt-cite>
+			</p>
+			<p id="caption_siames_nets" class="fewShotMethods-reference">
+						Siames Nets consist of two identical networks which produce a latent representation.
+						From the representations of two samples, a distance is calculated to
+						assess the similarity of the two samples.<dt-cite key="koch_siamese_2015"></dt-cite>
+						The result (accuracy of 88.1%) results from a reimplementaion of the method which
+						makes it more comparable.
+						<dt-cite key="vinyals_matching_2017"></dt-cite>
+
+			</p>
+			<p id="caption_matching_nets" class="fewShotMethods-reference">
+						Matching Networks also work by comparing new samples to labeled
+						examples. They do so by utilizing an attention kernel.
+						Though the second version of the paper is cited here,
+						it was first published in 2016.
+						<dt-cite key="vinyals_matching_2017"></dt-cite>
+			</p>
+
+			<p id="caption_prototypical_networks" class="fewShotMethods-reference">
+					Prototypical Networks
+					<dt-cite key="snell_prototypical_2017"></dt-cite>
+			</p>
+
+			<p id="caption_memory_augmented_nets">
+				Memory Augmented Networks
+				<dt-cite key="santoro_meta-learning_2016"></dt-cite>
+			</p>
+
+			<p id="caption_meta_nets">
+				Meta Networks
+				<dt-cite key="munkhdalai_meta_2017"></dt-cite>
+			</p>
+
+		</figcaption>
+  </figure>
+
+	<figure class="l-page side">
+		<d-figure>
+			<object type="image/svg+xml" data="img/meta-learning_few-shot.svg" style="height: 20em">
+				<!-- fallback -->
+				<img src="img/meta-learning_few-shot.svg"/>
+			</object>
+		</d-figure>
+	</figure>
+
 	<p>
 		This research area is called "few-shot learning". It aims to enable models
 		to classify unseen sampels after training only one a few examples ("shots").
 		The little exercise at the top of the article is an exmaple of such a task.
-		The symbols are part of a dataset called "omniglot" [<b>reference needed</b>].
+		The symbols are part of a dataset called "omniglot". <dt-cite key="lake_one_2011"></dt-cite>
 		It contains 1623 different characters across 50 alphabets and each character
 		has 20 instances drawn by different people. Because of that, the omniglot
 		was described as a "transpose" of the well-known MNIST dataset, by the authors
-		who originally proposed omniglot as a machine learning dataset. [<b>reference needed</b>]
+		who originally proposed omniglot as a machine learning dataset. <dt-cite key="lake_one_2011"></dt-cite>
 		While MNIST contains only a few classes (the digits 0 to 9) and many instances,
 		of each class, with omniglot it is vice-versa.
 	</p>
 
 
 
+	<p>
+		By now, you may be asking yourself: How can a model learn from only one example
+		(i.e. "one-shot") and why do I even need a dataset like omniglot
+		if the model is supposed to learn from one sample?
+		While clearly one sample is not enough for a model without prior knowledge,
+		we can pretrain models on tasks that we assume to be similar to the target tasks. This is
+		the general idea of few-shot learning: derive some inductive bias
+		from other classes in order to perform better on newly encountered classes.
+		This similarity assumption allows the model to collect meta-knowledge:
+		knowledge which does not describe a single task, but a distribution of tasks.
+		The learning of this meta-knowledge is referred to as "meta-learning".
+	</p>
 
-  <p>In the last years, Meta-learning has aroused the interest of many different research fields in machine learning. Especially model-agnostic meta-learning <dt-cite key="finn2017modelagnostic"></dt-cite> is a fascinating approach. Many different extensions have been proposed to improve training.
-  This project should compare these different approaches. It is the goal of this article to make it visually as understandable as possible.</p>
+	<p>
+		Plenty of methods have been proposed in the last years to tackle few-shot
+		learning using the meta-learning assumption,
+		and many are able to produce decent results.
+		In this article, we will focus
+		on one of them: "Model-Agnostic Meta-Learning" (MAML).
+	</p>
 
-  <h2>Few-shot learning with MAML</h2>
+	<h3>Model-Agnostic Meta-Learning</h3>
+
+	<p>
+		Before we get started with the explanation of how MAML works,
+		we want to take a moment to look at what is Model-Agnostic about MAML.
+		In order to understand, why
+	</p>
+
+	<p><strong>[...]</strong></p>
+
+  <h2 id="few_shot_maml">Few-shot learning with MAML</h2>
   <p>To get familiar with the problem and also to motivate the need for meta-learning we start with something you probably already know
     and develop it to something new. If you have done machine learning before you have probably already solved or attempted to solve a
     trivial special case of meta-learning: Learning a model to solve one specific task, for example to classify images or to teach an agent
@@ -142,23 +228,11 @@
 
   You can implement this in python as follows:
 	</p>
+
   <dt-code block language="python">
       def step(theta, alpha, model, data):
           return theta - alpha * model.grad(data)
   </dt-code>
-
-
-
-	<p>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eget nisi in tortor maximus feugiat id et massa. In eu pulvinar sapien, eget tincidunt massa. Praesent enim nibh, sagittis nec magna nec, tempus rhoncus metus. Vestibulum rutrum eget tortor sit amet consequat. Curabitur arcu justo, vulputate ut turpis eu, mattis viverra orci. Duis tincidunt ullamcorper mauris ut euismod. Nulla a enim in felis tempus varius. Phasellus sapien sem, viverra sit amet hendrerit a, facilisis a ex. Nulla felis quam, suscipit sed molestie nec, blandit ac ipsum. Quisque viverra tellus nec odio volutpat auctor. Sed sit amet sem luctus sapien efficitur sodales. Quisque dui mi, posuere sed vehicula vel, dapibus quis metus. Integer malesuada tristique massa, nec pellentesque tellus vestibulum sit amet. Donec et bibendum purus, non dignissim magna. Maecenas augue orci, consectetur eu volutpat sed, rutrum id nisl.
-	</p>
-	<figure class="l-page side">
-    <d-figure id="contourExample"><div class="element is-loading" style="height: 400px"></div></d-figure>
-  </figure>
-
-	<p>
-Praesent varius ut augue quis commodo. Donec euismod, ligula in porta pulvinar, diam metus volutpat libero, a iaculis urna quam quis mauris. Nam mi elit, placerat nec posuere non, posuere a dui. Praesent aliquam lacus dolor, ut vulputate tortor egestas eget. Sed libero sem, ultrices eget arcu et, lobortis dapibus quam. Duis facilisis erat dui, ullamcorper sodales risus placerat id. Cras vel risus scelerisque, blandit sem ac, pharetra urna. Integer eget ipsum vel purus pharetra condimentum. Donec eget quam bibendum metus tincidunt lacinia eget a neque. Nullam faucibus vehicula fringilla. Mauris vitae metus velit. Vivamus at mauris neque. Sed non leo vel dolor finibus blandit.
-	</p>
 
 	<figure class="l-body">
     <d-figure id="metaGradient"><div class="element is-loading" style="height: 400px"></div></d-figure>
@@ -184,6 +258,110 @@ Praesent varius ut augue quis commodo. Donec euismod, ligula in porta pulvinar, 
     primaryClass={cs.LG},
 		url={https://arxiv.org/abs/1703.03400},
 }
+
+
+@article{lake_one_2011,
+	title = {One shot learning of simple visual concepts},
+	abstract = {People can learn visual concepts from just one example, but it remains a mystery how this is accomplished. Many authors have proposed that transferred knowledge from more familiar concepts is a route to one shot learning, but what is the form of this abstract knowledge? One hypothesis is that the sharing of parts is core to one shot learning, and we evaluate this idea in the domain of handwritten characters, using a massive new dataset. These simple visual concepts have a rich internal part structure, yet they are particularly tractable for computational models. We introduce a generative model of how characters are composed from strokes, where knowledge from previous characters helps to infer the latent strokes in novel characters. The stroke model outperforms a competing stateof-the-art character model on a challenging one shot learning task, and it provides a good ﬁt to human perceptual data.},
+	language = {en},
+	author = {Lake, Brenden M and Salakhutdinov, Ruslan and Gross, Jason and Tenenbaum, Joshua B},
+	year = {2011},
+	url = {https://cims.nyu.edu/~brenden/LakeEtAl2011CogSci.pdf},
+}
+
+
+@article{lake_one-shot_2013,
+	title = {One-shot learning by inverting a compositional causal process},
+	abstract = {People can learn a new visual class from just one example, yet machine learning algorithms typically require hundreds or thousands of examples to tackle the same problems. Here we present a Hierarchical Bayesian model based on compositionality and causality that can learn a wide range of natural (although simple) visual concepts, generalizing in human-like ways from just one image. We evaluated performance on a challenging one-shot classiﬁcation task, where our model achieved a human-level error rate while substantially outperforming two deep learning models. We also tested the model on another conceptual task, generating new examples, by using a “visual Turing test” to show that our model produces human-like performance.},
+	language = {en},
+	author = {Lake, Brenden M and Salakhutdinov, Ruslan},
+	year = {2013},
+	url = {https://cims.nyu.edu/~brenden/LakeEtAlNips2013.pdf}
+}
+
+
+
+@article{koch_siamese_2015,
+	title = {Siamese Neural Networks for One-shot Image Recognition},
+	abstract = {The process of learning good features for machine learning applications can be very computationally expensive and may prove difﬁcult in cases where little data is available. A prototypical example of this is the one-shot learning setting, in which we must correctly make predictions given only a single example of each new class. In this paper, we explore a method for learning siamese neural networks which employ a unique structure to naturally rank similarity between inputs. Once a network has been tuned, we can then capitalize on powerful discriminative features to generalize the predictive power of the network not just to new data, but to entirely new classes from unknown distributions. Using a convolutional architecture, we are able to achieve strong results which exceed those of other deep learning models with near state-of-the-art performance on one-shot classiﬁcation tasks.},
+	language = {en},
+	author = {Koch, Gregory and Zemel, Richard and Salakhutdinov, Ruslan},
+	year = {2015},
+	url = {https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf},
+}
+
+
+@article{vinyals_matching_2017,
+	title = {Matching Networks for One Shot Learning},
+	url = {http://arxiv.org/abs/1606.04080},
+	abstract = {Learning from a few examples remains a key challenge in machine learning. Despite recent advances in important domains such as vision and language, the standard supervised deep learning paradigm does not offer a satisfactory solution for learning new concepts rapidly from little data. In this work, we employ ideas from metric learning based on deep neural features and from recent advances that augment neural networks with external memories. Our framework learns a network that maps a small labelled support set and an unlabelled example to its label, obviating the need for fine-tuning to adapt to new class types. We then define one-shot learning problems on vision (using Omniglot, ImageNet) and language tasks. Our algorithm improves one-shot accuracy on ImageNet from 87.6\% to 93.2\% and from 88.0\% to 93.8\% on Omniglot compared to competing approaches. We also demonstrate the usefulness of the same model on language modeling by introducing a one-shot task on the Penn Treebank.},
+	urldate = {2021-06-12},
+	journal = {arXiv:1606.04080 [cs, stat]},
+	author = {Vinyals, Oriol and Blundell, Charles and Lillicrap, Timothy and Kavukcuoglu, Koray and Wierstra, Daan},
+	month = dec,
+	year = {2017},
+	note = {arXiv: 1606.04080},
+	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning}
+}
+
+
+@article{santoro_meta-learning_2016,
+	title = {Meta-Learning with Memory-Augmented Neural Networks},
+	abstract = {Despite recent breakthroughs in the applications of deep neural networks, one setting that presents a persistent challenge is that of “one-shot learning.” Traditional gradient-based networks require a lot of data to learn, often through extensive iterative training. When new data is encountered, the models must inefﬁciently relearn their parameters to adequately incorporate the new information without catastrophic interference. Architectures with augmented memory capacities, such as Neural Turing Machines (NTMs), offer the ability to quickly encode and retrieve new information, and hence can potentially obviate the downsides of conventional models. Here, we demonstrate the ability of a memory-augmented neural network to rapidly assimilate new data, and leverage this data to make accurate predictions after only a few samples. We also introduce a new method for accessing an external memory that focuses on memory content, unlike previous methods that additionally use memory locationbased focusing mechanisms.},
+	language = {en},
+	author = {Santoro, Adam and Bartunov, Sergey and Botvinick, Matthew and Wierstra, Daan and Lillicrap, Timothy},
+	year = {2016},
+	url = {https://web.stanford.edu/class/psych209/Readings/Santoro16MetaLearningWithMemAugNNs.pdf},
+}
+
+
+
+@article{andrychowicz_learning_2016,
+	title = {Learning to learn by gradient descent by gradient descent},
+	url = {http://arxiv.org/abs/1606.04474},
+	abstract = {The move from hand-designed features to learned features in machine learning has been wildly successful. In spite of this, optimization algorithms are still designed by hand. In this paper we show how the design of an optimization algorithm can be cast as a learning problem, allowing the algorithm to learn to exploit structure in the problems of interest in an automatic way. Our learned algorithms, implemented by LSTMs, outperform generic, hand-designed competitors on the tasks for which they are trained, and also generalize well to new tasks with similar structure. We demonstrate this on a number of tasks, including simple convex problems, training neural networks, and styling images with neural art.},
+	urldate = {2021-06-12},
+	journal = {arXiv:1606.04474 [cs]},
+	author = {Andrychowicz, Marcin and Denil, Misha and Gomez, Sergio and Hoffman, Matthew W. and Pfau, David and Schaul, Tom and Shillingford, Brendan and de Freitas, Nando},
+	month = nov,
+	year = {2016},
+	note = {arXiv: 1606.04474},
+	keywords = {Computer Science - Machine Learning, Computer Science - Neural and Evolutionary Computing},
+}
+
+
+
+@article{snell_prototypical_2017,
+	title = {Prototypical Networks for Few-shot Learning},
+	url = {http://arxiv.org/abs/1703.05175},
+	abstract = {We propose prototypical networks for the problem of few-shot classiﬁcation, where a classiﬁer must generalize to new classes not seen in the training set, given only a small number of examples of each new class. Prototypical networks learn a metric space in which classiﬁcation can be performed by computing distances to prototype representations of each class. Compared to recent approaches for few-shot learning, they reﬂect a simpler inductive bias that is beneﬁcial in this limited-data regime, and achieve excellent results. We provide an analysis showing that some simple design decisions can yield substantial improvements over recent approaches involving complicated architectural choices and meta-learning. We further extend prototypical networks to zero-shot learning and achieve state-of-theart results on the CU-Birds dataset.},
+	language = {en},
+	urldate = {2021-06-11},
+	journal = {arXiv:1703.05175 [cs, stat]},
+	author = {Snell, Jake and Swersky, Kevin and Zemel, Richard S.},
+	month = jun,
+	year = {2017},
+	note = {arXiv: 1703.05175},
+	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning},
+}
+
+
+
+@article{munkhdalai_meta_2017,
+	title = {Meta {Networks}},
+	url = {http://arxiv.org/abs/1703.00837},
+	abstract = {Neural networks have been successfully applied in applications with a large amount of labeled data. However, the task of rapid generalization on new concepts with small training data while preserving performances on previously learned ones still presents a significant challenge to neural network models. In this work, we introduce a novel meta learning method, Meta Networks (MetaNet), that learns a meta-level knowledge across tasks and shifts its inductive biases via fast parameterization for rapid generalization. When evaluated on Omniglot and Mini-ImageNet benchmarks, our MetaNet models achieve a near human-level performance and outperform the baseline approaches by up to 6\% accuracy. We demonstrate several appealing properties of MetaNet relating to generalization and continual learning.},
+	urldate = {2021-06-12},
+	journal = {arXiv:1703.00837 [cs, stat]},
+	author = {Munkhdalai, Tsendsuren and Yu, Hong},
+	month = jun,
+	year = {2017},
+	note = {arXiv: 1703.00837},
+	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning},
+	annote = {Comment: Accepted at ICML 2017 - rewrote: the main section; added: MetaNet algorithmic procedure; performed: Mini-ImageNet evaluation},
+}
+
+
 </script>
   </body>
 </html>
