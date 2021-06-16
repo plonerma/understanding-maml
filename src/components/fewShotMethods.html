@@ -173,7 +173,7 @@
 
   export const activate = (event, point, active=true) => {
     if (point.ref) {
-      highlight_caption(ref, active)
+      highlight_caption(point.ref, active)
     }
 
     if (active) {
