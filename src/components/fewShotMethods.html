@@ -70,6 +70,8 @@
   import {tab} from './util/colors'
   import * as d3 from 'd3';
 
+  import {jumpTo, highlight_caption} from './util/fewShotUtil'
+
   const thisYear = new Date().getFullYear()
 
   const pointRadius = 3
@@ -115,7 +117,7 @@
     {
       year: 2015, accuracy: .881,
       label: "Siamese\nNets",
-      ref: "caption_siames_nets"
+      ref: "caption_siamese_nets"
     },
     {
       year: 2013, accuracy: .962,
@@ -169,12 +171,12 @@
     }
   })
 
-  const activate = (event, point, active=true) => {
-    if (active) {
-      if (point.ref) {
-        d3.select(`.fewShotMethods-reference#${point.ref}`).attr('class', 'active fewShotMethods-reference');
-      }
+  export const activate = (event, point, active=true) => {
+    if (point.ref) {
+      highlight_caption(ref, active)
+    }
 
+    if (active) {
       tooltip.innerText = (100 * point.accuracy).toFixed(1) + "%"
 
       d3.select(tooltip)
@@ -182,26 +184,12 @@
         .style("left", (event.clientX + 16) + "px")
         .style("opacity", 1)
     } else {
-      if (point.ref) {
-        d3.select(`.fewShotMethods-reference#${point.ref}`).attr('class', 'fewShotMethods-reference')
-      }
       //tooltip.innerText = "";
       d3.select(tooltip).style("opacity", 0)
     }
   }
 
-  const jumpTo = (target) => {
-    target = document.getElementById(target)
-    if (target != null){
-      let offset = 0;
-      while (target) {
-        offset += target.offsetTop;
-        target = target.offsetParent
-      }
-      window.scrollTo(0, offset - 30)
-    }
 
-  }
 </script>
 
 

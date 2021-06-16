@@ -1,4 +1,36 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<script>
+  import {jumpTo, highlight_caption} from './util/fewShotUtil'
+  import { onMount } from 'svelte';
+
+  const jumps = {
+    maml: 'few_shot_maml',
+    siam_nets: 'caption_siamese_nets',
+    matching_nets: 'caption_matching_nets',
+    proto_nets: 'caption_prototypical_networks',
+    mann: 'caption_memory_augmented_nets',
+    meta_nets: 'caption_meta_nets',
+    lstm_based: 'caption_lstm_based'
+
+  }
+
+  onMount(() => {
+    for (const id in jumps) {
+        let element = document.getElementById(id)
+
+        element.onmouseenter = () => highlight_caption(jumps[id])
+        element.onmouseleave = () => highlight_caption(jumps[id], false)
+        element.onclick = () => jumpTo(jumps[id])
+    }
+  })
+</script>
+
+
+<style>
+  #g_interactive {
+    cursor:pointer
+  }
+</style>
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -8,8 +40,7 @@
    id="svg8"
    version="1.1"
    viewBox="0 0 236.02887 164.4377"
-   height="621.49683"
-   width="892.07764">
+   preserveAspectRatio="xMinYMin meet">
   <defs
      id="defs2">
     <marker
@@ -210,16 +241,6 @@
        cx="105.83334"
        id="path4672"
        style="fill:#ea8f8f;fill-opacity:1;stroke:#000000;stroke-width:0.69806081;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-    <text
-       id="text4678"
-       y="185.91466"
-       x="105.6828"
-       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       xml:space="preserve"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
-         y="185.91466"
-         x="105.6828"
-         id="tspan4676">MAML</tspan></text>
     <path
        id="path5006"
        d="M 69.623712,238.13386 H 22.457832"
@@ -232,48 +253,6 @@
        id="path5010"
        d="M 90.537551,241.3411 52.585279,283.43605"
        style="fill:none;stroke:#000000;stroke-width:0.55000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker5840)" />
-    <text
-       id="text5892"
-       y="236.07024"
-       x="10.581412"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       xml:space="preserve"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
-         y="236.07024"
-         x="10.581412"
-         id="tspan5890">Prototypical</tspan><tspan
-         id="tspan5894"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
-         y="241.80287"
-         x="10.581412">Networks</tspan></text>
-    <text
-       id="text5892-3"
-       y="262.60818"
-       x="19.368504"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       xml:space="preserve"><tspan
-         id="tspan6505"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
-         y="262.60818"
-         x="19.368504">Siamese</tspan><tspan
-         id="tspan5894-7"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
-         y="268.34082"
-         x="19.368504">Networks</tspan></text>
-    <text
-       id="text5892-3-5"
-       y="288.84253"
-       x="45.595314"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       xml:space="preserve"><tspan
-         id="tspan5894-7-6"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
-         y="288.84253"
-         x="45.595314">Matching</tspan><tspan
-         id="tspan6532"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
-         y="294.57516"
-         x="45.595314">Nets</tspan></text>
     <path
        id="path5010-7"
        d="m 123.33647,240.20571 46.33641,45.30775"
@@ -282,30 +261,6 @@
        id="path5010-7-7"
        d="m 137.81723,241.4274 48.0373,22.06221"
        style="fill:none;stroke:#000000;stroke-width:0.55000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker5840-2-8)" />
-    <text
-       id="text5892-3-5-4"
-       y="288.70401"
-       x="186.37207"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       xml:space="preserve"><tspan
-         id="tspan6532-8"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
-         y="288.70401"
-         x="186.37207">Meta Networks</tspan></text>
-    <text
-       id="text5892-3-5-4-5"
-       y="262.0567"
-       x="207.72772"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       xml:space="preserve"><tspan
-         id="tspan5894-7-6-1-9"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
-         y="262.0567"
-         x="207.72772">Memory-Augmented</tspan><tspan
-         id="tspan6532-8-7"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
-         y="267.78934"
-         x="207.72772">Neural Networks</tspan></text>
     <text
        transform="rotate(-30)"
        id="text8305"
@@ -332,19 +287,99 @@
        id="path5010-7-7-7"
        d="m 170.9794,218.05903 h 22.6467"
        style="fill:none;stroke:#000000;stroke-width:0.55000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker5840-2-8-3)" />
-    <text
-       id="text5892-3-5-4-5-5"
-       y="216.24573"
-       x="207.54829"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       xml:space="preserve"><tspan
-         id="tspan1502"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
+    <g
+       id="g_interactive">
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         x="105.6828"
+         y="185.91466"
+         id="maml"><tspan
+           id="tspan4676"
+           x="105.6828"
+           y="185.91466"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332">MAML</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         x="10.581412"
+         y="236.07024"
+         id="proto_nets"
+         onclick=""><tspan
+           id="tspan5890"
+           x="10.581412"
+           y="236.07024"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332">Prototypical</tspan><tspan
+           x="10.581412"
+           y="241.80287"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
+           id="tspan5894">Networks</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         x="19.368504"
+         y="262.60818"
+         id="siam_nets"><tspan
+           x="19.368504"
+           y="262.60818"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
+           id="tspan6505">Siamese</tspan><tspan
+           x="19.368504"
+           y="268.34082"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
+           id="tspan5894-7">Networks</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         x="45.595314"
+         y="288.84253"
+         id="matching_nets"><tspan
+           x="45.595314"
+           y="288.84253"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
+           id="tspan5894-7-6">Matching</tspan><tspan
+           x="45.595314"
+           y="294.57516"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
+           id="tspan6532">Nets</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         x="186.37207"
+         y="288.70401"
+         id="meta_nets"><tspan
+           x="186.37207"
+           y="288.70401"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
+           id="tspan6532-8">Meta Networks</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         x="207.72772"
+         y="262.0567"
+         id="mann"><tspan
+           x="207.72772"
+           y="262.0567"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
+           id="tspan5894-7-6-1-9">Memory-Augmented</tspan><tspan
+           x="207.72772"
+           y="267.78934"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
+           id="tspan6532-8-7">Neural Networks</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;line-height:1.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         x="207.54829"
          y="216.24573"
-         x="207.54829">LSTM-based</tspan><tspan
-         id="tspan1506"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
-         y="221.97836"
-         x="207.54829">Optimizer</tspan></text>
+         id="lstm_based"><tspan
+           x="207.54829"
+           y="216.24573"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
+           id="tspan1502">LSTM-based</tspan><tspan
+           x="207.54829"
+           y="221.97836"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611107px;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:center;text-anchor:middle;stroke-width:0.26458332"
+           id="tspan1506">Optimizer</tspan></text>
+    </g>
   </g>
 </svg>

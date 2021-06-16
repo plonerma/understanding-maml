@@ -20,6 +20,16 @@ const FewShotMethods_Component = new FewShotMethods({
 });
 
 
+import FewShotVenn from './components/fewShotVenn.html';
+target = document.querySelector('#fewShotVenn');
+target.innerHTML = '';
+const FewShotVenn_Component = new FewShotVenn({
+  target: target
+});
+
+
+
+
 
 import UserOptimizedTheta from './components/userOptimizedTheta.html';
 target = document.querySelector('#userOptimizedTheta');
