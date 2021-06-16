@@ -37,6 +37,14 @@
 	<dt-byline></dt-byline>
 
 	<p>
+		<i style="font-size: .8em;">
+			If you are already familiar with few-shot learning, and are only interested
+			in learning about MAML specifically, you may want to skip this section and
+			jump straight to the <a href="#few_shot_maml">next part</a>.
+		</i>
+	</p>
+
+	<p>
 		If you tried the little exercise above, you probably got a pretty good score.
 		Even though you likely have never seen some of the characters,
 		you are able to compare them to a another one, potentially without realizing
@@ -53,81 +61,8 @@
 		Humans, for example, are quite good at generalizing after seeing only a few
 		samples. Enabling machine learning methods to achieve the same would allow
 		for many new applications and generally reduce the need to collect huge
-		datasets.[<b>reference needed</b>]
+		datasets.[<b>TODO: reference needed</b>]
 	</p>
-
-	<figure class="l-page side">
-    <d-figure id="fewShotMethods">
-			<div class="element is-loading" style="height: 400px"></div>
-		</d-figure>
-		<figcaption>
-			<p>Results of different methods on the omniglot dataset
-				(if not stated differently: 1-shot, 20-way;
-				some differences in the evaluation procedure exist).
-				As usual, accuracy numbers need to be taken with a grain of salt as
-				differences in the evaluation method, implementation, and the model
-				complexity may a have a non-negligible impact on the performance.
-			</p>
-			<p id="caption_generative_stroke_model" class="fewShotMethods-reference">
-						The generative stroke model was introduced in the paper which also
-						introduced omniglot. The model is based on a latent stroke representation
-						(including the number and directions of strokes). While it is an
-						interesting approach, it can hardly be generalized to other
-						few-shot problems.<dt-cite key="lake_one_2011"></dt-cite>
-			</p>
-			<p id="caption_hierachical_bayesian_program_learning" class="fewShotMethods-reference">
-						The same authors improved the model by learning latent
-						primitive motor elements and called this process "Hierarchial
-						Bayesian Program Learning" (HBPL).
-						While the accuracy was greatly increased, it also
-						is focused on symbol learning.
-						<dt-cite key="lake_one-shot_2013"></dt-cite>
-			</p>
-			<p id="caption_siamese_nets" class="fewShotMethods-reference">
-						Siames Nets consist of two identical networks which produce a latent representation.
-						From the representations of two samples, a distance is calculated to
-						assess the similarity of the two samples.<dt-cite key="koch_siamese_2015"></dt-cite>
-						The result (accuracy of 88.1%) results from a reimplementaion of the method which
-						makes it more comparable.
-						<dt-cite key="vinyals_matching_2017"></dt-cite>
-
-			</p>
-			<p id="caption_matching_nets" class="fewShotMethods-reference">
-						Matching Networks also work by comparing new samples to labeled
-						examples. They do so by utilizing an attention kernel.
-						Though the second version of the paper is cited here,
-						it was first published in 2016.
-						<dt-cite key="vinyals_matching_2017"></dt-cite>
-			</p>
-
-			<p id="caption_prototypical_networks" class="fewShotMethods-reference">
-					Prototypical Networks
-					<dt-cite key="snell_prototypical_2017"></dt-cite>
-			</p>
-
-			<p id="caption_memory_augmented_nets" class="fewShotMethods-reference">
-				Memory Augmented Networks
-				<dt-cite key="santoro_meta-learning_2016"></dt-cite>
-			</p>
-
-			<p id="caption_meta_nets" class="fewShotMethods-reference">
-				Meta Networks
-				<dt-cite key="munkhdalai_meta_2017"></dt-cite>
-			</p>
-
-		</figcaption>
-  </figure>
-
-	<figure class="l-page side">
-		<d-figure id="fewShotVenn">
-			<div class="element is-loading" style="height: 300px"></div>
-		</d-figure>
-		<figcaption>
-			<p id="caption_lstm_based" class="fewShotMethods-reference">
-						[...]
-			</p>
-		</figcaption>
-	</figure>
 
 	<p>
 		This research area is called "few-shot learning". It aims to enable models
@@ -157,6 +92,86 @@
 		The learning of this meta-knowledge is referred to as "meta-learning".
 	</p>
 
+	<figure class="l-page side">
+    <d-figure id="fewShotMethods">
+			<div class="element is-loading" style="height: 400px"></div>
+		</d-figure>
+		<figcaption>
+			<p>Results of different methods on the omniglot dataset
+				(if not stated differently: 1-shot, 20-way;
+				some differences in the evaluation procedure exist).
+				As usual, accuracy numbers need to be taken with a grain of salt as
+				differences in the evaluation method, implementation, and the model
+				complexity may a have a non-negligible impact on the performance.
+			</p>
+			<p id="caption_generative_stroke_model" class="fewShotMethods-reference">
+				The generative stroke model was introduced in the paper which also
+				introduced omniglot. The model is based on a latent stroke representation
+				(including the number and directions of strokes). While it is an
+				interesting approach, it can hardly be generalized to other
+				few-shot problems.<dt-cite key="lake_one_2011"></dt-cite>
+			</p>
+			<p id="caption_hierachical_bayesian_program_learning" class="fewShotMethods-reference">
+				The same authors improved the model by learning latent
+				primitive motor elements and called this process "Hierarchial
+				Bayesian Program Learning" (HBPL).
+				While the accuracy was greatly increased, it also
+				is focused on symbol learning.
+				<dt-cite key="lake_one-shot_2013"></dt-cite>
+			</p>
+			<p id="caption_siamese_nets" class="fewShotMethods-reference">
+				Siames Nets consist of two identical networks which produce a latent representation.
+				From the representations of two samples, a distance is calculated to
+				assess the similarity of the two samples.<dt-cite key="koch_siamese_2015"></dt-cite>
+				The result (accuracy of 88.1%) results from a reimplementaion of the method which
+				makes it more comparable.
+				<dt-cite key="vinyals_matching_2017"></dt-cite>
+			</p>
+			<p id="caption_matching_nets" class="fewShotMethods-reference">
+				Matching Networks also work by comparing new samples to labeled
+				examples. They do so by utilizing an attention kernel.
+				Though the second version of the paper is cited here,
+				it was first published in 2016.
+				<dt-cite key="vinyals_matching_2017"></dt-cite>
+			</p>
+
+			<p id="caption_prototypical_networks" class="fewShotMethods-reference">
+				Prototypical Networks use prototype vectors to represent each class
+				in the metric space. The nearest neighbor (i.e. the closest prototype)
+				of a sample then determines the prediction.
+				<dt-cite key="snell_prototypical_2017"></dt-cite>
+			</p>
+
+			<p id="caption_memory_augmented_nets" class="fewShotMethods-reference">
+				Memory-Augmented Networks (MANNs) use an external memory to make accurate
+				predictions using a small number of samples.
+				<dt-cite key="santoro_meta-learning_2016"></dt-cite>
+			</p>
+
+			<p id="caption_meta_nets" class="fewShotMethods-reference">
+				MetaNets [<b>TODO: short description</b>]
+				<dt-cite key="munkhdalai_meta_2017"></dt-cite>
+			</p>
+
+		</figcaption>
+  </figure>
+
+	<figure class="l-page side">
+		<d-figure id="fewShotVenn">
+			<div class="element is-loading" style="height: 300px"></div>
+		</d-figure>
+		<figcaption>
+			<p id="caption_lstm_based" class="fewShotMethods-reference">
+					Applications of Meta-Learning outside the domain of few-shot learning
+					include the optimization of the task-level optimizer using
+					a LSTM network.
+					<dt-cite key="andrychowicz_learning_2016"></dt-cite>
+			</p>
+		</figcaption>
+	</figure>
+
+
+
 	<p>
 		Plenty of methods have been proposed in the last years to tackle few-shot
 		learning using the meta-learning assumption,
@@ -170,10 +185,56 @@
 	<p>
 		Before we get started with the explanation of how MAML works,
 		we want to take a moment to look at what is Model-Agnostic about MAML.
-		In order to understand, why
+		In order to understand, why this method is called "model-agnostic", we need
+		to look at how the few-shot problem was tackled by other approaches.
+		While there are methods, which try to mitigate the issues introduced by the
+		the few-shot constraint, many do resort to adopting the meta-learning
+		assumption. These methods can broadly be divided into two classes:
+		metric-based and model-based approaches.
+	</p>
+	<p>
+		The core idea of metric-based approaches is two compare two samples in a
+		latent (metric) space: In this space, samples of the same class are supposed
+		to be close to each other, while two samplese from different classes are
+		supposed to have a large distance (the notion of a distance is what makes
+		the latent space a metric space). These approaches often require "episodic"
+		training: The training samples are arranged such that the intra-class
+		distances can be minimized while maximizing the inter-class distances.
+		This kind of training is called "episodic training".
+		[<b>TODO: citation needed</b>]
+		Some methods even resort to training on triplets where two sample are from
+		the same class, while the third is from another class. Then the distance
+		to the intra-class distance can be directly compared to an inter-class
+		distance.
+		Some methods already include a means of classifying samples using the metric
+		(e.g. Prototypical Networks <dt-cite key="snell_prototypical_2017"></dt-cite>)
+		while some can be conceived of implementing as kernels which can be used
+		to classify samples by some other means (e.g. nearest-neighbor).
+	</p>
+	<p>
+		Model-based approaches are neural architectures which are deliberately designed
+		for fast adaption to new tasks without inclining to overfit.
+		Memory-Augmented Neural Networks and MetaNet are two examples. Both employ
+		an external memory while still maintaining the ability to be trained
+		end-to-end.
+		<dt-cite key="santoro_meta-learning_2016"></dt-cite>
+		<dt-cite key="munkhdalai_meta_2017"></dt-cite>
 	</p>
 
-	<p><strong>[...]</strong></p>
+	<p>
+		MAML goes a different route: The nerual network is designed the same way
+		your usual model might be (in the many-shot case). All the magic happens during the
+		optimization. Hence, it is called "optimization-based".
+		Unlike, metric-based and model-based approaches, MAML lets
+		you choose the model architecture as you like.
+		This has the great benefit of being applicable can not only for
+		classical supervised learning classification tasks but can also
+		for reinforcement learning.
+		<dt-cite key="finn2017modelagnostic"></dt-cite>
+	</p>
+	<p>
+		In the next seciton, you will learn how this is achieved.
+	</p>
 
   <h2 id="few_shot_maml">Few-shot learning with MAML</h2>
   <p>To get familiar with the problem and also to motivate the need for meta-learning we start with something you probably already know
@@ -358,6 +419,23 @@
 	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning},
 	annote = {Comment: Accepted at ICML 2017 - rewrote: the main section; added: MetaNet algorithmic procedure; performed: Mini-ImageNet evaluation},
 }
+
+
+
+
+@article{andrychowicz_learning_2016,
+	title = {Learning to learn by gradient descent by gradient descent},
+	url = {http://arxiv.org/abs/1606.04474},
+	abstract = {The move from hand-designed features to learned features in machine learning has been wildly successful. In spite of this, optimization algorithms are still designed by hand. In this paper we show how the design of an optimization algorithm can be cast as a learning problem, allowing the algorithm to learn to exploit structure in the problems of interest in an automatic way. Our learned algorithms, implemented by LSTMs, outperform generic, hand-designed competitors on the tasks for which they are trained, and also generalize well to new tasks with similar structure. We demonstrate this on a number of tasks, including simple convex problems, training neural networks, and styling images with neural art.},
+	urldate = {2021-06-12},
+	journal = {arXiv:1606.04474 [cs]},
+	author = {Andrychowicz, Marcin and Denil, Misha and Gomez, Sergio and Hoffman, Matthew W. and Pfau, David and Schaul, Tom and Shillingford, Brendan and de Freitas, Nando},
+	month = nov,
+	year = {2016},
+	note = {arXiv: 1606.04474},
+	keywords = {Computer Science - Machine Learning, Computer Science - Neural and Evolutionary Computing}
+}
+
 
 
 </script>
