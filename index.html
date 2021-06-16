@@ -174,10 +174,10 @@
 	<p><strong>[...]</strong></p>
 
   <h2 id="few_shot_maml">Few-shot learning with MAML</h2>
-  <p>To get familiar with the problem and also to motivate the need for meta-learning we start with something you probably already know
-    and develop it to something new. If you have done machine learning before you have probably already solved or attempted to solve a
-    trivial special case of meta-learning: Learning a model to solve one specific task, for example to classify images or to teach an agent
-    to find its way through a maze. In those settings, if we are able to define a loss \(\mathcal{L}_\tau\) for our task \(\tau\) which depends on the parameters
+  <p>Model-Agnostic Meta Learning is a meta-learning approach to solve few-shot learning. We are now going to have a look at the method and see what makes it <i>meta</i>. 
+	But before we see the method unfold, take a look at the following setting: If you have done machine learning before you have probably already solved or attempted to solve such a problem: 
+	Learning a model to solve one specific task, for example to classify a specific collection of images or to teach an agent
+    to find its way through a specific maze. In those settings, if we are able to define a loss \(\mathcal{L}_\tau\) for our task \(\tau\) which depends on the parameters
     \(\phi\) of a model, we can express our learning objective as
 
     \[ \underset{\phi}{\text{min}} \, \mathcal{L}_\tau (\phi) .\]
@@ -188,20 +188,20 @@
     \[ \phi \leftarrow \phi - \alpha \nabla_\phi \mathcal{L}_\tau (\phi) ,\]
 
     also known as gradient descent, where \(\mathcal{L}_\tau\) usually also depends on some data and \(\alpha\) is a fixed learning rate,
-    controlling the size of the steps we want to take.
+    controlling the size of the steps we want to take. 
   </p>
-  <p>We will now make an additional assumption, namely that \(\tau\) comes from some distribution of tasks \(p(\tau)\) and that we
+  <p>Unfortunately, when framing this in a few-shot setting (i.e., with a very small dataset), the above method is known to fail almost certaintly [REF]. A key insight to MAML is now to 
+	bypass this problem by learning not only from the data regarding exactly our task, but to learn also from data of similar tasks.
+	To incorporate this we make an additional assumption, namely that \(\tau\) comes from some distribution of tasks \(p(\tau)\) and that we
     can sample freely from this distribution. We can then generalize the above objective to learn how to find an
-    optimization strategy for a randomly sampled task from \(p(\tau)\). If we additionally ensure that the optimization strategy requires observing only
-    a few samples from this task, we
-    would have come up with a solution to few-shot learning for tasks from \(p(\tau)\). We
-    can express our new learning objective as follows:
+    optimization strategy for a randomly sampled task from \(p(\tau)\), which we can express as follows:
 
     \[ \text{min} \, \mathbb{E}_\tau [ \mathcal{L}_\tau (\phi_\tau) ] ,\]
 
-    where \(\tau\) is now a random variable and \(\phi_\tau\) are a set of parameters for task \(\tau\), which is nothing more than a practical way to formalize really.
-    We may use different parameters for each task, use the same parameters for every task or something in between. But anyway, how
-    are we actually minimizing this new objective? In the following we will explore two possible answers to this question.
+    where \(\tau\) is now a random variable and \(\phi_\tau\) are a set of parameters for task \(\tau\), which is nothing more than clean notation really.
+    We may use different parameters for each task, use the same parameters for every task or something in between. 
+	However, having set our optimization objective, two important issues arise.
+	But anyway, how are we actually minimizing this new objective? In the following we will explore two possible answers to this question.
   </p>
   <h3>Answer 1: Just do gradient descent, silly!</h3>
   <p>Of course! The answer to most problems. We can simply learn a single set of parameters \(\phi\) which minimizes the expected loss
@@ -214,14 +214,27 @@
 
     \[ \phi \leftarrow \phi - \alpha \nabla_\phi \sum_i \mathcal{L}_{\tau_i} (\phi) .\]
 
-    To make this a bit more robust we can also use an optimizer using an adaptive step size, e.g. <i>Adam</i>. In the following figure
-    you can experiment with a model that was trained in exactly this way.
+    To make this a bit more robust we can also use an optimizer using an adaptive step size, e.g. <i>Adam</i>. Finn et al. call this model <i>pretrained</i>.
+	In the following figure you can experiment with <i>pretrained</i> model which was trained by a collection of sinusoid regression tasks.
   </p>
 
   <figure>
     <d-figure id="fitSinePretrained"></d-figure>
   </figure>
+  <p>Ouch! That doesn't seem to work that well. Maybe you have already guessed that this would have been to easy. The problem that the above approach faces is that the optimal parameters of 
+	  different tasks might live in completely different loss spaces. Take for example the following two tasks (which were probably both part of the training set of the <i>pretrained</i> model):
+	  Tasks \(\tau_1, \tau_2\) are both regression tasks on sinusoids \(y_1(x) := \sin (x - \frac{\pi}{2})\) and \(y_2(x) := \sin (x + \frac{\pi}{2})\) respectively. These two tasks will 
+	  give the <i>pretrained</i> model completely contradicting information as 
 
+	  \[ y_1(x) = - y_2(x) \].
+
+	  Intuitively this is because the vanilla gradient descent approach is always just fitting one particular function (of which we assume not have enough data) and thus fails upon receiving information 
+	  that does not stem from said function. Maybe answer 2 will be better... 
+  </p>
+
+  <h3>Just do Model-Agnostic Meta-Learning, silly!</h3>
+  <p>
+  </p>
 
   <p>If we want to use equations we can either write inline, e.g. saying that we intitalize \(\alpha = 0.01\), or in its own paragraph, e.g. saying we then learn our updates via
     \[ \theta_i' = \theta - \alpha \nabla_\theta \mathcal{L}_{\mathcal{T}_i} (f_\theta) .\]
