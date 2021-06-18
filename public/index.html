@@ -197,19 +197,10 @@
 		latent (metric) space: In this space, samples of the same class are supposed
 		to be close to each other, while two samplese from different classes are
 		supposed to have a large distance (the notion of a distance is what makes
-		the latent space a metric space). These approaches often require "episodic"
-		training: The training samples are arranged such that the intra-class
-		distances can be minimized while maximizing the inter-class distances.
-		This kind of training is called "episodic training".
-		[<b>TODO: citation needed</b>]
-		Some methods even resort to training on triplets where two sample are from
-		the same class, while the third is from another class. Then the distance
-		to the intra-class distance can be directly compared to an inter-class
-		distance.
-		Some methods already include a means of classifying samples using the metric
-		(e.g. Prototypical Networks <dt-cite key="snell_prototypical_2017"></dt-cite>)
-		while some can be conceived of implementing as kernels which can be used
-		to classify samples by some other means (e.g. nearest-neighbor).
+		the latent space a metric space).
+		<dt-cite key="snell_prototypical_2017"></dt-cite>
+		<dt-cite key="koch_siamese_2015"></dt-cite>
+		<dt-cite key="vinyals_matching_2017"></dt-cite>
 	</p>
 	<p>
 		Model-based approaches are neural architectures which are deliberately designed
