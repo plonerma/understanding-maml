@@ -8,7 +8,7 @@ import FewShotVenn from './components/fewShotVenn.html';
 import UserOptimizedTheta from './components/userOptimizedTheta.html';
 import MetaGradient from './components/metaGradient.html'
 import FitSinePretrained from './components/fitSinePretrained.html'
-
+import FitSineMaml from './components/fitSineMaml.html'
 
 const componentMap = {
   '#teaser': Teaser,
@@ -16,7 +16,8 @@ const componentMap = {
   '#fewShotVenn': FewShotVenn,
   '#userOptimizedTheta': UserOptimizedTheta,
   '#metaGradient': MetaGradient,
-  '#fitSinePretrained': FitSinePretrained
+  '#fitSinePretrained': FitSinePretrained,
+  '#fitSineMaml': FitSineMaml
 }
 
 

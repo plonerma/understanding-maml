@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Visual Comparison of Model-Agnostic Meta-Learning 👩‍🔬</title>
-		<meta charset="UTF-8"/>
-		<link rel="stylesheet" href="build/bundle.css">
-  </head>
-  <body>
-    <script async src="https://distill.pub/template.v1.js"></script>
-    <script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
-    <script defer src="build/bundle.js"></script>
 
-<script type="text/front-matter">
+<head>
+	<title>Visual Comparison of Model-Agnostic Meta-Learning 👩‍🔬</title>
+	<meta charset="UTF-8" />
+	<link rel="stylesheet" href="build/bundle.css">
+</head>
+
+<body>
+	<script async src="https://distill.pub/template.v1.js"></script>
+	<script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+	<script defer src="build/bundle.js"></script>
+
+	<script type="text/front-matter">
   title: "Visual Comparison of Model-Agnostic Meta-Learning"
   description: "t.b.d."
   authors:
@@ -22,289 +24,400 @@
   - NI @ TU Berlin: https://www.ni.tu-berlin.de/menue/neural_information_processing_group/
 </script>
 
-<dt-article>
-	<h1>A Visual Comparison of Model-Agnostic Meta-Learning</h1>
-	<h2>Exploring the world of model-agnostic meta-learning and its extensions.</h2>
-	<figure class="l-page">
-    <d-figure id="teaser">
-			<div class="element is-loading" style="height: 400px"></div>
-		</d-figure>
-		<figcaption>
-			Click button or drag sample onto example to classify the sample.
-		</figcaption>
-  </figure>
+	<dt-article>
+		<h1>A Visual Comparison of Model-Agnostic Meta-Learning</h1>
+		<h2>Exploring the world of model-agnostic meta-learning and its extensions.</h2>
+		<figure class="l-page">
+			<d-figure id="teaser">
+				<div class="element is-loading" style="height: 400px"></div>
+			</d-figure>
+			<figcaption>
+				Click button or drag sample onto example to classify the sample.
+			</figcaption>
+		</figure>
 
-	<dt-byline></dt-byline>
+		<dt-byline></dt-byline>
 
-	<p>
-		<i style="font-size: .8em;">
-			If you are already familiar with few-shot learning, and are only interested
-			in learning about MAML specifically, you may want to skip this section and
-			jump straight to the <a href="#few_shot_maml">next part</a>.
-		</i>
-	</p>
+		<p>
+			<i style="font-size: .8em;">
+				If you are already familiar with few-shot learning, and are only interested
+				in learning about MAML specifically, you may want to skip this section and
+				jump straight to the <a href="#few_shot_maml">next part</a>.
+			</i>
+		</p>
 
-	<p>
-		If you tried the little exercise above, you probably got a pretty good score.
-		Even though you likely have never seen some of the characters,
-		you are able to compare them to a another one, potentially without realizing
-		that what you are doing is actually pretty impressive!
-	</p>
+		<p>
+			If you tried the little exercise above, you probably got a pretty good score.
+			Even though you likely have never seen some of the characters,
+			you are able to compare them to a another one, potentially without realizing
+			that what you are doing is actually pretty impressive!
+		</p>
 
-	<h3>Few-Shot Learning</h3>
+		<h3>Few-Shot Learning</h3>
 
-	<p>
-		Typically, in machine learning we need a lot of examples to be able to
-		classify a class. But not always do we have enough data to cater this need:
-		a sufficient amount of data may be expensive or even impossible to acquire.
-		But there is good reasons to believe, that this is not an inherent issue of learning.
-		Humans, for example, are quite good at generalizing after seeing only a few
-		samples. Enabling machine learning methods to achieve the same would allow
-		for many new applications and generally reduce the need to collect huge
-		datasets.[<b>TODO: reference needed</b>]
-	</p>
+		<p>
+			Typically, in machine learning we need a lot of examples to be able to
+			classify a class. But not always do we have enough data to cater this need:
+			a sufficient amount of data may be expensive or even impossible to acquire.
+			But there is good reasons to believe, that this is not an inherent issue of learning.
+			Humans, for example, are quite good at generalizing after seeing only a few
+			samples. Enabling machine learning methods to achieve the same would allow
+			for many new applications and generally reduce the need to collect huge
+			datasets.[<b>TODO: reference needed</b>]
+		</p>
 
-	<p>
-		This research area is called "few-shot learning". It aims to enable models
-		to classify unseen sampels after training only one a few examples ("shots").
-		The little exercise at the top of the article is an exmaple of such a task.
-		The symbols are part of a dataset called "omniglot". <dt-cite key="lake_one_2011"></dt-cite>
-		It contains 1623 different characters across 50 alphabets and each character
-		has 20 instances drawn by different people. Because of that, the omniglot
-		was described as a "transpose" of the well-known MNIST dataset, by the authors
-		who originally proposed omniglot as a machine learning dataset. <dt-cite key="lake_one_2011"></dt-cite>
-		While MNIST contains only a few classes (the digits 0 to 9) and many instances,
-		of each class, with omniglot it is vice-versa.
-	</p>
+		<p>
+			This research area is called "few-shot learning". It aims to enable models
+			to classify unseen sampels after training only one a few examples ("shots").
+			The little exercise at the top of the article is an exmaple of such a task.
+			The symbols are part of a dataset called "omniglot". <dt-cite key="lake_one_2011"></dt-cite>
+			It contains 1623 different characters across 50 alphabets and each character
+			has 20 instances drawn by different people. Because of that, the omniglot
+			was described as a "transpose" of the well-known MNIST dataset, by the authors
+			who originally proposed omniglot as a machine learning dataset. <dt-cite key="lake_one_2011"></dt-cite>
+			While MNIST contains only a few classes (the digits 0 to 9) and many instances,
+			of each class, with omniglot it is vice-versa.
+		</p>
 
 
 
-	<p>
-		By now, you may be asking yourself: How can a model learn from only one example
-		(i.e. "one-shot") and why do I even need a dataset like omniglot
-		if the model is supposed to learn from one sample?
-		While clearly one sample is not enough for a model without prior knowledge,
-		we can pretrain models on tasks that we assume to be similar to the target tasks. This is
-		the general idea of few-shot learning: derive some inductive bias
-		from other classes in order to perform better on newly encountered classes.
-		This similarity assumption allows the model to collect meta-knowledge:
-		knowledge which does not describe a single task, but a distribution of tasks.
-		The learning of this meta-knowledge is referred to as "meta-learning".
-	</p>
+		<p>
+			By now, you may be asking yourself: How can a model learn from only one example
+			(i.e. "one-shot") and why do I even need a dataset like omniglot
+			if the model is supposed to learn from one sample?
+			While clearly one sample is not enough for a model without prior knowledge,
+			we can pretrain models on tasks that we assume to be similar to the target tasks. This is
+			the general idea of few-shot learning: derive some inductive bias
+			from other classes in order to perform better on newly encountered classes.
+			This similarity assumption allows the model to collect meta-knowledge:
+			knowledge which does not describe a single task, but a distribution of tasks.
+			The learning of this meta-knowledge is referred to as "meta-learning".
+		</p>
 
-	<figure class="l-page side">
-    <d-figure id="fewShotMethods">
-			<div class="element is-loading" style="height: 400px"></div>
-		</d-figure>
-		<figcaption>
-			<p>Results of different methods on the omniglot dataset
-				(if not stated differently: 1-shot, 20-way;
-				some differences in the evaluation procedure exist).
-				As usual, accuracy numbers need to be taken with a grain of salt as
-				differences in the evaluation method, implementation, and the model
-				complexity may a have a non-negligible impact on the performance.
-			</p>
-			<p id="caption_generative_stroke_model" class="fewShotMethods-reference">
-				The generative stroke model was introduced in the paper which also
-				introduced omniglot. The model is based on a latent stroke representation
-				(including the number and directions of strokes). While it is an
-				interesting approach, it can hardly be generalized to other
-				few-shot problems.<dt-cite key="lake_one_2011"></dt-cite>
-			</p>
-			<p id="caption_hierachical_bayesian_program_learning" class="fewShotMethods-reference">
-				The same authors improved the model by learning latent
-				primitive motor elements and called this process "Hierarchial
-				Bayesian Program Learning" (HBPL).
-				While the accuracy was greatly increased, it also
-				is focused on symbol learning.
-				<dt-cite key="lake_one-shot_2013"></dt-cite>
-			</p>
-			<p id="caption_siamese_nets" class="fewShotMethods-reference">
-				Siames Nets consist of two identical networks which produce a latent representation.
-				From the representations of two samples, a distance is calculated to
-				assess the similarity of the two samples.<dt-cite key="koch_siamese_2015"></dt-cite>
-				The result (accuracy of 88.1%) results from a reimplementaion of the method which
-				makes it more comparable.
-				<dt-cite key="vinyals_matching_2017"></dt-cite>
-			</p>
-			<p id="caption_matching_nets" class="fewShotMethods-reference">
-				Matching Networks also work by comparing new samples to labeled
-				examples. They do so by utilizing an attention kernel.
-				Though the second version of the paper is cited here,
-				it was first published in 2016.
-				<dt-cite key="vinyals_matching_2017"></dt-cite>
-			</p>
+		<figure class="l-page side">
+			<d-figure id="fewShotMethods">
+				<div class="element is-loading" style="height: 400px"></div>
+			</d-figure>
+			<figcaption>
+				<p>Results of different methods on the omniglot dataset
+					(if not stated differently: 1-shot, 20-way;
+					some differences in the evaluation procedure exist).
+					As usual, accuracy numbers need to be taken with a grain of salt as
+					differences in the evaluation method, implementation, and the model
+					complexity may a have a non-negligible impact on the performance.
+				</p>
+				<p id="caption_generative_stroke_model" class="fewShotMethods-reference">
+					The generative stroke model was introduced in the paper which also
+					introduced omniglot. The model is based on a latent stroke representation
+					(including the number and directions of strokes). While it is an
+					interesting approach, it can hardly be generalized to other
+					few-shot problems.<dt-cite key="lake_one_2011"></dt-cite>
+				</p>
+				<p id="caption_hierachical_bayesian_program_learning" class="fewShotMethods-reference">
+					The same authors improved the model by learning latent
+					primitive motor elements and called this process "Hierarchial
+					Bayesian Program Learning" (HBPL).
+					While the accuracy was greatly increased, it also
+					is focused on symbol learning.
+					<dt-cite key="lake_one-shot_2013"></dt-cite>
+				</p>
+				<p id="caption_siamese_nets" class="fewShotMethods-reference">
+					Siames Nets consist of two identical networks which produce a latent representation.
+					From the representations of two samples, a distance is calculated to
+					assess the similarity of the two samples.<dt-cite key="koch_siamese_2015"></dt-cite>
+					The result (accuracy of 88.1%) results from a reimplementaion of the method which
+					makes it more comparable.
+					<dt-cite key="vinyals_matching_2017"></dt-cite>
+				</p>
+				<p id="caption_matching_nets" class="fewShotMethods-reference">
+					Matching Networks also work by comparing new samples to labeled
+					examples. They do so by utilizing an attention kernel.
+					Though the second version of the paper is cited here,
+					it was first published in 2016.
+					<dt-cite key="vinyals_matching_2017"></dt-cite>
+				</p>
 
-			<p id="caption_prototypical_networks" class="fewShotMethods-reference">
-				Prototypical Networks use prototype vectors to represent each class
-				in the metric space. The nearest neighbor (i.e. the closest prototype)
-				of a sample then determines the prediction.
-				<dt-cite key="snell_prototypical_2017"></dt-cite>
-			</p>
+				<p id="caption_prototypical_networks" class="fewShotMethods-reference">
+					Prototypical Networks use prototype vectors to represent each class
+					in the metric space. The nearest neighbor (i.e. the closest prototype)
+					of a sample then determines the prediction.
+					<dt-cite key="snell_prototypical_2017"></dt-cite>
+				</p>
 
-			<p id="caption_memory_augmented_nets" class="fewShotMethods-reference">
-				Memory-Augmented Networks (MANNs) use an external memory to make accurate
-				predictions using a small number of samples.
-				<dt-cite key="santoro_meta-learning_2016"></dt-cite>
-			</p>
+				<p id="caption_memory_augmented_nets" class="fewShotMethods-reference">
+					Memory-Augmented Networks (MANNs) use an external memory to make accurate
+					predictions using a small number of samples.
+					<dt-cite key="santoro_meta-learning_2016"></dt-cite>
+				</p>
 
-			<p id="caption_meta_nets" class="fewShotMethods-reference">
-				Meta Networks utilize a base learner (task level) and a meta learner
-				as well as a set of slow and rapid weights in order to allow
-				meta learning as well as task-specific concepts.
-				<dt-cite key="munkhdalai_meta_2017"></dt-cite>
-			</p>
+				<p id="caption_meta_nets" class="fewShotMethods-reference">
+					Meta Networks utilize a base learner (task level) and a meta learner
+					as well as a set of slow and rapid weights in order to allow
+					meta learning as well as task-specific concepts.
+					<dt-cite key="munkhdalai_meta_2017"></dt-cite>
+				</p>
 
-		</figcaption>
-  </figure>
+			</figcaption>
+		</figure>
 
-	<figure class="l-page side">
-		<d-figure id="fewShotVenn">
-			<div class="element is-loading" style="height: 300px"></div>
-		</d-figure>
-		<figcaption>
-			<p id="caption_lstm_based" class="fewShotMethods-reference">
+		<figure class="l-page side">
+			<d-figure id="fewShotVenn">
+				<div class="element is-loading" style="height: 300px"></div>
+			</d-figure>
+			<figcaption>
+				<p id="caption_lstm_based" class="fewShotMethods-reference">
 					Applications of Meta-Learning outside the domain of few-shot learning
 					include the optimization of the task-level optimizer using
 					a LSTM network.
 					<dt-cite key="andrychowicz_learning_2016"></dt-cite>
-			</p>
-		</figcaption>
-	</figure>
+				</p>
+			</figcaption>
+		</figure>
 
 
 
-	<p>
-		Plenty of methods have been proposed in the last years to tackle few-shot
-		learning using the meta-learning assumption,
-		and many are able to produce decent results.
-		In this article, we will focus
-		on one of them: "Model-Agnostic Meta-Learning" (MAML).
-	</p>
+		<p>
+			Plenty of methods have been proposed in the last years to tackle few-shot
+			learning using the meta-learning assumption,
+			and many are able to produce decent results.
+			In this article, we will focus
+			on one of them: "Model-Agnostic Meta-Learning" (MAML).
+		</p>
 
-	<h3>Model-Agnostic Meta-Learning</h3>
+		<h3>Model-Agnostic Meta-Learning</h3>
 
-	<p>
-		Before we get started with the explanation of how MAML works,
-		we want to take a moment to look at what is Model-Agnostic about MAML.
-		In order to understand, why this method is called "model-agnostic", we need
-		to look at how the few-shot problem was tackled by other approaches.
-		While there are methods, which try to mitigate the issues introduced by the
-		the few-shot constraint, many do resort to adopting the meta-learning
-		assumption. These methods can broadly be divided into two classes:
-		metric-based and model-based approaches.
-	</p>
-	<p>
-		The core idea of metric-based approaches is two compare two samples in a
-		latent (metric) space: In this space, samples of the same class are supposed
-		to be close to each other, while two samplese from different classes are
-		supposed to have a large distance (the notion of a distance is what makes
-		the latent space a metric space).
-		<dt-cite key="snell_prototypical_2017"></dt-cite>
-		<dt-cite key="koch_siamese_2015"></dt-cite>
-		<dt-cite key="vinyals_matching_2017"></dt-cite>
-	</p>
-	<p>
-		Model-based approaches are neural architectures which are deliberately designed
-		for fast adaption to new tasks without inclining to overfit.
-		Memory-Augmented Neural Networks and MetaNet are two examples. Both employ
-		an external memory while still maintaining the ability to be trained
-		end-to-end.
-		<dt-cite key="santoro_meta-learning_2016"></dt-cite>
-		<dt-cite key="munkhdalai_meta_2017"></dt-cite>
-	</p>
+		<p>
+			Before we get started with the explanation of how MAML works,
+			we want to take a moment to look at what is Model-Agnostic about MAML.
+			In order to understand, why this method is called "model-agnostic", we need
+			to look at how the few-shot problem was tackled by other approaches.
+			While there are methods, which try to mitigate the issues introduced by the
+			the few-shot constraint, many do resort to adopting the meta-learning
+			assumption. These methods can broadly be divided into two classes:
+			metric-based and model-based approaches.
+		</p>
+		<p>
+			The core idea of metric-based approaches is two compare two samples in a
+			latent (metric) space: In this space, samples of the same class are supposed
+			to be close to each other, while two samplese from different classes are
+			supposed to have a large distance (the notion of a distance is what makes
+			the latent space a metric space).
+			<dt-cite key="snell_prototypical_2017"></dt-cite>
+			<dt-cite key="koch_siamese_2015"></dt-cite>
+			<dt-cite key="vinyals_matching_2017"></dt-cite>
+		</p>
+		<p>
+			Model-based approaches are neural architectures which are deliberately designed
+			for fast adaption to new tasks without inclining to overfit.
+			Memory-Augmented Neural Networks and MetaNet are two examples. Both employ
+			an external memory while still maintaining the ability to be trained
+			end-to-end.
+			<dt-cite key="santoro_meta-learning_2016"></dt-cite>
+			<dt-cite key="munkhdalai_meta_2017"></dt-cite>
+		</p>
 
-	<p>
-		MAML goes a different route: The nerual network is designed the same way
-		your usual model might be (in the many-shot case). All the magic happens during the
-		optimization. Hence, it is called "optimization-based".
-		Unlike, metric-based and model-based approaches, MAML lets
-		you choose the model architecture as you like.
-		This has the great benefit of being applicable can not only for
-		classical supervised learning classification tasks but can also
-		for reinforcement learning.
-		<dt-cite key="finn2017modelagnostic"></dt-cite>
-	</p>
-	<p>
-		In the next seciton, you will learn how this is achieved.
-	</p>
+		<p>
+			MAML goes a different route: The nerual network is designed the same way
+			your usual model might be (in the many-shot case). All the magic happens during the
+			optimization. Hence, it is called "optimization-based".
+			Unlike, metric-based and model-based approaches, MAML lets
+			you choose the model architecture as you like.
+			This has the great benefit of being applicable can not only for
+			classical supervised learning classification tasks but can also
+			for reinforcement learning.
+			<dt-cite key="finn2017modelagnostic"></dt-cite>
+		</p>
+		<p>
+			In the next seciton, you will learn how this is achieved.
+		</p>
 
-  <h2 id="few_shot_maml">Few-shot learning with MAML</h2>
-  <p>To get familiar with the problem and also to motivate the need for meta-learning we start with something you probably already know
-    and develop it to something new. If you have done machine learning before you have probably already solved or attempted to solve a
-    trivial special case of meta-learning: Learning a model to solve one specific task, for example to classify images or to teach an agent
-    to find its way through a maze. In those settings, if we are able to define a loss \(\mathcal{L}_\tau\) for our task \(\tau\) which depends on the parameters
-    \(\phi\) of a model, we can express our learning objective as
+		<h2 id="few_shot_maml">Few-shot learning with MAML</h2>
+		<p>Model-Agnostic Meta Learning is a meta-learning approach to solve few-shot learning. We are now going to have
+			a look at the method and see what makes it <i>meta</i>.
+			But before we see the method unfold, take a look at the following setting: If you have done machine learning
+			before you have probably already solved or attempted to solve such a problem:
+			Learning a model to solve one specific task, for example to classify a specific collection of images or to
+			teach an agent
+			to find its way through a specific maze. In those settings, if we are able to define a loss
+			\(\mathcal{L}_\tau\) for our task \(\tau\) which depends on the parameters
+			\(\phi\) of a model, we can express our learning objective as
 
-    \[ \underset{\phi}{\text{min}} \, \mathcal{L}_\tau (\phi) .\]
+			\[ \underset{\phi}{\text{min}} \, \mathcal{L}_\tau (\phi) .\]
 
-    We usually find the optimal \(\phi\) by progressively walking along the direction of the gradient of
-    \(\mathcal{L}_\tau\) with respect to \(\phi\), i.e.
+			We usually find the optimal \(\phi\) by progressively walking along the direction of the gradient of
+			\(\mathcal{L}_\tau\) with respect to \(\phi\), i.e.
 
-    \[ \phi \leftarrow \phi - \alpha \nabla_\phi \mathcal{L}_\tau (\phi) ,\]
+			\[ \phi \leftarrow \phi - \alpha \nabla_\phi \mathcal{L}_\tau (\phi) ,\]
 
-    also known as gradient descent, where \(\mathcal{L}_\tau\) usually also depends on some data and \(\alpha\) is a fixed learning rate,
-    controlling the size of the steps we want to take.
-  </p>
-  <p>We will now make an additional assumption, namely that \(\tau\) comes from some distribution of tasks \(p(\tau)\) and that we
-    can sample freely from this distribution. We can then generalize the above objective to learn how to find an
-    optimization strategy for a randomly sampled task from \(p(\tau)\). If we additionally ensure that the optimization strategy requires observing only
-    a few samples from this task, we
-    would have come up with a solution to few-shot learning for tasks from \(p(\tau)\). We
-    can express our new learning objective as follows:
+			also known as gradient descent, where \(\mathcal{L}_\tau\) usually also depends on some data and \(\alpha\)
+			is a fixed learning rate,
+			controlling the size of the steps we want to take.
+		</p>
+		<p>Unfortunately, when framing this in a few-shot setting (i.e., with a very small dataset), the above method is
+			known to fail almost certaintly [REF]. A key insight to MAML is now to
+			bypass this problem by learning not only from the data regarding exactly our task, but to learn also from
+			data of similar tasks.
+			To incorporate this we make an additional assumption, namely that \(\tau\) comes from some distribution of
+			tasks \(p(\tau)\) and that we
+			can sample freely from this distribution. We can then generalize the above objective to learn how to find an
+			optimization strategy for a randomly sampled task from \(p(\tau)\), which we can express as follows:
 
-    \[ \text{min} \, \mathbb{E}_\tau [ \mathcal{L}_\tau (\phi_\tau) ] ,\]
+			\[ \text{min} \, \mathbb{E}_\tau [ \mathcal{L}_\tau (\phi_\tau) ] ,\]
 
-    where \(\tau\) is now a random variable and \(\phi_\tau\) are a set of parameters for task \(\tau\), which is nothing more than a practical way to formalize really.
-    We may use different parameters for each task, use the same parameters for every task or something in between. But anyway, how
-    are we actually minimizing this new objective? In the following we will explore two possible answers to this question.
-  </p>
-  <h3>Answer 1: Just do gradient descent, silly!</h3>
-  <p>Of course! The answer to most problems. We can simply learn a single set of parameters \(\phi\) which minimizes the expected loss
-    over all tasks. Or formally speaking our objective becomes
+			where \(\tau\) is now a random variable and \(\phi_\tau\) are a set of parameters for task \(\tau\).
+			We may use different parameters for each task, use the same parameters for every task or something in
+			between. So we have to decide on a parameterization and decide how we actually minimize this new objective.
+			In the following we will explore two possible
+			answers to these issues.
+		</p>
+		<h3>Answer 1: Just do gradient descent, silly!</h3>
+		<p>Of course! The answer to most problems. We can simply learn a single set of parameters \(\phi\) which
+			minimizes the expected loss
+			over all tasks. Or formally speaking our objective becomes
 
-    \[ \underset{\phi}{\text{min}} \, \mathbb{E}_\tau [ \mathcal{L}_\tau (\phi) ] .\]
+			\[ \underset{\phi}{\text{min}} \, \mathbb{E}_\tau [ \mathcal{L}_\tau (\phi) ] .\]
 
-    Further, to actually implement this strategy we can do what is known as <i>Expected Risk Minimization (ERM)</i>, which roughly
-    dictates us to sample a lot of tasks \(\tau\) and then descent according to
+			As you can see we choose the most simple parameterization: We learn one parameter vector \(\phi\) that
+			minimizes the objective
+			across all tasks.
+			Further, to actually implement this strategy we can do what is known as <i>Expected Risk Minimization
+				(ERM)</i>, which roughly
+			dictates us to sample a lot of tasks \(\tau\) and then descent according to
 
-    \[ \phi \leftarrow \phi - \alpha \nabla_\phi \sum_i \mathcal{L}_{\tau_i} (\phi) .\]
+			\[ \phi \leftarrow \phi - \alpha \nabla_\phi \sum_i \mathcal{L}_{\tau_i} (\phi) .\]
 
-    To make this a bit more robust we can also use an optimizer using an adaptive step size, e.g. <i>Adam</i>. In the following figure
-    you can experiment with a model that was trained in exactly this way.
-  </p>
+			To make this a bit more robust we can also use an optimizer using an adaptive step size, e.g. <i>Adam</i>.
+			Finn et al. call this model <i>pretrained</i>.
+			In the following figure you can experiment with <i>pretrained</i> model which was trained by a collection of
+			sinusoid regression tasks. Before you fit the model think what
+			you would expect to happen based on the position and the
+			amount of samples you provided. Feel free to also experiment with the different settings: Distributing the
+			samples equispaced or squeezing all of them to a small range
+			of the x-axis.
+		</p>
+		<figure>
+			<d-figure id="fitSinePretrained"></d-figure>
+		</figure>
+		<p>Ouch! That doesn't seem to work that well. Maybe you have already guessed that this would have been to easy.
+			The problem that the above approach faces is that the optimal parameters of
+			different tasks might live in completely different loss spaces. Take for example the following two tasks
+			(which were probably both part of the training set of the <i>pretrained</i> model):
+			Tasks \(\tau_1, \tau_2\) are both regression tasks on sinusoids \(y_1(x) := \sin (x - \frac{\pi}{2})\) and
+			\(y_2(x) := \sin (x + \frac{\pi}{2})\) respectively. These two tasks will
+			give the <i>pretrained</i> model completely contradicting information as
 
-  <figure>
-    <d-figure id="fitSinePretrained"></d-figure>
-  </figure>
+			\[ y_1(x) = - y_2(x). \]
+
+			Intuitively this is because the vanilla gradient descent approach is always just fitting one particular
+			function (of which we assume not have enough data) and thus fails upon receiving information
+			that does not stem from said function. However, despite these two functions contradicting each other in the
+			gradient descent setting
+			does not mean they do not agree in other ways. Looking at the two functions in the above figure they clearly
+			represent the same structure,
+			merely shifted by an amount of \(\pi\). This indicates that maybe we can learn from one of the tasks about
+			the other one after all.
+			Maybe answer 2 will do...
+		</p>
+
+		<h3>Just do Model-Agnostic Meta-Learning, silly!</h3>
+		<p>
+			MAML comes to our rescue. We have already seen how different tasks might give us contradicting function
+			values at the same query point. The idea of MAML is now to
+			learn an optimal initialization \(\theta\) in the sense that initializating a task optimizer with these
+			parameters and taking gradient descent steps
+			from there minimizes the loss for that task. We can express this formally as follows:
+
+			\[ \underset{\theta}{\text{min}} \, \mathbb{E}_\tau [ \mathcal{L}_\tau (U_\tau(\theta)) ] .\]
+
+			where \(U_\tau\) is an optimizer that takes a number of gradient descent steps given the samples of task
+			\(\tau\). This is also why MAML is called mode-agnostic, it does
+			not make any further assumptions about \(U_\tau\), thus allowing any gradient-based inner optimizer. We can
+			implement the above objective function almost
+			exactly like we are used to. Applying ERM over a number of sampled tasks and taking the gradient of the
+			resulting loss gives us
+
+			\[ \nabla \mathcal{L}(\theta) = \sum_{\tau_i \tilde p(\tau)} \nabla \mathcal{L}_{\tau_i}(U_{\tau_i}(\theta))
+			.\]
+
+			Note that \( \phi_i := U_{\tau_i}(\theta) \) is a new parameter vector produced after a number of optimizer
+			steps in \(U_{\tau_i}\). We will now further expand
+			the summands and write
+
+			\[ \nabla \mathcal{L}_{\tau_i}(U_{\tau_i}(\theta)) = \nabla_{U_{\tau_i}(\theta)} \mathcal{L}_{\tau_i}
+			\nabla_\theta U_{\tau_i}(\theta) \].
+
+			Here, \( \nabla_{U_{\tau_i}(\theta)} \mathcal{L}_{\tau_i} \) represents the gradient of the loss of task
+			\(\tau_i\) by the optimized parameter \(\phi_i\)
+			and \(\nabla_\theta U_{\tau_i}(\theta)\) is a gradient through an optimization algorithm. Even if we assume
+			that
+			the optimizer takes only one gradient descent step, this term becomes
+
+			\[ \nabla_\theta U_{\tau_i}(\theta) = \nabla_\theta (\theta - \alpha \nabla_\theta
+			\mathcal{L}_{\tau_i}(\theta) )\]
+
+			which is equal to
+
+			\[ I - \alpha \nabla^2_\theta \mathcal{L}_{\tau_i}(\theta). \]
+
+			Hence, MAML requires us to compute second derivatives in order to optimize \(\theta\). We will later pick up
+			on that and discuss
+			complications and possible solutions.
+		</p>
+		<p>
+			After having studied the math behind the MAML objective it is time to evaluate it on the sinusoid example.
+			Hopefully, MAML will produce better results
+			than the pretrained model. But before we study the MAML model on that task distribution, let us spend some
+			time on trying to understand MAML intuitively. Why would we expect it to produce better results than the
+			pretrained model?
+
+			The answer to that is two-fold. Firstly, MAML treats different tasks as different and does not try to find a
+			parameter vector that
+			fits all tasks. We have already examined why that is a problem. Secondly, MAML learns a meta-parameter
+			\(\theta\) which serves as an
+			initialization to the individual task optimizers. The hope is that this initialization is both close enough
+			to each optimal task parameter such that
+			we can converge in only a few gradient steps (and hence requiring only a few samples) and yet not too close
+			such that it is already in a local optimimum
+			of one of the tasks. On an intuitive level the task of finding such a \(\theta\) becomes increasingly harder
+			the further apart the local optima of the task
+			distribution are from each other. However, in the case of our sinusoid problem the tasks are so similar that
+			a nice
+			meta-parameter should be found.
+
+			You will now have the opportunity to repeat the above experiements on a model that has been trained with
+			MAML.
+			Try to compare the optimization behavior of both the pretrained model and MAML and evaluate for yourself
+			whether
+			you think the MAML-trained model has found a nearly optimal meta-initialization parameter \(\theta\).
+		</p>
+		<figure>
+			<d-figure id="fitSineMaml"></d-figure>
+		</figure>
+
+		<dt-code block language="python">
+			def step(theta, alpha, model, data):
+			return theta - alpha * model.grad(data)
+		</dt-code>
+
+		<figure class="l-body">
+			<d-figure id="metaGradient">
+				<div class="element is-loading" style="height: 400px"></div>
+			</d-figure>
+		</figure>
+
+		<figure class="l-body-outset">
+			<d-figure id="userOptimizedTheta">
+				<div class="element is-loading" style="height: 400px"></div>
+			</d-figure>
+		</figure>
+
+	</dt-article>
+
+	<dt-appendix>
+	</dt-appendix>
 
 
-  <p>If we want to use equations we can either write inline, e.g. saying that we intitalize \(\alpha = 0.01\), or in its own paragraph, e.g. saying we then learn our updates via
-    \[ \theta_i' = \theta - \alpha \nabla_\theta \mathcal{L}_{\mathcal{T}_i} (f_\theta) .\]
-
-  You can implement this in python as follows:
-	</p>
-
-  <dt-code block language="python">
-      def step(theta, alpha, model, data):
-          return theta - alpha * model.grad(data)
-  </dt-code>
-
-	<figure class="l-body">
-    <d-figure id="metaGradient"><div class="element is-loading" style="height: 400px"></div></d-figure>
-  </figure>
-
-	<figure class="l-body-outset">
-	<d-figure id="userOptimizedTheta"><div class="element is-loading" style="height: 400px"></div></d-figure>
-	</figure>
-
-</dt-article>
-
-<dt-appendix>
-</dt-appendix>
-
-
-<script type="text/bibliography">
+	<script type="text/bibliography">
 @misc{finn2017modelagnostic,
     title={Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks},
     author={Chelsea Finn and Pieter Abbeel and Sergey Levine},
@@ -432,5 +545,6 @@
 
 
 </script>
-  </body>
+</body>
+
 </html>

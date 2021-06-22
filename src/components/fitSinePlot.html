@@ -85,13 +85,13 @@
 
 <div class="chart-container">
     <div>
-        <label for="amplitudeSlider" class="slider-label">Amplitude \(A\)</label>
+        <label for="amplitudeSlider" class="slider-label">Amplitude</label>
         <input name="amplitudeSlider" class="slider" type="range" min="10" max="500" bind:value={amplitude}
             on:input={updateSine2} />
         <output class="slider-label" id="amplOut" style="margin-right: 30px">{amplitudeSliderValue}</output>
 
 
-        <label for="phaseSlider" class="slider-label">Phase \(\varphi\)</label>
+        <label for="phaseSlider" class="slider-label">Phase</label>
         <input name="phaseSlider" class="slider" type="range" min="0" max="1800" bind:value={phase}
             on:input={updateSine2} />
         <output class="slider-label" id="phaseOut">{phaseSliderValue}</output>
