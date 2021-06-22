@@ -44,11 +44,13 @@
         <div class="columns is-mobile is-multiline is-0 is-variable">
           {#each task.examples as example}
             <div class="column is-narrow">
-              <div draggable=false class={`card class_card ${example.feedback_class}`} class:dragover={example.dragover}
+              <div draggable=false class={`card class_card ${example.feedback_class}`}
+                   class:dragover={example.dragover}
                    on:drop|preventDefault={(event) => drop(event, example)}
-                   on:click={(event) => drop(event, example)}
+                   on:click|preventDefault={(event) => drop(event, example)}
                    on:dragenter|preventDefault={(event) => dragEnter(event, example)}
                    on:dragleave|preventDefault={(event) => dragLeave(event, example)}
+                   on:dragover|preventDefault={(event) => true}
                    >
                 <div class="card-image" draggable=false>
                   <figure class="image is-square" draggable=false>
@@ -176,6 +178,7 @@
   let dragEnter = (event, example) => {
     example.dragover = true
     mark_dirty()
+    return true
   }
 
   let dragLeave = (event, example) => {
