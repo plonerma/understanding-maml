@@ -9,6 +9,7 @@ import UserOptimizedTheta from './components/userOptimizedTheta.html';
 import MetaGradient from './components/metaGradient.html'
 import FitSinePretrained from './components/fitSinePretrained.html'
 import FitSineMaml from './components/fitSineMaml.html'
+import IMAMLLoss from './components/imamlLoss.html'
 
 const componentMap = {
   '#teaser': Teaser,
@@ -17,7 +18,8 @@ const componentMap = {
   '#userOptimizedTheta': UserOptimizedTheta,
   '#metaGradient': MetaGradient,
   '#fitSinePretrained': FitSinePretrained,
-  '#fitSineMaml': FitSineMaml
+  '#fitSineMaml': FitSineMaml,
+  '#imamlLoss': IMAMLLoss,
 }
 
 

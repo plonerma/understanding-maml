@@ -1,0 +1,26 @@
+<script>
+  import ContourPlot from './contourPlot.html'
+
+  export let loss
+
+  export let opacity = 1
+
+  export let logScale = false
+
+  export let nx=64, ny=64;
+  export let n_thresholds = 10;
+
+  let element
+
+  let losses = [loss]
+
+  $: {
+    losses = [loss]
+  }
+</script>
+
+{#each losses as loss (loss.id)}
+
+  <ContourPlot lossFunc={loss.func} {opacity} {logScale} {nx} {ny} {n_thresholds} />
+
+{/each}

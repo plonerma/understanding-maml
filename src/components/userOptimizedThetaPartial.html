@@ -1,6 +1,6 @@
 <Chart width=300 height=300>
   <Axis>
-    <ContourPlot lossFunc={loss} logScale={false} />
+    <DynamicContourPlot loss={loss} logScale={false} />
     <VariableHandle bind:position={theta} value="\theta" withPoint={false} onDragEnd={calculateTrajectories} onDrag={calculateTrajectoriesSlow} />
     {#each trajectory as segment}
       <Arrow origin={segment.origin} target={segment.target} trimStart=0.1 trimEnd=0.1
@@ -16,7 +16,7 @@
 <script>
   import {Chart, Axis, VariableHandle, Arrow, Translate, Latex} from './elements'
 
-  import ContourPlot from './contourPlot.html'
+  import DynamicContourPlot from './dynamicContourPlot.html'
 
 
   import throttle from 'lodash/throttle'

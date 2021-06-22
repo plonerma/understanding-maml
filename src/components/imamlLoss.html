@@ -88,12 +88,29 @@
     tf.tensor([-1, -1.5, 2, -1.5]));
 
 
-  let loss_functions = ([
+  let original_loss_functions = [
     loss_1, loss_2, loss_3, loss_4
-  ]).map((loss) => ({id: 0, func: loss}));
+  ];
+
+  const regularizer = (theta, grid) => (
+    grid.squaredDifference(theta).sum(-1)
+  )
 
 
+  const regularizedLosses = (theta) => {
+    let id = theta[0] + ', ' + theta[1];
+    return original_loss_functions.map((loss) => ({
+      id: id,
+      func: (grid) => (
+        loss(grid).add(
+          regularizer(theta, grid)
+        )
+      )
+    }))
+  }
 
+
+  let loss_functions = regularizedLosses(theta)
   let trajectories = Array(loss_functions.length).fill([{origin:theta, target: theta}])
 
 
@@ -102,6 +119,7 @@
   })
 
   const calculateTrajectories = () => {
+    loss_functions = regularizedLosses(theta)
 
     tf.tidy(() => {
       Promise.all(
