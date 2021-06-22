@@ -1,30 +1,38 @@
-<!--<div>
+<div>
     {#each tasks as task, i}
       <input type="radio" bind:group={selected_task} value={i} id={`loss_${i+1}`}>
       <label for={`loss_${i+1}`}>
-        \( \mathcal L_{i+1} \)
+        {i+1}
       </label>
     {/each}
-</div>-->
+</div>
 
 <Chart width=600 height=400>
   <Axis>
-    {#each tasks as task, i}
-    <ContourPlot lossFunc={task.loss} logScale={true} opacity={i==selected_task ? 1 : 0} />
+    {#each tasks as loss, i}
+    <ContourPlot lossFunc={loss} logScale={false} opacity={i==selected_task ? 1 : 0} />
     {/each}
 
-    {#each tasks as task, i}
-    <ContourPlot lossFunc={task.loss} logScale={true} opacity={i==selected_task ? 1 : 0} />
+    {#each tasks as loss, i}
+    <ContourPlot lossFunc={loss} logScale={false} opacity={i==selected_task ? 1 : 0} />
     {/each}
 
-    {#each tasks as task, i}
-    <Arrow origin={theta} target={task.phi} trimStart=0 trimEnd=0.01 stroke="#fff" fill="#fff" stroke-width="2" />
+    {#each updates as phi, i}
+    <Arrow origin={theta} target={phi} trimStart=0 trimEnd=0.01 stroke="#fff" fill="#fff" stroke-width="2" />
     {/each}
 
-    <VariableHandle bind:position={theta} value="θ" offset={[0, -15]} referencePoint={theta}/>
+    <VariableHandle bind:position={theta} value="θ" offset={[0, -15]} referencePoint={theta} />
 
-    {#each tasks as task, i}
-    <VariableHandle bind:position={task.phi} value="ϕ" offset={[0, -15]} referencePoint={theta} variableIndex={i}/>
+    {#each updates as phi, i}
+    <VariableHandle bind:position={phi} value="ϕ" offset={[0, -15]} referencePoint={theta} variableIndex={i} />
+    {/each}
+
+    {#each algos as alg, i}
+    <Arrow origin={theta} target={alg} trimStart=0 trimEnd=0.01 stroke="#fff" fill="#fff" stroke-width="2" />
+    {/each}
+
+    {#each algos as alg, i}
+    <VariableHandle position={alg} value="A" offset={[0, -15]} referencePoint={theta} variableIndex={i} />
     {/each}
   </Axis>
 </Chart>
@@ -36,16 +44,41 @@
   import * as d3 from 'd3';
   import { onMount, getContext } from 'svelte';
   import * as tf from '@tensorflow/tfjs'
+  import { Random2DLinearRegressionLossSpace } from './util/LossSpace'
 
   import { rosenbrock as loss_1 } from './util/loss'
   import { beale as loss_2 } from './util/loss'
 
-  let tasks = [
-    { loss: loss_1, phi: [0.1, 0.2] },
-    { loss: loss_2, phi: [0.3, 0.8] }
-  ]
+  let theta = [0.1, 0.9]
+  let means = [[0.9, 0.1], [0.8, 0.8]]
+  let lossSpaces = means.map(mean => new Random2DLinearRegressionLossSpace(mean))
 
-  let theta = [0.5, 0.5]
+  let metaLoss = x => tf.stack(lossSpaces.map(space => space.loss(x))).sum(0)
+
+  let tasks = [metaLoss, ...lossSpaces.map(space => space.loss)]
+
+  const U = (space, t) => space.toArray(space.paramUpdate([t], 0.4, true))
+  const add2d = (a, b) => [ a[0] + b[0], a[1] + b[1]]
+  const sub2d = (a, b) => [ a[0] - b[0], a[1] - b[1]]
+  const mul2d = (a, b) => [ a * b[0], a * b[1]]
+
+  let updates = lossSpaces.map(space => U(space, theta))
 
   let selected_task = 0
+  let beta = 0.5
+  let eta = 0.2
+
+  let algos = [theta, theta]
+
+  $ : {
+    let t = theta
+    for(let i = 0; i < lossSpaces.length; i++){
+      t = add2d(t, mul2d(eta, sub2d(U(lossSpaces[i], theta), algos[0])))
+    }
+    algos[0] = t
+  }
+
+  $ : {
+    algos[1] = sub2d(theta, mul2d(beta, tf.stack(lossSpaces.map((space, i) => space.lossGrad(tf.tensor([updates[i]])))).sum(0).bufferSync().values))
+  }
 </script>
