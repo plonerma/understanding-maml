@@ -277,7 +277,8 @@
 
 			\[ \underset{\phi}{\text{min}} \, \mathbb{E}_\tau [ \mathcal{L}_\tau (\phi) ] .\]
 
-			As you can see we choose the most simple parameterization: We learn one parameter vector \(\phi\) that minimizes the objective 
+			As you can see we choose the most simple parameterization: We learn one parameter vector \(\phi\) that
+			minimizes the objective
 			across all tasks.
 			Further, to actually implement this strategy we can do what is known as <i>Expected Risk Minimization
 				(ERM)</i>, which roughly
@@ -294,7 +295,6 @@
 			samples equispaced or squeezing all of them to a small range
 			of the x-axis.
 		</p>
-
 		<figure>
 			<d-figure id="fitSinePretrained"></d-figure>
 		</figure>
@@ -306,26 +306,93 @@
 			\(y_2(x) := \sin (x + \frac{\pi}{2})\) respectively. These two tasks will
 			give the <i>pretrained</i> model completely contradicting information as
 
-			\[ y_1(x) = - y_2(x) \].
+			\[ y_1(x) = - y_2(x). \]
 
 			Intuitively this is because the vanilla gradient descent approach is always just fitting one particular
 			function (of which we assume not have enough data) and thus fails upon receiving information
-			that does not stem from said function. However, despite these two functions contradicting each other in the gradient descent setting  
-			does not mean they do not agree in other ways. Looking at the two functions in the above figure they clearly represent the same structure, 
-			merely shifted by an amount of \(\pi\). This indicates that maybe we can learn from one of the tasks about the other one after all.
+			that does not stem from said function. However, despite these two functions contradicting each other in the
+			gradient descent setting
+			does not mean they do not agree in other ways. Looking at the two functions in the above figure they clearly
+			represent the same structure,
+			merely shifted by an amount of \(\pi\). This indicates that maybe we can learn from one of the tasks about
+			the other one after all.
 			Maybe answer 2 will do...
 		</p>
 
 		<h3>Just do Model-Agnostic Meta-Learning, silly!</h3>
 		<p>
-			MAML comes to our rescue. We have already seen how different tasks might give us contradicting function values at the same query point. The idea of MAML is now to 
-			learn an optimal initialization \(\theta\) in the sense that initializating a task optimizer with these parameters and taking gradient descent steps 
+			MAML comes to our rescue. We have already seen how different tasks might give us contradicting function
+			values at the same query point. The idea of MAML is now to
+			learn an optimal initialization \(\theta\) in the sense that initializating a task optimizer with these
+			parameters and taking gradient descent steps
 			from there minimizes the loss for that task. We can express this formally as follows:
 
 			\[ \underset{\theta}{\text{min}} \, \mathbb{E}_\tau [ \mathcal{L}_\tau (U_\tau(\theta)) ] .\]
 
-			where \(U_\tau\) is an optimizer that takes a number of gradient descent steps given the samples of task \(\tau\).
+			where \(U_\tau\) is an optimizer that takes a number of gradient descent steps given the samples of task
+			\(\tau\). This is also why MAML is called mode-agnostic, it does
+			not make any further assumptions about \(U_\tau\), thus allowing any gradient-based inner optimizer. We can
+			implement the above objective function almost
+			exactly like we are used to. Applying ERM over a number of sampled tasks and taking the gradient of the
+			resulting loss gives us
+
+			\[ \nabla \mathcal{L}(\theta) = \sum_{\tau_i \tilde p(\tau)} \nabla \mathcal{L}_{\tau_i}(U_{\tau_i}(\theta))
+			.\]
+
+			Note that \( \phi_i := U_{\tau_i}(\theta) \) is a new parameter vector produced after a number of optimizer
+			steps in \(U_{\tau_i}\). We will now further expand
+			the summands and write
+
+			\[ \nabla \mathcal{L}_{\tau_i}(U_{\tau_i}(\theta)) = \nabla_{U_{\tau_i}(\theta)} \mathcal{L}_{\tau_i}
+			\nabla_\theta U_{\tau_i}(\theta) \].
+
+			Here, \( \nabla_{U_{\tau_i}(\theta)} \mathcal{L}_{\tau_i} \) represents the gradient of the loss of task
+			\(\tau_i\) by the optimized parameter \(\phi_i\)
+			and \(\nabla_\theta U_{\tau_i}(\theta)\) is a gradient through an optimization algorithm. Even if we assume
+			that
+			the optimizer takes only one gradient descent step, this term becomes
+
+			\[ \nabla_\theta U_{\tau_i}(\theta) = \nabla_\theta (\theta - \alpha \nabla_\theta
+			\mathcal{L}_{\tau_i}(\theta) )\]
+
+			which is equal to
+
+			\[ I - \alpha \nabla^2_\theta \mathcal{L}_{\tau_i}(\theta). \]
+
+			Hence, MAML requires us to compute second derivatives in order to optimize \(\theta\). We will later pick up
+			on that and discuss
+			complications and possible solutions.
 		</p>
+		<p>
+			After having studied the math behind the MAML objective it is time to evaluate it on the sinusoid example.
+			Hopefully, MAML will produce better results
+			than the pretrained model. But before we study the MAML model on that task distribution, let us spend some
+			time on trying to understand MAML intuitively. Why would we expect it to produce better results than the
+			pretrained model?
+
+			The answer to that is two-fold. Firstly, MAML treats different tasks as different and does not try to find a
+			parameter vector that
+			fits all tasks. We have already examined why that is a problem. Secondly, MAML learns a meta-parameter
+			\(\theta\) which serves as an
+			initialization to the individual task optimizers. The hope is that this initialization is both close enough
+			to each optimal task parameter such that
+			we can converge in only a few gradient steps (and hence requiring only a few samples) and yet not too close
+			such that it is already in a local optimimum
+			of one of the tasks. On an intuitive level the task of finding such a \(\theta\) becomes increasingly harder
+			the further apart the local optima of the task
+			distribution are from each other. However, in the case of our sinusoid problem the tasks are so similar that
+			a nice
+			meta-parameter should be found.
+
+			You will now have the opportunity to repeat the above experiements on a model that has been trained with
+			MAML.
+			Try to compare the optimization behavior of both the pretrained model and MAML and evaluate for yourself
+			whether
+			you think the MAML-trained model has found a nearly optimal meta-initialization parameter \(\theta\).
+		</p>
+		<figure>
+			<d-figure id="fitSineMaml"></d-figure>
+		</figure>
 
 		<dt-code block language="python">
 			def step(theta, alpha, model, data):
