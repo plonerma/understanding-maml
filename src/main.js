@@ -2,56 +2,37 @@ import './main.scss';
 import '@fortawesome/fontawesome-free/js/all.js';
 
 
-let target
-
-
 import Teaser from './components/teaser.html';
-target = document.querySelector('#teaser');
-target.innerHTML = '';
-const Teaser_Component = new Teaser({
-  target: target
-});
-
 import FewShotMethods from './components/fewShotMethods.html';
-target = document.querySelector('#fewShotMethods');
-target.innerHTML = '';
-const FewShotMethods_Component = new FewShotMethods({
-  target: target
-});
-
-
 import FewShotVenn from './components/fewShotVenn.html';
-target = document.querySelector('#fewShotVenn');
-target.innerHTML = '';
-const FewShotVenn_Component = new FewShotVenn({
-  target: target
-});
-
-
-
-
-
 import UserOptimizedTheta from './components/userOptimizedTheta.html';
-target = document.querySelector('#userOptimizedTheta');
-target.innerHTML = '';
-const UserOptimizedTheta_Component = new UserOptimizedTheta({
-  target: target
-});
-
-
 import MetaGradient from './components/metaGradient.html'
-target = document.querySelector('#metaGradient');
-target.innerHTML = '';
-const MetaGradient_Component = new MetaGradient({
-  target: target
-})
-
 import FitSinePretrained from './components/fitSinePretrained.html'
-const FitSinePretrained_Component = new FitSinePretrained({
-  target: document.querySelector('#fitSinePretrained')
-})
 
-/*import FitSineMaml from './components/fitSineMaml.html'
-const FitSineMaml_Component = new FitSineMaml({
-  target: document.querySelector('#fitSineMaml')
-})*/
+
+const componentMap = {
+  '#teaser': Teaser,
+  '#fewShotMethods': FewShotMethods,
+  '#fewShotVenn': FewShotVenn,
+  '#userOptimizedTheta': UserOptimizedTheta,
+  '#metaGradient': MetaGradient,
+  '#fitSinePretrained': FitSinePretrained
+}
+
+
+let element
+
+for (let target in componentMap) {
+  element = document.querySelector(target)
+  if (element) {
+    element.innerHTML = '';
+    new componentMap[target]({
+      target: element
+    })
+  } else {
+    console.log(`Element ${target} not found.`)
+  }
+}
+
+// All components monted, reexecute mathjax
+MathJax.typesetPromise()
