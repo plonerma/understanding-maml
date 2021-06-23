@@ -1,37 +1,32 @@
-<div class="columns">
 
-  <div class="column is-half">
-    <Partial loss={loss_functions[0]} trajectory={trajectories[0]} bind:theta={theta} {calculateTrajectories}/>
+
+{#each [0,'controls',2] as row}
+  <div class="columns">
+    {#if row != 'controls'}
+      {#each [row,row+1] as i}
+        <div class="column is-half">
+          <Chart width=300 height=300>
+            <Axis>
+              <DynamicContourPlot loss={loss_functions[i]} logScale={false} />
+              <VariableHandle bind:position={theta} value="\theta" withPoint={false} onDragEnd={calculateTrajectories} onDrag={calculateTrajectoriesSlow} />
+              <!-- <Translate position={trajectories[i][trajectories[i].length-1].target}>
+                <Latex value="\phi" style="font-size: 0.8em; color:white" />
+              </Translate> -->
+          </Axis>
+          </Chart>
+        </div>
+      {/each}
+    {:else}
+      <div class="column is-half">
+        <Slider min="-4" max="0" bind:value={lr_exp} id="userOptimizedTheta_lr" label={`Learning Rate: ${lr.toPrecision(2)}`} />
+      </div>
+
+      <div class="column is-half">
+        <Slider min="1" max="5" bind:value={steps} id="userOptimizedTheta_steps" label={`Inner optimization steps: ${steps}`} />
+      </div>
+    {/if}
   </div>
-
-  <div class="column is-half">
-    <Partial loss={loss_functions[1]} trajectory={trajectories[1]} bind:theta={theta} {calculateTrajectories}/>
-  </div>
-
-</div>
-<div class="columns">
-
-
-  <div class="column is-half">
-    <Slider min="-4" max="0" bind:value={lr_exp} id="userOptimizedTheta_lr" label={`Learning Rate: ${lr.toPrecision(2)}`} />
-  </div>
-
-  <div class="column is-half">
-    <Slider min="1" max="5" bind:value={steps} id="userOptimizedTheta_steps" label={`Inner optimization steps: ${steps}`} />
-  </div>
-
-</div>
-<div class="columns">
-
-  <div class="column is-half">
-    <Partial loss={loss_functions[2]} trajectory={trajectories[2]} bind:theta={theta} {calculateTrajectories}/>
-  </div>
-
-  <div class="column is-half">
-    <Partial loss={loss_functions[3]} trajectory={trajectories[3]} bind:theta={theta} {calculateTrajectories}/>
-  </div>
-
-</div>
+{/each}
 
 <style>
   .column {
@@ -52,8 +47,6 @@
   import {RBFLoss} from './util/loss';
 
   import {Slider} from './elements'
-
-  import Partial from './userOptimizedThetaPartial.html'
 
 
   export let theta = [0.5, 0.5]

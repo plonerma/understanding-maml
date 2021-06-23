@@ -1,37 +1,35 @@
-<div class="columns">
+{#each [0,'controls',2] as row}
+  <div class="columns">
+    {#if row != 'controls'}
+      {#each [row,row+1] as i}
+        <div class="column is-half">
+          <Chart width=300 height=300>
+            <Axis>
+              <DynamicContourPlot loss={loss_functions[i]} logScale={false} />
+              <VariableHandle bind:position={theta} value="\theta" withPoint={false} onDragEnd={calculateTrajectories} onDrag={calculateTrajectoriesSlow} />
+              {#each trajectories[i] as segment}
+                <Arrow origin={segment.origin} target={segment.target} trimStart=0.1 trimEnd=0.1
+                      stroke="#fff" fill="#fff" stroke-width="1" />
+              {/each}
+              <Translate position={trajectories[i][trajectories[i].length-1].target}>
+                <Latex value="\phi" style="font-size: 0.8em; color:white" />
+              </Translate>
+          </Axis>
+          </Chart>
+        </div>
+      {/each}
+    {:else}
+      <div class="column is-half">
+        <Slider min="-4" max="0" bind:value={lr_exp} id="userOptimizedTheta_lr" label={`Learning Rate: ${lr.toPrecision(2)}`} />
+      </div>
 
-  <div class="column is-half">
-    <Partial loss={loss_functions[0]} trajectory={trajectories[0]} bind:theta={theta} {calculateTrajectories}/>
+      <div class="column is-half">
+        <Slider min="1" max="5" bind:value={steps} id="userOptimizedTheta_steps" label={`Inner optimization steps: ${steps}`} />
+      </div>
+    {/if}
   </div>
+{/each}
 
-  <div class="column is-half">
-    <Partial loss={loss_functions[1]} trajectory={trajectories[1]} bind:theta={theta} {calculateTrajectories}/>
-  </div>
-
-</div>
-<div class="columns">
-
-
-  <div class="column is-half">
-    <Slider min="-4" max="0" bind:value={lr_exp} id="userOptimizedTheta_lr" label={`Learning Rate: ${lr.toPrecision(2)}`} />
-  </div>
-
-  <div class="column is-half">
-    <Slider min="1" max="5" bind:value={steps} id="userOptimizedTheta_steps" label={`Inner optimization steps: ${steps}`} />
-  </div>
-
-</div>
-<div class="columns">
-
-  <div class="column is-half">
-    <Partial loss={loss_functions[2]} trajectory={trajectories[2]} bind:theta={theta} {calculateTrajectories}/>
-  </div>
-
-  <div class="column is-half">
-    <Partial loss={loss_functions[3]} trajectory={trajectories[3]} bind:theta={theta} {calculateTrajectories}/>
-  </div>
-
-</div>
 
 <style>
   .column {
@@ -47,13 +45,13 @@
 
 
   import range from 'lodash/range'
+  import throttle from 'lodash/throttle'
 
 
   import {RBFLoss} from './util/loss';
 
-  import {Slider} from './elements'
-
-  import Partial from './userOptimizedThetaPartial.html'
+  import {Slider, Chart, Axis, VariableHandle, Arrow, Translate, Latex} from './elements'
+  import DynamicContourPlot from './dynamicContourPlot.html'
 
 
   export let theta = [0.5, 0.5]
@@ -123,4 +121,6 @@
       })
     })
   }
+
+  const calculateTrajectoriesSlow = throttle(calculateTrajectories, 120);
 </script>
