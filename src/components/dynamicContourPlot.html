@@ -1,4 +1,6 @@
 <script>
+  import { getContext } from 'svelte';
+
   import ContourPlot from './contourPlot.html'
 
   export let loss
@@ -7,8 +9,12 @@
 
   export let logScale = false
 
+  let [width, height] = getContext("size")
+
   export let nx=64, ny=64;
   export let n_thresholds = 10;
+
+  export let bgColor = "#470d60"
 
   let element
 
@@ -18,6 +24,13 @@
     losses = [loss]
   }
 </script>
+
+<!-- Background -->
+<rect
+  width={width}
+  height={height}
+  fill={bgColor}
+  />
 
 {#each losses as loss (loss.id)}
 

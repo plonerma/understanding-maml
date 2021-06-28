@@ -6,7 +6,7 @@
           <Chart width=300 height=300>
             <Axis>
               <DynamicContourPlot loss={loss_functions[i]} logScale={false} />
-              <VariableHandle bind:position={theta} value="\theta" withPoint={false} onDragEnd={calculateTrajectories} onDrag={calculateTrajectoriesSlow} />
+              <VariableHandle bind:position={theta} value="\theta" withPoint={false} onDragEnd={recalculate} onDrag={recalculateSlow} />
               {#each trajectories[i] as segment}
                 <Arrow origin={segment.origin} target={segment.target} trimStart=0.1 trimEnd=0.1
                       stroke="#fff" fill="#fff" stroke-width="1" />
@@ -66,7 +66,7 @@
     //mark dirty
     steps=steps
     optimizer = tf.train.sgd(lr)
-    calculateTrajectories()
+    recalculate()
   }
 
   const loss_1 = phi => RBFLoss(phi,
@@ -96,10 +96,10 @@
 
 
   onMount(() => {
-    calculateTrajectories()
+    recalculate()
   })
 
-  const calculateTrajectories = () => {
+  const recalculate = () => {
 
     tf.tidy(() => {
       Promise.all(
@@ -122,5 +122,5 @@
     })
   }
 
-  const calculateTrajectoriesSlow = throttle(calculateTrajectories, 120);
+  const recalculateSlow = throttle(recalculate, 120);
 </script>

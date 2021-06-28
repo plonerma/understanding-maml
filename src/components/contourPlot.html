@@ -1,5 +1,7 @@
 <script>
   import { onMount, getContext } from 'svelte';
+  import { fade } from 'svelte/transition';
+
   import * as d3 from 'd3';
   import * as tf from '@tensorflow/tfjs'
 
@@ -42,28 +44,38 @@
 
   let color_scale = d3.scaleLinear().range([0, 1])
 
+  const d3Contours = (gridLoss) => new Promise((resolve) => {
+    setTimeout(() => {
+
+      let contours = d3.contours()
+          .size([nx, ny])
+          .thresholds(n_thresholds)
+          (gridLoss);
+
+      contours = contours.map((multiPoly) => ({
+        ...multiPoly, coordinates: multiPoly.coordinates.map((polygons) => polygons.map((path) => (
+          path.map((c) => [c[0]/nx * width, -c[1]/ny * height])
+        )))
+      }))
+      resolve(contours);
+    }, 0)
+
+  })
+
   const computeContours = async () => {
     var t0 = performance.now()
+
     let gridLoss = await calculateGridLoss()
 
     color_scale.domain(d3.extent(gridLoss))
 
     var t1 = performance.now()
-
-    let contours = d3.contours()
-        .size([nx, ny])
-        .thresholds(n_thresholds)
-        (gridLoss)
-
+    let contours = await d3Contours(gridLoss)
 
     var t2 = performance.now()
-    console.log(t1-t0, t2-t1)
 
-    return contours.map((multiPoly) => ({
-      ...multiPoly, coordinates: multiPoly.coordinates.map((polygons) => polygons.map((path) => (
-        path.map((c) => [c[0]/nx * width, -c[1]/ny * height])
-      )))
-    }))
+    return contours;
+
   };
 
   let contours = computeContours()
@@ -71,7 +83,7 @@
 </script>
 
 
-<g fill="none" stroke="#fff" stroke-opacity="0.3" bind:this={groupElement} opacity={opacity} transform={`translate(0,${height})`}>
+<g out:fade="{{duration: 500}}" fill="none" stroke="#fff" stroke-opacity="0.3" bind:this={groupElement} opacity={opacity} transform={`translate(0,${height})`}>
 
   {#await contours then paths}
     {#each paths as path}

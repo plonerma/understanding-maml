@@ -1,5 +1,3 @@
-
-
 {#each [0,'controls',2] as row}
   <div class="columns">
     {#if row != 'controls'}
@@ -8,21 +6,17 @@
           <Chart width=300 height=300>
             <Axis>
               <DynamicContourPlot loss={loss_functions[i]} logScale={false} />
-              <VariableHandle bind:position={theta} value="\theta" withPoint={false} onDragEnd={calculateTrajectories} onDrag={calculateTrajectoriesSlow} />
-              <!-- <Translate position={trajectories[i][trajectories[i].length-1].target}>
+              <VariableHandle bind:position={theta} value="\theta" withPoint={false} onDragEnd={recalculate} onDrag={recalculateSlow} />
+              <Translate position={phis[i]}>
                 <Latex value="\phi" style="font-size: 0.8em; color:white" />
-              </Translate> -->
+              </Translate>
           </Axis>
           </Chart>
         </div>
       {/each}
     {:else}
       <div class="column is-half">
-        <Slider min="-4" max="0" bind:value={lr_exp} id="userOptimizedTheta_lr" label={`Learning Rate: ${lr.toPrecision(2)}`} />
-      </div>
-
-      <div class="column is-half">
-        <Slider min="1" max="5" bind:value={steps} id="userOptimizedTheta_steps" label={`Inner optimization steps: ${steps}`} />
+        <Slider min="0" max="5" bind:value={lambda_slider} id="imaml_lambda" label={`Learning Rate: ${lambda.toPrecision(2)}`} />
       </div>
     {/if}
   </div>
@@ -42,27 +36,28 @@
 
 
   import range from 'lodash/range'
+  import throttle from 'lodash/throttle'
 
 
   import {RBFLoss} from './util/loss';
 
-  import {Slider} from './elements'
+  import {Slider, Chart, Axis, VariableHandle, Arrow, Translate, Latex} from './elements'
+  import DynamicContourPlot from './dynamicContourPlot.html'
 
 
   export let theta = [0.5, 0.5]
 
-  let lr_exp = -2
-  let steps = 1
-  let lr
-  let optimizer
+  let lambda, lambda_slider = 1
 
-  $: {
-    lr = Math.pow(10, lr_exp/2)
-    //mark dirty
-    steps=steps
-    optimizer = tf.train.sgd(lr)
-    calculateTrajectories()
-  }
+  let lr = 0.1
+  let steps = 5
+  let optimizer = tf.train.sgd(lr)
+
+  lambda = 1
+
+  /*$: {
+    lambda = 1 -
+  }*/
 
   const loss_1 = phi => RBFLoss(phi,
     tf.tensor([[0.5, 0.7], [0.4, 0.2], [0.6, 0.2], [0.9, 0.3]]),
@@ -85,18 +80,18 @@
     loss_1, loss_2, loss_3, loss_4
   ];
 
-  const regularizer = (theta, grid) => (
-    grid.squaredDifference(theta).sum(-1)
-  )
+  const regularizer = (theta, grid, lambda=1) => {
+    return grid.squaredDifference(theta).sum(-1).mul(lambda)
+  }
 
 
   const regularizedLosses = (theta) => {
     let id = theta[0] + ', ' + theta[1];
     return original_loss_functions.map((loss) => ({
       id: id,
-      func: (grid) => (
-        loss(grid).add(
-          regularizer(theta, grid)
+        func: (x) => (
+        loss(x).add(
+          regularizer(theta, x, lambda)
         )
       )
     }))
@@ -104,34 +99,34 @@
 
 
   let loss_functions = regularizedLosses(theta)
-  let trajectories = Array(loss_functions.length).fill([{origin:theta, target: theta}])
+
+  let phis = Array(loss_functions.length).fill(theta)
 
 
   onMount(() => {
-    calculateTrajectories()
+    recalculate()
   })
 
-  const calculateTrajectories = () => {
+  const recalculate = () => {
     loss_functions = regularizedLosses(theta)
 
     tf.tidy(() => {
       Promise.all(
-        loss_functions.map((loss, i) => {
+        loss_functions.map(async (loss, i) => {
           let x = tf.variable(tf.tensor(theta))
 
-          return Promise.all(range(steps).map((s) => {
+          for (let i in range(steps)) {
             optimizer.minimize(() => loss.func(x).sum(), x)
-            return x.buffer()
-          }));
+          }
+
+          return (await x.buffer()).values
+
         })
-      ).then((ts) => {
-
-        trajectories = ts.map((t) => range(t.length).map((j) => ({
-          origin: (j == 0 ? theta : Array.from(t[j-1].values)),
-          target: Array.from(t[j].values)
-        })))
-
+      ).then((x) => {
+        phis = Array.from(x);
       })
     })
   }
+
+  const recalculateSlow = throttle(recalculate, 300);
 </script>
