@@ -7,6 +7,7 @@
     {/each}
 </div>
 
+
 <Chart width=600 height=400>
   <Axis>
     {#each tasks as loss, i}
@@ -21,10 +22,10 @@
     <Arrow origin={theta} target={phi} trimStart=0 trimEnd=0.01 stroke="#fff" fill="#fff" stroke-width="2" />
     {/each}
 
-    <VariableHandle bind:position={theta} value="θ" offset={[0, -15]} referencePoint={theta} />
+    <VariableHandleWithReference bind:position={theta} value="\theta" offset={[0, -15]} referencePoint={null} />
 
     {#each updates as phi, i}
-    <VariableHandle bind:position={phi} value="ϕ" offset={[0, -15]} referencePoint={theta} variableIndex={i} />
+    <VariableHandleWithReference bind:position={phi} value={`\\phi_{${i}}`} offset={[0, -15]} referencePoint={theta}/>
     {/each}
 
     {#each algos as alg, i}
@@ -32,15 +33,16 @@
     {/each}
 
     {#each algos as alg, i}
-    <VariableHandle position={alg} value="A" offset={[0, -15]} referencePoint={theta} variableIndex={i} />
+    <VariableHandleWithReference position={alg} value={`A_{${i}}`} offset={[0, -15]} referencePoint={theta} />
     {/each}
   </Axis>
 </Chart>
 
 
+
 <script>
   import ContourPlot from './contourPlot.html'
-  import { Chart, Axis, Arrow, VariableHandle } from './elements'
+  import { Chart, Axis, Arrow, VariableHandleWithReference } from './elements'
   import * as d3 from 'd3';
   import { onMount, getContext } from 'svelte';
   import * as tf from '@tensorflow/tfjs'
@@ -81,4 +83,6 @@
   $ : {
     algos[1] = sub2d(theta, mul2d(beta, tf.stack(lossSpaces.map((space, i) => space.lossGrad(tf.tensor([updates[i]])))).sum(0).bufferSync().values))
   }
+
+  $: console.log(theta)
 </script>

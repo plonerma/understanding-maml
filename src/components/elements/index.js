@@ -8,6 +8,8 @@ import MultilineText from './multilineText.html'
 import Slider from './slider.html'
 import Translate from './translate.html'
 import VariableHandle from './variableHandle.html'
+import VariableHandleWithReference from './variableHandleWithReference.html'
+
 
 
 
@@ -21,5 +23,6 @@ export {
     MultilineText,
     Slider,
     Translate,
-    VariableHandle
+    VariableHandle,
+    VariableHandleWithReference
 }

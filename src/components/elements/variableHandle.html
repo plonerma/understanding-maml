@@ -6,8 +6,6 @@
   export let position
   export let rHovered = 6
   export let r = 3
-  export let referencePoint = [0, 0]
-  export let variableIndex = -1
 
   export let withPoint = true
 
@@ -25,43 +23,15 @@
     delete otherProps["offset"]
   }
 
-  let transform = ""
-
-  $: {
-    transform = `translate(${offset[0]}, ${offset[1]})`
-  }
-
-  let offx = 30, offy = 30
-
   let normedVec = [0, 0]
-  $: {
-    let vec = [position[0] - referencePoint[0], position[1] - referencePoint[1]]
-    let vecNorm = Math.sqrt(vec[0] ** 2 + vec[1] ** 2)
-    if (vecNorm > 0){
-      normedVec = [vec[0] / vecNorm, vec[1] / vecNorm]
-    }
-    else{
-      normedVec = [0.2, 0]
-    }
-  }
 
 </script>
 
 <Handle bind:position={position} let:isHovered={hovered} {...otherProps}>
   {#if withPoint}
-  <g transform={transform}>
-    <!--<Latex {value} style="color: white; font-size: {hovered ? '1.2em' : '1em'}" />-->
-
-    <foreignObject x="{normedVec[0] * offx}" y="{-normedVec[1] * offy}" width="50" height="30">
-      <body xmlns="http://www.w3.org/1999/xhtml">
-        <div style="color: white;">{value}<sub>{variableIndex >= 0 ? variableIndex : ''}</sub></div>
-      </body>
-    </foreignObject>
-  </g>
-
-  <circle stroke="none" fill="white" class="circleMarker" r="{hovered ? rHovered : r}" cx=0 cy=0 />
+    <Latex {value} style="color: white; font-size: {hovered ? '1.2em' : '1em'}" x={offset[0]} y={offset[1]}/>
+    <circle stroke="none" fill="white" class="circleMarker" r="{hovered ? rHovered : r}" cx=0 cy=0 />
   {:else}
-  <!--<Latex {value} style="color: white; font-size: {hovered ? '1.2em' : '1em'}" />-->
-  <div>{value}<sub>1</sub></div>
+    <Latex {value} style="color: white; font-size: {hovered ? '1.2em' : '1em'}" />
   {/if}
 </Handle>
