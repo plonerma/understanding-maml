@@ -1,10 +1,10 @@
 <div>
-    {#each tasks as task, i}
-      <input type="radio" bind:group={selected_task} value={i} id={`loss_${i+1}`}>
-      <label for={`loss_${i+1}`}>
-        {i+1}
-      </label>
-    {/each}
+  {#each tasks as task, i}
+  <input type="radio" bind:group={selected_task} value={i} id={`loss_${i+1}`}>
+  <label for={`loss_${i+1}`}>
+    {i+1}
+  </label>
+  {/each}
 </div>
 
 
@@ -25,7 +25,7 @@
     <VariableHandleWithReference bind:position={theta} value="\theta" offset={[0, -15]} referencePoint={null} />
 
     {#each updates as phi, i}
-    <VariableHandleWithReference bind:position={phi} value={`\\phi_{${i}}`} offset={[0, -15]} referencePoint={theta}/>
+    <VariableHandleWithReference bind:position={phi} value={`\\phi_{${i}}`} offset={[0, -15]} referencePoint={theta} />
     {/each}
 
     {#each algos as alg, i}
@@ -33,8 +33,10 @@
     {/each}
 
     {#each algos as alg, i}
-    <VariableHandleWithReference position={alg} value={`A_{${i}}`} offset={[0, -15]} referencePoint={theta} />
+    <VariableHandleWithReference position={alg} value={`A_{${i}}`} offset={[0, -15]} referencePoint={theta}
+      withPoint="{false}" />
     {/each}
+
   </Axis>
 </Chart>
 
@@ -51,38 +53,72 @@
   import { rosenbrock as loss_1 } from './util/loss'
   import { beale as loss_2 } from './util/loss'
 
-  let theta = [0.1, 0.9]
-  let means = [[0.9, 0.1], [0.8, 0.8]]
+  import { MetaVariable, Reptile, FirstOrderMAML } from './util/metal-lib'
+
+  // Credit: https://stackoverflow.com/questions/27078285/simple-throttle-in-js
+  function throttle(callback, limit) {
+    var waiting = false;                      // Initially, we're not waiting
+    return function () {                      // We return a throttled function
+      if (!waiting) {                       // If we're not waiting
+        callback.apply(this, arguments);  // Execute users function
+        waiting = true;                   // Prevent future invocations
+        setTimeout(function () {          // After a period of time
+          waiting = false;              // And allow future invocations
+        }, limit);
+      }
+    }
+  }
+
+  let theta = [0.5, .9]
+  let means = [[0, 0], [1, 0]]
   let lossSpaces = means.map(mean => new Random2DLinearRegressionLossSpace(mean))
 
-  let metaLoss = x => tf.stack(lossSpaces.map(space => space.loss(x))).sum(0)
+  let lr = 0.03
+
+  let metaLoss = x => tf.stack(lossSpaces.map(space => {
+    let upd = space.paramUpdate(x, lr, false)
+    return space.loss(upd)
+  })).sum(0)
 
   let tasks = [metaLoss, ...lossSpaces.map(space => space.loss)]
 
-  const U = (space, t) => space.toArray(space.paramUpdate([t], 0.4, true))
-  const add2d = (a, b) => [ a[0] + b[0], a[1] + b[1]]
-  const sub2d = (a, b) => [ a[0] - b[0], a[1] - b[1]]
-  const mul2d = (a, b) => [ a * b[0], a * b[1]]
+  const U = (space, t) => space.toArray(space.paramUpdate([t], lr, true))
+  const add2d = (a, b) => [a[0] + b[0], a[1] + b[1]]
+  const sub2d = (a, b) => [a[0] - b[0], a[1] - b[1]]
+  const mul2d = (a, b) => [a * b[0], a * b[1]]
 
   let updates = lossSpaces.map(space => U(space, theta))
 
   let selected_task = 0
-  let beta = 0.5
-  let eta = 0.2
+  let beta = 0.03
+  let eta = 0.5
 
   let algos = [theta, theta]
 
-  $ : {
-    let t = theta
-    for(let i = 0; i < lossSpaces.length; i++){
-      t = add2d(t, mul2d(eta, sub2d(U(lossSpaces[i], theta), algos[0])))
-    }
-    algos[0] = t
+  let lossGradients = lossSpaces.map(space => space.lossGrad)
+  let reptile = new Reptile(eta, lr, 5)
+
+  let fomaml = new FirstOrderMAML(beta)
+
+  function updateReptile(t){
+    let thetaVar = new MetaVariable([t])
+    algos[0] = thetaVar.transform(reptile)(lossGradients).toArray()
   }
 
-  $ : {
-    algos[1] = sub2d(theta, mul2d(beta, tf.stack(lossSpaces.map((space, i) => space.lossGrad(tf.tensor([updates[i]])))).sum(0).bufferSync().values))
+  function updateFomaml(t){
+    let thetaVar = new MetaVariable([t])
+    algos[1] = thetaVar.transform(fomaml)(lossGradients, updates).toArray()
   }
 
-  $: console.log(theta)
+  const updateReptileThrottle = throttle(updateReptile, 100)
+  const updateFomamlThrottle = throttle(updateFomaml, 100)
+
+  $: {
+    updateFomamlThrottle(theta)
+  }
+
+  $: {
+    updateReptileThrottle(theta)
+  }
+
 </script>

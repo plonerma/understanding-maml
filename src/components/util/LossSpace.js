@@ -40,31 +40,39 @@ export class Random2DLinearRegressionLossSpace {
      * 
      * where loss({a, b}) = .5 * (y_true - ax - b)**2, summed over all samples. Note that the input is 1D but the parameter space is 2D.
      */
-    constructor(mean = [.5, .5], variance = [.01, .01]) {
-        this.trueParameters = sampleIndependentMultivariateGaussian(mean, variance)
+    constructor(mean = [.5, .5], variance = [.00, .00]) {
+        this.trueParameters = tf.tensor1d(mean)//sampleIndependentMultivariateGaussian(mean, variance)
         this.trueParameters.print()
-        var N = 10
-        var x = tf.randomUniform([N])
+        var N = 5
+        var x = tf.randomUniform([N], -3, 3)
         var z = tf.stack([x, tf.ones([N])])
         var y = tf.dot(this.trueParameters, z)
+
+        x.print()
 
         this.loss = tf.tidy(() => parameters => {
             var estimates = tf.matMul(parameters, z)
             var squaredError = estimates.squaredDifference(y)
             var sumOfSquares = squaredError.sum(-1)
-            return sumOfSquares.div(tf.scalar(2 * N))
+            return sumOfSquares.div(tf.scalar(2))
         })
 
         this.lossGrad = tf.grad(this.loss)
     }
 
-    paramUpdate(input, lr = 0.05, makeTensor = false) {
+    paramUpdate(input, lr = 0.05, makeTensor = false, nSteps = 1) {
         if(makeTensor){
             input = tf.tensor(input)
         }
         
         lr = tf.scalar(lr)
-        return tf.tidy(() => input.sub(lr.mul(this.lossGrad(input))))
+        return tf.tidy(() => {
+            var param = input
+            for(var i = 0; i < nSteps; i++){
+                param = param.sub(lr.mul(this.lossGrad(param)))
+            }
+            return param
+        })
     }
 
     toArray(tensor) {
