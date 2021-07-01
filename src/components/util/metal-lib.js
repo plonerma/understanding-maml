@@ -53,12 +53,6 @@ export class Reptile extends Model {
         return optimalInnerUpdates.reduce((aggregatedParams, optimalInnerParams) => {
             return aggregatedParams.add(optimalInnerParams.sub(aggregatedParams).mul(this.metaInterpolationRate))
         }, params)
-        
-        for (let i = 0; i < lossGradients.length; i++) {
-            let optimalInnerParams = this.vGD.update(params, lossGradients[i])
-            params = params.add(optimalInnerParams.sub(params).mul(this.metaInterpolationRate))
-        }
-        return params
     }
 }
 
