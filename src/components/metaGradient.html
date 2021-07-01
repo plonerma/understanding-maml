@@ -53,7 +53,7 @@
   import { rosenbrock as loss_1 } from './util/loss'
   import { beale as loss_2 } from './util/loss'
 
-  import { MetaVariable, Reptile, FirstOrderMAML } from './util/metal-lib'
+  import { MetaVariable, Reptile, FirstOrderMAML, VanillaGradientDescent } from './util/metal-lib'
 
   // Credit: https://stackoverflow.com/questions/27078285/simple-throttle-in-js
   function throttle(callback, limit) {
@@ -75,50 +75,39 @@
 
   let lr = 0.03
 
-  let metaLoss = x => tf.stack(lossSpaces.map(space => {
-    let upd = space.paramUpdate(x, lr, false)
-    return space.loss(upd)
-  })).sum(0)
 
-  let tasks = [metaLoss, ...lossSpaces.map(space => space.loss)]
-
-  const U = (space, t) => space.toArray(space.paramUpdate([t], lr, true))
-  const add2d = (a, b) => [a[0] + b[0], a[1] + b[1]]
-  const sub2d = (a, b) => [a[0] - b[0], a[1] - b[1]]
-  const mul2d = (a, b) => [a * b[0], a * b[1]]
-
-  let updates = lossSpaces.map(space => U(space, theta))
 
   let selected_task = 0
   let beta = 0.03
   let eta = 0.5
 
-  let algos = [theta, theta]
-
-  let lossGradients = lossSpaces.map(space => space.lossGrad)
   let reptile = new Reptile(eta, lr, 5)
+  let fomaml = new FirstOrderMAML(beta, lr, 1)
+  let vgd = new VanillaGradientDescent(lr, 1)
 
-  let fomaml = new FirstOrderMAML(beta)
+  let algos = [theta, theta]
+  let lossGradients = lossSpaces.map(space => space.lossGrad)
+  let updates = lossGradients.map(space => theta)
 
-  function updateReptile(t){
+  let metaLoss = x => tf.stack(lossGradients.map((lossGradient, i) => {
+    let thetaVar = new MetaVariable(x)
+    let optimalParam = vgd.update(thetaVar, lossGradient)
+    return lossSpaces[i].loss(optimalParam.getStateCopy())
+  })).sum(0)
+  let tasks = [metaLoss, ...lossSpaces.map(space => space.loss)]
+
+  function updateDirections(t){
     let thetaVar = new MetaVariable([t])
-    algos[0] = thetaVar.transform(reptile)(lossGradients).toArray()
+
+    updates = lossGradients.map(lossGradient => vgd.update(thetaVar, lossGradient).toArray())
+    algos[0] = reptile.update(thetaVar, lossGradients).toArray()
+    algos[1] = fomaml.update(thetaVar, lossGradients).toArray()
   }
 
-  function updateFomaml(t){
-    let thetaVar = new MetaVariable([t])
-    algos[1] = thetaVar.transform(fomaml)(lossGradients, updates).toArray()
-  }
+  const updateDirectionsThrottle = throttle(updateDirections, 100)
 
-  const updateReptileThrottle = throttle(updateReptile, 100)
-  const updateFomamlThrottle = throttle(updateFomaml, 100)
-
-  $: {
-    updateFomamlThrottle(theta)
-  }
-
-  $: {
-    updateReptileThrottle(theta)
+  $: {    
+    updateDirectionsThrottle(theta)
   }
 
 </script>

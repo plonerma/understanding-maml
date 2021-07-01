@@ -7,8 +7,8 @@ export class MetaVariable {
         this.state = Array.isArray(initialValues) ? tf.tensor(initialValues) : initialValues
     }
 
-    transform(model) {
-        return model.transform(this.state)
+    getStateCopy() {
+        return this.state.clone()
     }
 
     toArray() {
@@ -16,64 +16,101 @@ export class MetaVariable {
     }
 }
 
+class Model {
+    update(variable, ...args) {
+        if(variable instanceof MetaVariable){
+            let params = variable.getStateCopy()
+            return new MetaVariable(tf.tidy(() => this.updateParameters(params, ...args)))
+        }
+        return tf.tidy(() => this.updateParameters(variable, ...args))
+    }
+
+    updateParameters() {
+        throw new Error("This model does not implement the 'updateParameters' method.")
+    }
+}
+
 /**
  * Implementation of Reptile
  */
-export class Reptile {
+export class Reptile extends Model {
     constructor(metaInterpolationRate, innerLearningRate, nSteps = 1) {
+        super()
         this.metaInterpolationRate = metaInterpolationRate
-        this.innerLearningRate = innerLearningRate
-        this.nSteps = nSteps
+        this.vGD = new VanillaGradientDescent(innerLearningRate, nSteps)
     }
 
-    transform(state) {
-        let params = state.clone()
-        return lossGradients => new MetaVariable(this.updateParameters(lossGradients, params))
-    }
-
-    updateParameters(lossGradients, params) {
+    /**
+     * Performs a Reptile step given a fixed set of loss gradients (each obtained from tf.grad(loss)), where loss is the loss-function of 
+     * the respective task.
+     * @param {Array<function>} lossGradients List of loss gradients. Obtained from tf.grad(loss).
+     * @param {tf.Tensor} params Parameters to be updated. 
+     * @returns Updated parameters.
+     */
+    updateParameters(params, lossGradients) {
+        let optimalInnerUpdates = lossGradients.map(lossGradient => this.vGD.update(params, lossGradient))
+        
+        return optimalInnerUpdates.reduce((aggregatedParams, optimalInnerParams) => {
+            return aggregatedParams.add(optimalInnerParams.sub(aggregatedParams).mul(this.metaInterpolationRate))
+        }, params)
+        
         for (let i = 0; i < lossGradients.length; i++) {
-            let optimalInnerParams = vanillaGradientDescent(lossGradients[i], params, this.innerLearningRate, this.nSteps)
+            let optimalInnerParams = this.vGD.update(params, lossGradients[i])
             params = params.add(optimalInnerParams.sub(params).mul(this.metaInterpolationRate))
         }
         return params
     }
 }
 
-/**
- * Implementation of first-order MAML.
- */
-export class FirstOrderMAML {
-    constructor(metaLearningRate) {
+export class FirstOrderMAML extends Model {
+
+    /**
+     * Implementation of first-order MAML.
+     * @param {float} metaLearningRate 
+     */
+    constructor(metaLearningRate, innerLearningRate, nSteps = 1) {
+        super()
         this.metaLearningRate = metaLearningRate
+        this.vGD = new VanillaGradientDescent(innerLearningRate, nSteps)
     }
 
-    transform(state) {
-        let params = state.clone()
-        return (lossGradients, innerUpdates) => new MetaVariable(
-            this.updateParameters(lossGradients, innerUpdates, params))
-    }
-
-    updateParameters(lossGradients, innerUpdates, params) {
+    /**
+     * Performs a Reptile step given a fixed set of loss gradients (each obtained from tf.grad(loss)), where loss is the loss-function of 
+     * the respective task.
+     * @param {Array<function>} lossGradients List of loss gradients. Obtained from tf.grad(loss).
+     * @param {tf.Tensor} params Parameters to be updated. 
+     * @returns Updated parameters.
+     */
+    updateParameters(params, lossGradients) {
+        let optimalInnerUpdates = lossGradients.map(lossGradient => this.vGD.update(params, lossGradient))
         let taskLossGradients = lossGradients.map(
-            (lossGradient, i) => lossGradient([innerUpdates[i]]))
+            (lossGradient, i) => lossGradient(optimalInnerUpdates[i]))
         return params.sub(tf.sum(tf.stack(taskLossGradients), 0).mul(this.metaLearningRate))
     }
 }
 
-/**
- * Performs nSteps steps of vanilla gradient descent on a provided loss, given some initial params and a learning rate.
- * @param {function} gradient Gradient of the loss. Obtained from tf.grad(loss).
- * @param {tf.Tensor} params Initial parameters.
- * @param {float} learningRate Static learning rate.
- * @param {int} nSteps Number of steps.
- * @returns The updated parameters.
- */
-const vanillaGradientDescent = (gradient, params, learningRate, nSteps) => {
-    return tf.tidy(() => {
-        for (let _ = 0; _ < nSteps; _++) {
-            params = params.sub(gradient(params).mul(learningRate))
+export class VanillaGradientDescent extends Model {
+    /**
+     * Implements vanilla gradient descent
+     * @param {float} learningRate Static learning rate.
+     * @param {int} nSteps Number of steps.
+     */
+    constructor(learningRate, nSteps) {
+        super()
+        this.learningRate = learningRate
+        this.nSteps = nSteps
+    }
+
+    /**
+     * Performs nSteps steps of vanilla gradient descent on a provided loss, given some initial params and a learning rate.
+     * @param {tf.Tensor} params Initial parameters.
+     * @param {function} gradient Gradient of the loss. Obtained from tf.grad(loss).
+     * @returns The updated parameters.
+     */
+    updateParameters(params, gradient) {
+        for (let _ = 0; _ < this.nSteps; _++) {
+            params = params.sub(gradient(params).mul(this.learningRate))
         }
         return params
-    })
+    }
 }

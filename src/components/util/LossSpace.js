@@ -46,12 +46,12 @@ export class Random2DLinearRegressionLossSpace {
         var N = 5
         var x = tf.randomUniform([N], -3, 3)
         var z = tf.stack([x, tf.ones([N])])
-        var y = tf.dot(this.trueParameters, z)
+        var y = tf.dot(this.trueParameters, z).elu()
 
         x.print()
 
         this.loss = tf.tidy(() => parameters => {
-            var estimates = tf.matMul(parameters, z)
+            var estimates = tf.matMul(parameters, z).elu()
             var squaredError = estimates.squaredDifference(y)
             var sumOfSquares = squaredError.sum(-1)
             return sumOfSquares.div(tf.scalar(2))
