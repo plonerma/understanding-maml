@@ -15,10 +15,13 @@
       <div class="column is-half">
         <Slider min="-5" max="4"
                 bind:value={lambda_slider} id="imaml_lambda"
-                label={`Regularization coeffiecient: ${lambda.toPrecision(3)}`}
                 on:change={recalculateSlow}
                 on:input={recalculateSlow}
                 />
+      </div>
+      <div class="column is-half">
+        <small>Regularization coeffiecient \( \lambda \):</small>
+        <span>{lambda.toPrecision(3)}</span>
       </div>
     {/if}
   </div>

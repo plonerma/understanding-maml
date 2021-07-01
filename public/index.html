@@ -461,7 +461,7 @@
 		<p>
 			Now, instead of using only few update steps, we will use an abitrary
 			optimizer which optimizes the task-parameter until it reaches a minimum,
-			but instead of only minimizing the task-loss we add a quadratic regularization
+			but instead of only minimizing the task-loss we add a \( L_2 \) normalization term.
 			term:
 
 			$$
@@ -475,14 +475,89 @@
 			results in higher loss.
 		</p>
 
-
-
-
 		<figure class="l-body-outset">
 			<d-figure id="imamlLoss">
 				<div class="element is-loading" style="height: 400px"></div>
 			</d-figure>
+			<figcaption>
+				Play around with \( \theta \) and \( \lambda \) to get a feeling for the
+				resulting loss space of the inner optimization objective.
+				High \( \lambda \) will encourage the the algorithm to place the task-parameter
+				close to the meta-parameter \( \theta \). \( \lambda = 0\) results in the
+				original loss function.
+			</figcaption>
 		</figure>
+
+
+		<p>
+			Now, in order to minimize the meta-objective, we again calculate the gradient:
+
+			$$
+			\begin{align}
+				\nabla_\theta\, \mathbb E_\tau \left[ \mathcal L \left(
+					\phi_\tau , \mathcal D ^ {test}_\tau
+				\right)\right]
+				&= \mathbb E_\tau \left[ \nabla_\theta\, \mathcal L \left(
+					\phi_\tau , \mathcal D ^ {test}_\tau
+				\right)\right]\\
+				&= \mathbb E_\tau \left[ \nabla_{\phi_\tau} \, \mathcal L \left(
+					\phi_\tau , \mathcal D ^ {test}_\tau\right) \cdot \frac{\mathrm d \phi_\tau}{\mathrm d \theta}
+				\right]
+			\end{align}
+			$$
+
+			Calculating the first part \( \nabla_{\phi_\tau} \, \mathcal L \left(
+			\phi_\tau , \mathcal D ^ {test}_\tau\right) \) can be done using back-propagation.
+			This is the gradient of \(\phi_\tau\) at the parameter which was found by
+			the optimizer. \( \frac{\mathrm d \phi_\tau}{\mathrm d \theta} \) is the part
+			that MAML has its problems with: depending on how complex the optimization
+			algorithm is, this may be difficult to compute using back-propagation.
+		</p>
+
+		<p>
+			But, here comes the awesome part: Since we assume that out inner optimizer
+			found a local minimum, we know that the gradient of the objective
+			in regard to the task-parameter is 0. This gives us the following equation:
+
+			$$
+				\begin{align}
+				\mathbf {0} &= \nabla_{\phi} \left(
+					\mathcal L \left( \phi, \mathcal D^{train} \right)
+					+ \frac{\lambda}{2} \| \phi - \theta \| ^ 2
+
+					 \right)\\
+					 &= \nabla_{\phi} L \left( \phi, \mathcal D^{train} \right) + \lambda \left( \phi - \theta \right)
+				\end{align}
+			$$
+
+			By rearranging we get:
+
+			$$
+				\phi = \theta - \frac{1}{\lambda} \nabla_\phi L \left( \phi, \mathcal D^{train} \right)
+			$$
+
+			Now, we can calculate the total derivative of the task-parameter in regard to the meta-parameter:
+
+			$$
+				\begin{align}
+					\frac{\mathrm d \phi}{\mathrm d \theta}
+					&= \frac{\mathrm d \left( \theta - \frac{1}{\lambda} \nabla_\phi L \left( \phi, \mathcal D^{train} \right) \right)}{\mathrm d \theta}\\
+					&= \frac{\mathrm d \theta}{\mathrm \theta} - \frac{1}{\lambda}\frac{ \mathrm d \nabla_\phi L \left( \phi, \mathcal D^{train} \right)}{\mathrm d \theta}\\
+					&= I - \frac{1}{\lambda} \nabla^2_\phi L \left( \phi, \mathcal D^{train} \right) \frac{\mathrm d \phi}{\mathrm d \theta}
+				\end{align}
+			$$
+
+			Here, to get from the 2nd to 3rd line, we need to apply the chain rule: \( \phi \)
+			is a function of \( \theta \). Hence, we need to calculate the outer derivative (which results in the Hessian)
+			and the inner derivative which is exactly what we want to calculate.
+
+			Finally, we arrive at the following equations (assuming the inverse exists):
+
+			$$\begin{align}
+				&&(I + \frac{1}{\lambda} \nabla^2_\phi L \left( \phi, \mathcal D^{train} \right))\frac{\mathrm d \phi}{\mathrm d \theta} = I\\
+				\Rightarrow&& \frac{\mathrm d \phi}{\mathrm d \theta} = (I + \frac{1}{\lambda} \nabla^2_\phi L \left( \phi, \mathcal D^{train} \right))^{-1}
+			\end{align}$$
+		</p>
 
 	</dt-article>
 
