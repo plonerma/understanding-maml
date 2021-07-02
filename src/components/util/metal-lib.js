@@ -1,26 +1,17 @@
-
 import * as tf from '@tensorflow/tfjs'
 
+export class Model {
 
-export class MetaVariable {
-    constructor(initialValues) {
-        this.state = Array.isArray(initialValues) ? tf.tensor(initialValues) : initialValues
-    }
-
-    getStateCopy() {
-        return this.state.clone()
-    }
-
-    toArray() {
-        return this.state.bufferSync().values
-    }
-}
-
-class Model {
+    /**
+     * Wrapper Model superclass that conveniently calls the parameter updates.
+     * @param {Array|tf.Tensor} variable Either an array of data or already a tensor.
+     * @param  {...any} args Any args to apply to the updateParameters-call.
+     * @returns The result of the parameter update.
+     */
     update(variable, ...args) {
-        if(variable instanceof MetaVariable){
-            let params = variable.getStateCopy()
-            return new MetaVariable(tf.tidy(() => this.updateParameters(params, ...args)))
+        if (Array.isArray(variable)) {
+            let params = tf.tensor(variable)
+            return tf.tidy(() => this.updateParameters(params, ...args))
         }
         return tf.tidy(() => this.updateParameters(variable, ...args))
     }
@@ -31,9 +22,64 @@ class Model {
 }
 
 /**
- * Implementation of Reptile
+ * Since tfjs does not provide a tf.jacobian, we use finite differences to estimate the Jacobian.
+ * This isn't optimal, but required for MAML.
+ * @param {function} f Vector-valued function.
+ * @returns function that computes the Jacobian J(x).
  */
+const jacobian = (f) => {
+    const sliceRow = (tensor, rowIndex) => tensor.slice([rowIndex, 0], [1, tensor.shape[1]])
+    const perturbationCoeff = 0.01
+    return (x) => {
+        const perturb = tf.eye(x.shape[1]).mul(perturbationCoeff)
+        const jac = tf.stack(x.shape.map((_, i) => f(x.add(sliceRow(perturb, i))).sub(f(x)).div(perturbationCoeff)))
+        return jac.squeeze()
+    }
+}
+
+export class MAML extends Model {
+
+    /**
+     * Implements Finn et al. (2017) MAML update step.
+     * @param {float} metaLearningRate meta learning rate
+     * @param {float} innerLearningRate inner learning rate
+     * @param {int} nSteps Number of inner gradient descent steps
+     */
+    constructor(metaLearningRate, innerLearningRate, nSteps = 1) {
+        super()
+        this.metaLearningRate = metaLearningRate
+        this.innerLearningRate = innerLearningRate
+        this.vGD = new VanillaGradientDescent(innerLearningRate, nSteps)
+    }
+
+    /**
+     * Performs a MAML step given a fixed set of loss gradients (each obtained from tf.grad(loss)), where loss is the loss-function of 
+     * the respective task.
+     * @param {Array<function>} lossGradients List of loss gradients. Obtained from tf.grad(loss).
+     * @param {tf.Tensor} params Parameters to be updated. 
+     * @returns Updated parameters.
+     */
+    updateParameters(params, lossGradients) {
+        let optimalInnerUpdates = lossGradients.map(lossGradient => this.vGD.update(params, lossGradient))
+        let taskLossGradients = lossGradients.map(
+            (lossGradient, i) => {
+                let gradientOptimalInner = lossGradient(optimalInnerUpdates[i])
+                let taskLossJacobian = jacobian(lossGradients[i])(params).mul(this.innerLearningRate)
+                return gradientOptimalInner.sub(tf.matMul(gradientOptimalInner, taskLossJacobian))
+            })
+
+        return params.sub(tf.sum(tf.stack(taskLossGradients), 0).mul(this.metaLearningRate))
+    }
+}
+
 export class Reptile extends Model {
+
+    /**
+     * Implements the Nicho et al. (2018) Reptile update step. 
+     * @param {float} metaInterpolationRate interpolation rate between old and new parameters
+     * @param {float} innerLearningRate inner learning rate
+     * @param {int} nSteps inner gradient descent steps 
+     */
     constructor(metaInterpolationRate, innerLearningRate, nSteps = 1) {
         super()
         this.metaInterpolationRate = metaInterpolationRate
@@ -49,27 +95,17 @@ export class Reptile extends Model {
      */
     updateParameters(params, lossGradients) {
         let optimalInnerUpdates = lossGradients.map(lossGradient => this.vGD.update(params, lossGradient))
-        
+
         return optimalInnerUpdates.reduce((aggregatedParams, optimalInnerParams) => {
             return aggregatedParams.add(optimalInnerParams.sub(aggregatedParams).mul(this.metaInterpolationRate))
         }, params)
     }
 }
 
-export class FirstOrderMAML extends Model {
+export class FirstOrderMAML extends MAML {
 
     /**
-     * Implementation of first-order MAML.
-     * @param {float} metaLearningRate 
-     */
-    constructor(metaLearningRate, innerLearningRate, nSteps = 1) {
-        super()
-        this.metaLearningRate = metaLearningRate
-        this.vGD = new VanillaGradientDescent(innerLearningRate, nSteps)
-    }
-
-    /**
-     * Performs a Reptile step given a fixed set of loss gradients (each obtained from tf.grad(loss)), where loss is the loss-function of 
+     * Performs a first-order MAML step given a fixed set of loss gradients (each obtained from tf.grad(loss)), where loss is the loss-function of 
      * the respective task.
      * @param {Array<function>} lossGradients List of loss gradients. Obtained from tf.grad(loss).
      * @param {tf.Tensor} params Parameters to be updated. 
@@ -108,3 +144,4 @@ export class VanillaGradientDescent extends Model {
         return params
     }
 }
+

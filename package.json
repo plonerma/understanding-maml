@@ -26,7 +26,6 @@
     "dev": "webpack serve --content-base public"
   },
   "dependencies": {
-    "mathjax": "^3.2.0",
-    "meta-learning": "file:src/meta-learning-js"
+    "mathjax": "^3.2.0"
   }
 }
