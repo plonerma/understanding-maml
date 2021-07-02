@@ -43,7 +43,7 @@ export class Random2DLinearRegressionLossSpace {
     constructor(mean = [.5, .5], variance = [.00, .00]) {
         this.trueParameters = tf.tensor1d(mean)//sampleIndependentMultivariateGaussian(mean, variance)
         this.trueParameters.print()
-        var N = 5
+        var N = 10
         var x = tf.randomUniform([N], -3, 3)
         var z = tf.stack([x, tf.ones([N])])
         var y = tf.dot(this.trueParameters, z).elu()
