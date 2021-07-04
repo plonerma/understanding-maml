@@ -274,7 +274,7 @@
 			In the following we will explore two possible
 			answers to these issues.
 		</p>
-		<h3>Answer 1: Just do gradient descent, silly!</h3>
+		<h3>Part 1: Just do gradient descent, silly!</h3>
 		<p>Of course! The answer to most problems. We can simply learn a single set of parameters \(\phi\) which
 			minimizes the expected loss
 			over all tasks. Or formally speaking our objective becomes
@@ -343,7 +343,8 @@
 			The problem that the above approach faces is that the optimal parameters of
 			different tasks might live in completely different loss spaces. Given a loss function \(\mathcal{L}\) w.r.t
 			some parameters \(\rho\), as well as
-			constant parameter-set \(C\) (e.g. a dataset on which the loss is defined), the parameter space defined the function values of
+			constant parameter-set \(C\) (e.g. a dataset on which the loss is defined), the parameter space defined the
+			function values of
 
 			\[ \mathcal{L}(\rho; C) .\]
 
@@ -371,13 +372,17 @@
 			<d-figure id="twoLossSpaces"></d-figure>
 		</figure>
 		<p>
-			Having seen how we can probably not select an optimal \(\phi\) pointing to a minimum in a
+			At this point we can conclude that optimizating for parameter-vector \(\phi\) minimizing all task
+			distributions at the same time
+			is maybe not the best parameter to optimize for. The next approach rather optimizes another variable of the
+			problem. Maybe you already have a hunch?
 		</p>
 
-		<h3>Just do Model-Agnostic Meta-Learning, silly!</h3>
+		<h3>Part 2: Just do Model-Agnostic Meta-Learning, silly!</h3>
 		<p>
 			MAML comes to our rescue. We have already seen how different tasks might give us contradicting function
-			values at the same query point. The idea of MAML is now to
+			values at the same query point and how that leads to an undesired ping-pong from one local optimum to
+			another, resulting in no meaningful convergence. The idea of MAML is now to
 			learn an optimal initialization \(\theta\) in the sense that initializating a task optimizer with these
 			parameters and taking gradient descent steps
 			from there minimizes the loss for that task. We can express this formally as follows:
@@ -391,7 +396,7 @@
 		<h4>Outline of the Algorithm</h4>
 		<p>
 			Now that we fixed the objective function, let us briefly take a look at the three main steps of the method,
-			starting with
+			given a (current)
 			meta-parameter \(\theta\):
 		</p>
 		<ul>
@@ -450,18 +455,23 @@
 				gist</a>.
 		</p>
 		<script src="https://gist.github.com/pupuis/f23f483c405b0a169bf279f7b02209bc.js"></script>
-		<h4>MAML on the Sinusoid Problem</h4>
+		<h4>Will it really work?</h4>
 		<p>
 			Before we study the MAML model on the sinusoid task distribution, let us spend some
 			time on trying to understand MAML intuitively. Why would we expect it to produce better results than the
-			pretrained model? To answer this, recall the exercise of <a href="#twoLossSpaces">comparing loss spaces</a> from before.
-			As stated above, MAML tries to learn an optimal initialization \(\theta\), from which we can easily descent into all desired task spaces.
-			If you go back to the figure you can see that with the right learning rate, it is relatively easy to position \(\theta\) such that 
-			both \(\phi_i\) point to the minimum of their respective tasks. This is exactly what MAML does! And now you know first hand, why it might actually work.
+			pretrained model? To answer this, recall the exercise of <a href="#twoLossSpaces">comparing loss spaces</a>
+			from before.
+			As stated above, MAML tries to learn an optimal initialization \(\theta\), from which we can easily descent
+			into all desired task spaces.
+			If you go back to the figure you can see that with the right learning rate, it is relatively easy to
+			position \(\theta\) such that
+			both \(\phi_i\) point to the minimum of their respective tasks. This is exactly what MAML does! And now you
+			know first hand, why it might actually work.
 		</p>
 		<h4>Returning to Sinusoids</h4>
 		<p>
-			After having studied the math behind the MAML objective, as well as its intuition and implementation, it is time to evaluate it on the sinusoid example.
+			After having studied the math behind the MAML objective, as well as its intuition and implementation, it is
+			time to evaluate it on the sinusoid example.
 			Hopefully, MAML will produce better results
 			than the pretrained model (although by now you should be convinced that it will).
 			You will have the opportunity to repeat the above experiements on a model that has been trained with
@@ -478,31 +488,76 @@
 			despite being exposed to at most 5 samples.
 		</p>
 		<p>
-			We will now further expand
-			the summands by applying the chain rule and write
+			The rest of this article is dedicated to introducing interesting extensions of MAML, making the method
+			either more robust or more efficient.
+			If you are interested in the former, <a href="#section_imaml">jump to iMAML</a>. If you are more interested
+			in the latter, the following section sheds
+			a light on the computational (in-)efficiency of MAML and what possible solutions to that problem are.
+		</p>
+		<h2>First-Order Methods: Why differentiating through an optimizer is actually as complicated as it sounds</h2>
+		<p>
+			In this section we want to gain some understanding of what it actually means to differentiate through \(U\),
+			the optimizer.
+			Recall the gradient that MAML requires us to compute:
 
-			\[ \nabla_\theta \mathcal{L}_{\tau_i}(U_{\tau_i}(\theta)) = \nabla_{U_{\tau_i}(\theta)} \mathcal{L}_{\tau_i}
+			\[ \nabla_\theta \mathcal{L}(\theta) = \sum_{i} \nabla_\theta
+			\mathcal{L}_{\tau_i, \text{test}}(\phi_i)
+			.\]
+
+			Expanding
+			the summands by applying the chain rule yields
+
+			\[ \nabla_\theta
+			\mathcal{L}_{\tau_i, \text{test}}(\phi_i) = \nabla_\theta
+			\mathcal{L}_{\tau_i, \text{test}}(U_{\tau_i}(\theta)) = \nabla_{U_{\tau_i}(\theta)} \mathcal{L}_{\tau_i,
+			\text{test}}
 			\nabla_\theta U_{\tau_i}(\theta) .\]
 
-			Here, \( \nabla_{U_{\tau_i}(\theta)} \mathcal{L}_{\tau_i} \) represents the gradient of the loss of task
+			Here, \( \nabla_{U_{\tau_i}(\theta)} \mathcal{L}_{\tau_i, \text{test}} \) represents the gradient of the
+			loss of task
 			\(\tau_i\) by the optimized parameter \(\phi_i\)
 			and \(\nabla_\theta U_{\tau_i}(\theta)\) is a gradient through an optimization algorithm. Even if we assume
 			that
 			the optimizer takes only one gradient descent step, this term becomes
 
 			\[ \nabla_\theta U_{\tau_i}(\theta) = \nabla_\theta (\theta - \alpha \nabla_\theta
-			\mathcal{L}_{\tau_i}(\theta) )\]
+			\mathcal{L}_{\tau_i, \text{train}}(\theta) )\]
 
 			which is equal to
 
-			\[ I - \alpha \nabla^2_\theta \mathcal{L}_{\tau_i}(\theta). \]
+			\[ I - \alpha \nabla^2_\theta \mathcal{L}_{\tau_i, \text{train}}(\theta). \]
 
-			Hence, MAML requires us to compute second derivatives in order to optimize \(\theta\). We will later pick up
-			on that and discuss
-			complications and possible solutions.
+			Hence, MAML requires us to compute second derivatives in order to optimize \(\theta\), which is
+			computationally inefficient, especially
+			in high-dimensional problems (such as learning neural nets).
+		</p>
+		<p>
+			We will now spend some time on introducing the two most prominent solutions to this problem, as well as
+			comparing them to MAML and to each other.
 		</p>
 
+		<h3>First-Order MAML (FOMAML)</h3>
+		<p>
+			FOMAML was suggested by Finn et al. (the authors of MAML) and is a straightforward heuristic to get rid of
+			the second order terms:
+			Setting them to zero! As a result
 
+			\[\nabla_\theta U_{\tau_i}(\theta) = I\]
+
+			and the overall meta loss gradient reduces to
+
+			\[ \nabla_\theta \mathcal{L}(\theta) = \sum_{i} \nabla_{U_{\tau_i}(\theta)} \mathcal{L}_{\tau_i,
+			\text{test}}
+			.\]
+
+			That's already it. We will be able to see how that change effects the update direction of \(\theta\). But
+			first we study another prominent fist-order method, with a whole different approach.
+		</p>
+
+		<h3>Reptile</h3>
+		<p>
+			...
+		</p>
 		<figure class="l-body">
 			<d-figure id="metaGradient">
 				<div class="element is-loading" style="height: 400px"></div>
