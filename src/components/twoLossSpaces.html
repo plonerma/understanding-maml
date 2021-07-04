@@ -1,0 +1,94 @@
+<div class="columns">
+    {#each tasks as loss, i}
+    <div class="column is-half">
+        <div style="text-align: center;">{taskNames[i]}</div>
+        <Chart width=400 height=400>
+            <Axis>
+                <ContourPlot lossFunc={loss} logScale={false} />
+
+                {#each updates as phi, i}
+                <Arrow origin={theta} target={phi} trimStart=0 trimEnd=0.01 stroke="#fff" fill="#fff"
+                    stroke-width="2" />
+                {/each}
+
+                <VariableHandleWithReference bind:position={theta} value="\theta" offset={[0, -15]}
+                    referencePoint={null} />
+
+                {#each updates as phi, i}
+                <VariableHandleWithReference bind:position={phi} value={`\\phi_{${i}}`} offset={[0, -15]}
+                    referencePoint={theta} />
+                {/each}
+            </Axis>
+        </Chart>
+    </div>
+    {/each}
+</div>
+<div class="columns">
+    <div class="column is-half">
+        <Slider min="10" max="50" bind:value={lr_slide} id="userOptimizedTheta_lr" label={`Learning Rate: ${(lr_slide /
+            1000).toPrecision(2)}`} />
+        <p class="caption">The two loss spaces displayed are with comprise the true parameters on the top of each plot,
+            10 random samples
+            and the corresponding <i>Mean Squared Error (MSE)</i> as the loss function. A darker color corresponds to a
+            lower loss. Discounted by a learning rate, vectors \(\phi_0, \phi_1\) represent
+            the gradient descent directions of tasks \(0, 1\), when starting at \(\theta\), respectively.
+            You can manipulate the slider for the learning rate, as well as move the \(\theta\) arround to see how the
+            descent directions
+            change in each plot. 
+        </p>
+    </div>
+    <div class="column is-half">
+        <p class="caption">Let us do the following experiment.
+            You, slipping into the role of the <i>pretrained</i> model, might observe loss space
+            \(0\) first and then descent according to \(\phi_0\) (just how the model suggests). After you
+            move \(\theta\) to where \(\phi_0\) points, you are observing loss space \(1\). Following \(\phi_1\) will
+            again lead you away from the local optimum of loss space \(0\). This ping-pong game is repeated until the
+            algorithm ends (involving possibly a lot more tasks). As a result, the you, the model, will never converge to anything meaningful.
+        </p>
+    </div>
+</div>
+
+<style>
+    .column {
+        text-align: center;
+    }
+
+    .caption {
+        color: gray;
+        font-size: 15px
+    }
+</style>
+
+<script>
+    import ContourPlot from './contourPlot.html'
+    import { Slider, Chart, Axis, Arrow, VariableHandleWithReference } from './elements'
+    import * as d3 from 'd3';
+    import { onMount, getContext } from 'svelte';
+    import * as tf from '@tensorflow/tfjs'
+    import { Random2DLinearRegressionLossSpace } from './util/LossSpace'
+    import { VanillaGradientDescent } from './util/metal-lib'
+
+    let theta = [0.5, .9]
+    let means = [[0.3, 0.05], [0.83, 0.75]]
+    let lossSpaces = means.map(mean => new Random2DLinearRegressionLossSpace(mean))
+
+    let selected_task = 0
+
+    //let lr = 0.03
+    let lr_slide = 30
+
+    let lossGradients = lossSpaces.map(space => space.lossGrad)
+    let updates = lossGradients.map(space => theta)
+    let tasks = lossSpaces.map(space => space.loss)
+    let taskNames = means.map(mean => `a = ${mean[0]}, b = ${mean[1]}`)
+
+    function updateDirections(t, lr_upd) {
+        let vgd = new VanillaGradientDescent(lr_upd, 1)
+        updates = lossGradients.map(lossGradient => vgd.update([t], lossGradient).arraySync()[0])
+    }
+
+    $: {
+        updateDirections(theta, lr_slide / 1000)
+    }
+
+</script>

@@ -10,6 +10,7 @@ import MetaGradient from './components/metaGradient.html'
 import FitSinePretrained from './components/fitSinePretrained.html'
 import FitSineMaml from './components/fitSineMaml.html'
 import IMAMLLoss from './components/imamlLoss.html'
+import TwoLossSpaces from './components/twoLossSpaces.html'
 
 const componentMap = {
   '#teaser': Teaser,
@@ -20,6 +21,7 @@ const componentMap = {
   '#fitSinePretrained': FitSinePretrained,
   '#fitSineMaml': FitSineMaml,
   '#imamlLoss': IMAMLLoss,
+  '#twoLossSpaces' : TwoLossSpaces
 }
 
 
