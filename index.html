@@ -232,11 +232,15 @@
 		</p>
 
 		<h2 id="few_shot_maml">Few-shot learning with MAML</h2>
-		<p>Model-Agnostic Meta Learning is a meta-learning approach to solve few-shot learning. We are now going to have
-			a look at the method and see what makes it <i>meta</i>.
-			But before we see the method unfold, take a look at the following setting: If you have done machine learning
-			before you have probably already solved or attempted to solve such a problem:
-			Learning a model to solve one specific task, for example to classify a specific collection of images or to
+		<p>Model-Agnostic Meta Learning (MAML) is a meta-learning approach to solve few-shot learning.
+			To learn more about it, let us build an example from the ground up and then try to apply MAML.
+			We will do this by alternating mathematical walk-throughs and interactive, as well as, coding examples.
+		</p>
+		<!--TODO: Maybe card to github repo for all code: https://github.com/lepture/github-cards-->
+		<p>
+			If you have done machine learning
+			before you have probably already solved or attempted to solve a problem like the following:
+			Learning a model to solve one specific task, for example to classify cats from dogs or to
 			teach an agent
 			to find its way through a specific maze. In those settings, if we are able to define a loss
 			\(\mathcal{L}_\tau\) for our task \(\tau\) which depends on the parameters
@@ -277,19 +281,56 @@
 
 			\[ \underset{\phi}{\text{min}} \, \mathbb{E}_\tau [ \mathcal{L}_\tau (\phi) ] .\]
 
-			As you can see we choose the most simple parameterization: We learn one parameter vector \(\phi\) that
+			As you can see we chose the most simple parameterization: We learn one parameter vector \(\phi\) that
 			minimizes the objective
 			across all tasks.
 			Further, to actually implement this strategy we can do what is known as <i>Expected Risk Minimization
-				(ERM)</i>, which roughly
-			dictates us to sample a lot of tasks \(\tau\) and then descent according to
+				(ERM)</i>, which tells us to sample a lot of tasks \(\tau\) and then descent according to
 
 			\[ \phi \leftarrow \phi - \alpha \nabla_\phi \sum_i \mathcal{L}_{\tau_i} (\phi) .\]
 
-			To make this a bit more robust we can also use an optimizer using an adaptive step size, e.g. <i>Adam</i>.
-			Finn et al. call this model <i>pretrained</i>.
-			In the following figure you can experiment with <i>pretrained</i> model which was trained by a collection of
-			sinusoid regression tasks. Before you fit the model think what
+			Finn et al. (the authors of MAML) call this type of model <i>pretrained</i>, referring to it simply
+			pretraining over all available data and
+			then trying to converge on a small amount of samples later.
+		</p>
+		<h4>Implementing the Pretrained Model</h4>
+		<p>
+			If the above has gotten all too theoretic for you, take a look at the following <i>gist</i>. It contains a
+			simplistic
+			implementation of an update step for this <i>pretrained</i> model. It is implemented such as to emphesize
+			that
+			even if we differentiate between tasks when sampling the batch, the actual optimizer treats each sample the
+			same.
+		</p>
+		<script src="https://gist.github.com/pupuis/cf31417164bc5513302788b906d2a3c2.js"></script>
+		<p>
+			The implementation is agnostic to the choice of optimizer that you use. To train their <i>pretrained</i>
+			model, the MAML creators use
+			the <i>Adam</i> optimizer.
+		</p>
+		<h4>Pretrained Model on a Sinusoid Problem</h4>
+		<p>
+			In the following figure you can experiment with a <i>pretrained</i> model, which was trained by a collection
+			of
+			sinusoid regression tasks. The task distribution works as follows: Each task is represented by an amplitude
+			\(A\) and a
+			phase \(\varphi\) and requires the prediction of sinusoid \(f\):
+
+			\[ f(x) := A \sin(x + \varphi),\]
+
+			where \(A, \varphi\) are sampled uniformly from some predefined range.
+
+			The jist is that different parameters yield different functions \(f_1\) and \(f_2\) with possibly completely
+			different function values and gradients.
+			Take for example the following two tasks:
+			Tasks \(\tau_1, \tau_2\) are both regression tasks on sinusoids \(f_1(x) := \sin (x - \frac{\pi}{2})\) and
+			\(f_2(x) := \sin (x + \frac{\pi}{2})\) respectively. These two tasks' function values give completely
+			contradicting information, as
+
+			\[ f_1(x) = - f_2(x). \]
+		</p>
+		<p>
+			Before you fit the model, think what
 			you would expect to happen based on the position and the
 			amount of samples you provided. Feel free to also experiment with the different settings: Distributing the
 			samples equispaced or squeezing all of them to a small range
@@ -300,23 +341,37 @@
 		</figure>
 		<p>Ouch! That doesn't seem to work that well. Maybe you have already guessed that this would have been to easy.
 			The problem that the above approach faces is that the optimal parameters of
-			different tasks might live in completely different loss spaces. Take for example the following two tasks
-			(which were probably both part of the training set of the <i>pretrained</i> model):
-			Tasks \(\tau_1, \tau_2\) are both regression tasks on sinusoids \(y_1(x) := \sin (x - \frac{\pi}{2})\) and
-			\(y_2(x) := \sin (x + \frac{\pi}{2})\) respectively. These two tasks will
-			give the <i>pretrained</i> model completely contradicting information as
+			different tasks might live in completely different loss spaces. Given a loss function \(\mathcal{L}\) w.r.t
+			some parameters \(\rho\), as well as
+			constant parameter-set \(C\) (e.g. a dataset on which the loss is defined), the parameter space defined the function values of
 
-			\[ y_1(x) = - y_2(x). \]
+			\[ \mathcal{L}(\rho; C) .\]
 
-			Intuitively this is because the vanilla gradient descent approach is always just fitting one particular
-			function (of which we assume not have enough data) and thus fails upon receiving information
-			that does not stem from said function. However, despite these two functions contradicting each other in the
-			gradient descent setting
-			does not mean they do not agree in other ways. Looking at the two functions in the above figure they clearly
-			represent the same structure,
-			merely shifted by an amount of \(\pi\). This indicates that maybe we can learn from one of the tasks about
-			the other one after all.
-			Maybe answer 2 will do...
+			You can investigate the problem of different loss spaces for different tasks a little deeper in
+			<a href="#twoLossSpaces">this figure</a>. The loss spaces displayed stem from a curve fitting (toy) problem,
+			where
+			we are interested in parameters \(a, b\)
+			and the task requires the prediction of
+
+			\[g(x) = \textbf{elu}(ax + b),\]
+
+			where \(\textbf{elu}\) is the <i>Exponential Linear Unit</i>, which is usually employed as an activation
+			function in neural nets, but serves
+			us here to make the resulting loss spaces a bit more funky. For reference, this is how the \(\textbf{elu}\)
+			is
+			defined:
+
+			\[ \textbf{elu} = \begin{cases}
+			x & \, x >= 0 \\
+			\alpha (\exp(x) - 1) & \, \text{otherwise}.
+			\end{cases}
+			\]
+		</p>
+		<figure>
+			<d-figure id="twoLossSpaces"></d-figure>
+		</figure>
+		<p>
+			Having seen how we can probably not select an optimal \(\phi\) pointing to a minimum in a
 		</p>
 
 		<h3>Just do Model-Agnostic Meta-Learning, silly!</h3>
@@ -331,20 +386,103 @@
 
 			where \(U_\tau\) is an optimizer that takes a number of gradient descent steps given the samples of task
 			\(\tau\). This is also why MAML is called mode-agnostic, it does
-			not make any further assumptions about \(U_\tau\), thus allowing any gradient-based inner optimizer. We can
-			implement the above objective function almost
-			exactly like we are used to. Applying ERM over a number of sampled tasks and taking the gradient of the
-			resulting loss gives us
+			not make any further assumptions about \(U_\tau\), thus allowing any gradient-based inner optimizer.
+		</p>
+		<h4>Outline of the Algorithm</h4>
+		<p>
+			Now that we fixed the objective function, let us briefly take a look at the three main steps of the method,
+			starting with
+			meta-parameter \(\theta\):
+		</p>
+		<ul>
+			<li>1. Sample a number of tasks \(\tau_i\) from \(p(\tau)\).</li>
+			<li>2. For each task obtain \(\phi_i = U_{\tau_i}(\theta)\), by minimizing \(\mathcal{L}_{\tau_i,
+				\text{train}}(\theta)\)
+				on a few training samples.</li>
+			<li>3. Update \(\theta\) by gradient descent such that it minimizes \(\mathcal{L}(\theta) := \sum_i
+				\mathcal{L}_{\tau_i, \text{test}}(\phi_i)\) on a few
+				test samples.</li>
+		</ul>
+		<p>
+			Note that \(\mathcal{L}_{\tau_i, \text{train}}\) and \(\mathcal{L}_{\tau_i, \text{test}}\) are two instances
+			of the same loss function
+			for different tasks and corresponding training or test data from these tasks.
+			Obtaining the \(\phi_i\) is easy, we just do gradient descent:
 
-			\[ \nabla \mathcal{L}(\theta) = \sum_{\tau_i \tilde p(\tau)} \nabla \mathcal{L}_{\tau_i}(U_{\tau_i}(\theta))
+			\[ \phi_i = \theta - \alpha \nabla_\theta \mathcal{L}_{\tau_i, \text{train}}(\theta).\]
+
+			Further, updating \(\theta\) requires us to evaluate the gradient of the individual task losses on a set of
+			test data. We obtain
+			the gradient of the overall loss as follows:
+
+			\[ \nabla_\theta \mathcal{L}(\theta) = \sum_{i} \nabla_\theta
+			\mathcal{L}_{\tau_i, \text{test}}(\phi_i)
 			.\]
 
-			Note that \( \phi_i := U_{\tau_i}(\theta) \) is a new parameter vector produced after a number of optimizer
-			steps in \(U_{\tau_i}\). We will now further expand
-			the summands and write
+			Note that \(\phi_i = U_{\tau_i}(\theta)\) depends on \(\theta\), which means that we have to take a gradient
+			through the optimizer
+			\(U\). We can then update \(\theta\) via gradient descent, using a new learning rate \(\beta\):
 
-			\[ \nabla \mathcal{L}_{\tau_i}(U_{\tau_i}(\theta)) = \nabla_{U_{\tau_i}(\theta)} \mathcal{L}_{\tau_i}
-			\nabla_\theta U_{\tau_i}(\theta) \].
+			\[ \theta' = \theta - \beta \nabla_\theta \mathcal{L}(\theta).\]
+
+			And that 🥁... is more or less everything that comprises the original MAML algorithm.
+		</p>
+		<h4>Implementing the Algorithm</h4>
+		<p>
+			However, a machine learning algorithm is not very usefull unless we can execute it on a computer. While
+			implementing the <i>pretrained</i>
+			model was more or less straightforward, implementing MAML requires some more thinking. Firstly, computing
+			\(\phi_i\) is still straightforward, simply call
+			the optimization algorithm of your choice (as long as it is gradient-based).
+			However, how do we then take the gradient through that optimization algorithm?
+			It's actually not that complicated. Almost every modern machine learning framework (e.g. tensorflow), can
+			differentiate through
+			nearly arbitrary python code. Hence, if we can express our optimizer in a python function, then tensorflow
+			can differentiate through it.
+		</p>
+		<p>
+			Below you find a <i>gist</i> that implements a simplistic version of the MAML update step. We coded our
+			optimizer ourselves within the function
+			<i>fastWeights</i>, but the function also directly applies an input tensor to the optimized weights. We did
+			this mainly for simplicity but if you
+			are interested in a more thorough reasoning about this design choice, you can read more about it <a
+				href="https://gist.github.com/pupuis/f23f483c405b0a169bf279f7b02209bc">in the comments under the
+				gist</a>.
+		</p>
+		<script src="https://gist.github.com/pupuis/f23f483c405b0a169bf279f7b02209bc.js"></script>
+		<h4>MAML on the Sinusoid Problem</h4>
+		<p>
+			Before we study the MAML model on the sinusoid task distribution, let us spend some
+			time on trying to understand MAML intuitively. Why would we expect it to produce better results than the
+			pretrained model? To answer this, recall the exercise of <a href="#twoLossSpaces">comparing loss spaces</a> from before.
+			As stated above, MAML tries to learn an optimal initialization \(\theta\), from which we can easily descent into all desired task spaces.
+			If you go back to the figure you can see that with the right learning rate, it is relatively easy to position \(\theta\) such that 
+			both \(\phi_i\) point to the minimum of their respective tasks. This is exactly what MAML does! And now you know first hand, why it might actually work.
+		</p>
+		<h4>Returning to Sinusoids</h4>
+		<p>
+			After having studied the math behind the MAML objective, as well as its intuition and implementation, it is time to evaluate it on the sinusoid example.
+			Hopefully, MAML will produce better results
+			than the pretrained model (although by now you should be convinced that it will).
+			You will have the opportunity to repeat the above experiements on a model that has been trained with
+			MAML in <a href="#fitSineMaml">this figure</a>.
+			Try to compare the optimization behavior of both the pretrained model and MAML and evaluate for yourself
+			whether
+			you think the MAML-trained model has found a good meta-initialization parameter \(\theta\).
+		</p>
+		<figure>
+			<d-figure id="fitSineMaml"></d-figure>
+		</figure>
+		<p>
+			So as you were hopefully able to verify, MAML produces results that are way closer to the actual sinusoid,
+			despite being exposed to at most 5 samples.
+		</p>
+		<p>
+			We will now further expand
+			the summands by applying the chain rule and write
+
+			\[ \nabla_\theta \mathcal{L}_{\tau_i}(U_{\tau_i}(\theta)) = \nabla_{U_{\tau_i}(\theta)} \mathcal{L}_{\tau_i}
+			\nabla_\theta U_{\tau_i}(\theta) .\]
 
 			Here, \( \nabla_{U_{\tau_i}(\theta)} \mathcal{L}_{\tau_i} \) represents the gradient of the loss of task
 			\(\tau_i\) by the optimized parameter \(\phi_i\)
@@ -363,41 +501,7 @@
 			on that and discuss
 			complications and possible solutions.
 		</p>
-		<p>
-			After having studied the math behind the MAML objective it is time to evaluate it on the sinusoid example.
-			Hopefully, MAML will produce better results
-			than the pretrained model. But before we study the MAML model on that task distribution, let us spend some
-			time on trying to understand MAML intuitively. Why would we expect it to produce better results than the
-			pretrained model?
 
-			The answer to that is two-fold. Firstly, MAML treats different tasks as different and does not try to find a
-			parameter vector that
-			fits all tasks. We have already examined why that is a problem. Secondly, MAML learns a meta-parameter
-			\(\theta\) which serves as an
-			initialization to the individual task optimizers. The hope is that this initialization is both close enough
-			to each optimal task parameter such that
-			we can converge in only a few gradient steps (and hence requiring only a few samples) and yet not too close
-			such that it is already in a local optimimum
-			of one of the tasks. On an intuitive level the task of finding such a \(\theta\) becomes increasingly harder
-			the further apart the local optima of the task
-			distribution are from each other. However, in the case of our sinusoid problem the tasks are so similar that
-			a nice
-			meta-parameter should be found.
-
-			You will now have the opportunity to repeat the above experiements on a model that has been trained with
-			MAML.
-			Try to compare the optimization behavior of both the pretrained model and MAML and evaluate for yourself
-			whether
-			you think the MAML-trained model has found a nearly optimal meta-initialization parameter \(\theta\).
-		</p>
-		<figure>
-			<d-figure id="fitSineMaml"></d-figure>
-		</figure>
-
-		<dt-code block language="python">
-			def step(theta, alpha, model, data):
-			return theta - alpha * model.grad(data)
-		</dt-code>
 
 		<figure class="l-body">
 			<d-figure id="metaGradient">
