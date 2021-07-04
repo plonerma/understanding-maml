@@ -27,7 +27,7 @@
     <div class="column is-half">
         <Slider min="10" max="50" bind:value={lr_slide} id="userOptimizedTheta_lr" label={`Learning Rate: ${(lr_slide /
             1000).toPrecision(2)}`} />
-        <p class="caption">The two loss spaces displayed are with comprise the true parameters on the top of each plot,
+        <p class="caption">The two loss spaces displayed comprise the true parameters on the top of each plot,
             10 random samples
             and the corresponding <i>Mean Squared Error (MSE)</i> as the loss function. A darker color corresponds to a
             lower loss. Discounted by a learning rate, vectors \(\phi_0, \phi_1\) represent
@@ -43,7 +43,8 @@
             \(0\) first and then descent according to \(\phi_0\) (just how the model suggests). After you
             move \(\theta\) to where \(\phi_0\) points, you are observing loss space \(1\). Following \(\phi_1\) will
             again lead you away from the local optimum of loss space \(0\). This ping-pong game is repeated until the
-            algorithm ends (involving possibly a lot more tasks). As a result, the you, the model, will never converge to anything meaningful.
+            algorithm ends (involving possibly a lot more tasks). As a result you, the model, will never converge to anything meaningful, because previously 
+            observed information is discarded as soon as a new task is presented.
         </p>
     </div>
 </div>
@@ -68,14 +69,14 @@
     import { Random2DLinearRegressionLossSpace } from './util/LossSpace'
     import { VanillaGradientDescent } from './util/metal-lib'
 
-    let theta = [0.5, .9]
+    let theta = [0.35, 0.55]
     let means = [[0.3, 0.05], [0.83, 0.75]]
     let lossSpaces = means.map(mean => new Random2DLinearRegressionLossSpace(mean))
 
     let selected_task = 0
 
     //let lr = 0.03
-    let lr_slide = 30
+    let lr_slide = 40
 
     let lossGradients = lossSpaces.map(space => space.lossGrad)
     let updates = lossGradients.map(space => theta)
