@@ -30,16 +30,18 @@
 
 
   const calculateGridLoss = () => new Promise((resolve) => {
-    resolve(tf.tidy(() => {
+    setTimeout(() => {
+      resolve(tf.tidy(() => {
 
-      let gridLoss = lossFunc(grid)
+        let gridLoss = lossFunc(grid)
 
-      if (logScale) {
-        gridLoss = tf.log(gridLoss)
-      }
+        if (logScale) {
+          gridLoss = tf.log(gridLoss)
+        }
 
-      return Array.from(gridLoss.bufferSync().values)})
-    )
+        return Array.from(gridLoss.bufferSync().values)
+      }))
+    }, 0)
   });
 
   let color_scale = d3.scaleLinear().range([0, 1])
@@ -63,16 +65,12 @@
   })
 
   const computeContours = async () => {
-    var t0 = performance.now()
-
     let gridLoss = await calculateGridLoss()
 
     color_scale.domain(d3.extent(gridLoss))
 
-    var t1 = performance.now()
     let contours = await d3Contours(gridLoss)
 
-    var t2 = performance.now()
 
     return contours;
 
