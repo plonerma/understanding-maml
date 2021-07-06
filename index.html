@@ -804,9 +804,15 @@
 			As Ferenc Huszár points out in his wonderful
 			<a href="https://www.inference.vc/notes-on-imaml-meta-learning-without-differentiating-through/#what-is-missing-stochasticity"
 				 alt="Huszár's blog post on iMAML">blog post on iMAML</a>
-
-			[... (stochasticity)]
-
+			iMAML does not consider the stochasticity of Stochastic Gradient-Descent:
+			SGD may have non-zero proabilities of finding more then one task-level
+			optimum, but iMAML will only derive the gradient in respect to actually
+			found optimum.
+		</p>
+		<p>
+			If you are interested int this condideration, you may want to also take
+			a look at the paper titled "Probabilistic Model-Agnostic Meta-Learning".
+			<dt-cite key="finn_probabilistic_2019"></dt-cite>
 		</p>
 
 	</dt-article>
@@ -980,6 +986,21 @@
 	year = {2021},
 	note = {arXiv: 2105.15183},
 	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning, Mathematics - Numerical Analysis},
+}
+
+@article{finn_probabilistic_2019,
+	title = {Probabilistic Model-Agnostic Meta-Learning},
+	url = {http://arxiv.org/abs/1806.02817},
+	abstract = {Meta-learning for few-shot learning entails acquiring a prior over previous tasks and experiences, such that new tasks be learned from small amounts of data. However, a critical challenge in few-shot learning is task ambiguity: even when a powerful prior can be meta-learned from a large number of prior tasks, a small dataset for a new task can simply be too ambiguous to acquire a single model (e.g., a classifier) for that task that is accurate. In this paper, we propose a probabilistic meta-learning algorithm that can sample models for a new task from a model distribution. Our approach extends model-agnostic meta-learning, which adapts to new tasks via gradient descent, to incorporate a parameter distribution that is trained via a variational lower bound. At meta-test time, our algorithm adapts via a simple procedure that injects noise into gradient descent, and at meta-training time, the model is trained such that this stochastic adaptation procedure produces samples from the approximate model posterior. Our experimental results show that our method can sample plausible classifiers and regressors in ambiguous few-shot learning problems. We also show how reasoning about ambiguity can also be used for downstream active learning problems.},
+	urldate = {2021-04-30},
+	journal = {arXiv:1806.02817 [cs, stat]},
+	author = {Finn, Chelsea and Xu, Kelvin and Levine, Sergey},
+	month = oct,
+	year = {2019},
+	note = {arXiv: 1806.02817
+version: 2},
+	keywords = {Computer Science - Artificial Intelligence, Computer Science - Machine Learning, Statistics - Machine Learning},
+	annote = {Comment: NeurIPS 2018. First two authors contributed equally. Supplementary results available at https://sites.google.com/view/probabilistic-maml/},
 }
 
 
