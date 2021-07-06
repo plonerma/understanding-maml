@@ -125,10 +125,11 @@ export class VanillaGradientDescent extends Model {
      * @param {float} learningRate Static learning rate.
      * @param {int} nSteps Number of steps.
      */
-    constructor(learningRate, nSteps) {
+    constructor(learningRate, nSteps, returnAllParams = false) {
         super()
         this.learningRate = learningRate
         this.nSteps = nSteps
+        this.returnAllParams = returnAllParams
     }
 
     /**
@@ -138,10 +139,13 @@ export class VanillaGradientDescent extends Model {
      * @returns The updated parameters.
      */
     updateParameters(params, gradient) {
-        for (let _ = 0; _ < this.nSteps; _++) {
-            params = params.sub(gradient(params).mul(this.learningRate))
+        let paramList = [ params ]
+        for (let i = 0; i < this.nSteps; i++) {
+            paramList.push(
+                paramList[i].sub(gradient(paramList[i]).mul(this.learningRate))
+            )
         }
-        return params
+        return this.returnAllParams ? paramList : paramList[paramList.length - 1]
     }
 }
 

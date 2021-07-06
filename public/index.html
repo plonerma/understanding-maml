@@ -553,14 +553,94 @@
 			.\]
 
 			That's already it. We will be able to see how that change effects the update direction of \(\theta\). But
-			first we study another prominent fist-order method, with a whole different approach.
+			first we study another prominent fist-order method, with a slightly different approach.
 		</p>
 
 		<h3>Reptile</h3>
 		<p>
-			...
+			Reptile, proposed by Nichol et al., [REF] is another first-order version of MAML that uses a simple update
+			procedure to find the
+			optimal initialization \(\theta\). Let's have a look:
 		</p>
+		<ul>
+			<li>1. Sample task \(\tau_i\) from \(p(\tau)\)</li>
+			<li>2. Compute \(\phi_i := U_{\tau_i}(\theta)\), where \(U_{\tau_i}(\theta)\) is a gradient-based optimizer
+				with \(k > 1\) gradient
+				descent steps.
+			</li>
+			<li>3. Update \(\theta\) according to \(\theta = \theta + \beta(\phi_i - \theta)\).</li>
+		</ul>
+		<p>
+		Note the two most obvious differences to MAML: First of all, we sample one task at a time, which is more similar
+		how we trained the <i>pretrained</i>
+		model than to MAML. Remember that in MAML we minimize the expected meta-loss over a number of sampled tasks.
+		Secondly, it seems like we
+		aren't computing a meta-gradient at all, more like a difference of parameters. And in fact, the formula we use for
+		updating \(\theta\), i.e.
 
+		\[ \theta = \theta + \beta(\phi_i - \theta), \]
+
+		is the formula for linearly interpolating between \( \theta \) and \( \phi_i \), with interpolation rate \(\beta
+		\in [0, 1]\).
+		If you are not sure what that means, take a look at <a href="#reptileInterpolation">this figure</a>. There you
+		can play around with the
+		position of \(\theta\), the optimizer \(U_{\tau_i}\) and the interpolation rate \(\beta\) and see what update
+		step Reptile would take.
+		</p>
+		<figure>
+			<d-figure id="reptileInterpolation"></d-figure>
+		</figure>
+		<p>
+			By the way, one detail of Reptile that isn't obvious just from looking at the three steps we posted above,
+			but still important to note,
+			is that Reptile does not (need to) differentiate between test- and training-sets when computing loss
+			\(\mathcal{L}_{\tau_i}\) since
+			Reptile does not update according to test-set-performance.
+		</p>
+		<p>
+			Furthermore, it makes sense to spend some time studying why the authors of Reptile expilictly state that
+			optimizer \(U_{\tau_i}\) must perform
+			more than one gradient descent step (\(k > 1\)). This is because otherwise
+
+			\[ U_{\tau_i}(\theta) = \theta - \alpha \nabla_\theta L_{\tau_i}(\theta) \]
+
+			and Reptile updates
+
+			\[ \theta = \theta + \beta (\theta - \alpha \nabla_\theta L_{\tau_i}(\theta) - \theta)
+			= \theta - \alpha \beta \nabla_\theta L_{\tau_i}(\theta), \]
+
+			which corresponds to updating \(\theta \) according to standard gradient descent with learning rate \(\alpha
+			\cdot \beta\).
+			And this in turn is more or less the update scheme we used for the <i>pretrained</i> model, which we have
+			already seen to fail.
+		</p>
+		<p>
+			You might have already figured this out yourself, if you set the inner steps of <a
+				href="#reptileInterpolation">the figure from above</a>
+			to \(1\) (which were set to \(2\) by default deliberately - and now you know why).
+
+			It should however also be noted, as the Nichol et al. state, that as soon as \(k > 1\), the update step
+			cannot be reduced to simple gradient descent anymore, i.e.
+			it involves terms accounting for meta-performance.
+		</p>
+		<p>
+			Now, at this point you might have already understood <i>how</i> the Reptile update works, but no idea
+			<i>if</i> and <i>why</i> it would
+			find the same optimal initialization that MAML does! As for the <i>if</i>, Reptile does not (always) find
+			the same optimal initialization
+			that MAML would find, since Reptile it is not minimizing the same objective. However, Reptile performs
+			competitively well compared to MAML in several few-shot learning
+			problems.
+		</p>
+		<p>
+			As for the <i>why</i> we would like to refer you to the <a
+				href="https://arxiv.org/pdf/1803.02999.pdf">Reptile paper</a> itself.
+			Section 5.1 contains a theoretical analysis of how both MAML and Reptile find updates for one task that also
+			improve meta-performance for other tasks of the task distribution.
+		</p>
+		<p>
+			After having seen all those extensions, in the next section we would like to compare them visually. 
+		</p>
 		<h3>Comparing the First-Order Methods to MAML</h3>
 		<p>
 			In order to compare the above methods visually, we return to the \(\textbf{elu}\)-fitting problem from
@@ -615,7 +695,7 @@
 
 			$$
 			\min_\theta \mathbb E_\tau \left[ \mathcal L \left(
-				\phi_\tau , \mathcal D ^ {test}_\tau
+			\phi_\tau , \mathcal D ^ {test}_\tau
 			\right)\right]
 			$$
 
@@ -629,7 +709,8 @@
 			a single update (or a few) gradient descent steps:
 
 			$$
-				\phi_\tau = U_\tau (\theta) = \theta - \alpha \nabla_\theta \mathcal L \left( \theta, \mathcal D^{train}_\theta \right)
+			\phi_\tau = U_\tau (\theta) = \theta - \alpha \nabla_\theta \mathcal L \left( \theta, \mathcal
+			D^{train}_\theta \right)
 			$$
 		</p>
 
@@ -640,9 +721,9 @@
 			term:
 
 			$$
-				\phi_\tau = U^\ast_\tau (\theta)
-				= \arg\min_\phi \left( \mathcal L \left( \phi, \mathcal D^{train}_\tau \right)
-				+ \frac{\lambda}{2} \| \phi - \theta \| ^ 2 \right)
+			\phi_\tau = U^\ast_\tau (\theta)
+			= \arg\min_\phi \left( \mathcal L \left( \phi, \mathcal D^{train}_\tau \right)
+			+ \frac{\lambda}{2} \| \phi - \theta \| ^ 2 \right)
 			$$
 
 			Here, the objective is the almost the same, with the addition, that
@@ -671,15 +752,15 @@
 
 			$$
 			\begin{align}
-				\nabla_\theta\, \mathbb E_\tau \left[ \mathcal L \left(
-					\phi_\tau , \mathcal D ^ {test}_\tau
-				\right)\right]
-				&= \mathbb E_\tau \left[ \nabla_\theta\, \mathcal L \left(
-					\phi_\tau , \mathcal D ^ {test}_\tau
-				\right)\right]\\
-				&= \mathbb E_\tau \left[ \nabla_{\phi_\tau} \, \mathcal L \left(
-					\phi_\tau , \mathcal D ^ {test}_\tau\right) \cdot \frac{\mathrm d \phi_\tau}{\mathrm d \theta}
-				\right]
+			\nabla_\theta\, \mathbb E_\tau \left[ \mathcal L \left(
+			\phi_\tau , \mathcal D ^ {test}_\tau
+			\right)\right]
+			&= \mathbb E_\tau \left[ \nabla_\theta\, \mathcal L \left(
+			\phi_\tau , \mathcal D ^ {test}_\tau
+			\right)\right]\\
+			&= \mathbb E_\tau \left[ \nabla_{\phi_\tau} \, \mathcal L \left(
+			\phi_\tau , \mathcal D ^ {test}_\tau\right) \cdot \frac{\mathrm d \phi_\tau}{\mathrm d \theta}
+			\right]
 			\end{align}
 			$$
 
@@ -697,42 +778,49 @@
 			in regard to the task-parameter is 0. This gives us the following equation:
 
 			$$
-				\begin{align}
-				\mathbf {0} &= \nabla_{\phi} \left(
-					\mathcal L \left( \phi, \mathcal D^{train} \right)
-					+ \frac{\lambda}{2} \| \phi - \theta \| ^ 2
+			\begin{align}
+			\mathbf {0} &= \nabla_{\phi} \left(
+			\mathcal L \left( \phi, \mathcal D^{train} \right)
+			+ \frac{\lambda}{2} \| \phi - \theta \| ^ 2
 
-					 \right)\\
-					 &= \nabla_{\phi} \mathcal L \left( \phi, \mathcal D^{train} \right) + \lambda \left( \phi - \theta \right)
-				\end{align}
+			\right)\\
+			&= \nabla_{\phi} \mathcal L \left( \phi, \mathcal D^{train} \right) + \lambda \left( \phi - \theta \right)
+			\end{align}
 			$$
 
 			By rearranging we get:
 
 			$$
-				\phi = \theta - \frac{1}{\lambda} \nabla_\phi \mathcal L \left( \phi, \mathcal D^{train} \right)
+			\phi = \theta - \frac{1}{\lambda} \nabla_\phi \mathcal L \left( \phi, \mathcal D^{train} \right)
 			$$
 
 			Now, we can calculate the total derivative of the task-parameter in regard to the meta-parameter:
 
 			$$
-				\begin{align}
-					\frac{\mathrm d \phi}{\mathrm d \theta}
-					&= \frac{\mathrm d \left( \theta - \frac{1}{\lambda} \nabla_\phi \mathcal L \left( \phi, \mathcal D^{train} \right) \right)}{\mathrm d \theta}\\
-					&= \frac{\mathrm d \theta}{\mathrm \theta} - \frac{1}{\lambda}\frac{ \mathrm d \nabla_\phi \mathcal L \left( \phi, \mathcal D^{train} \right)}{\mathrm d \theta}\\
-					&= I - \frac{1}{\lambda} \nabla^2_\phi \mathcal L \left( \phi, \mathcal D^{train} \right) \frac{\mathrm d \phi}{\mathrm d \theta}
-				\end{align}
+			\begin{align}
+			\frac{\mathrm d \phi}{\mathrm d \theta}
+			&= \frac{\mathrm d \left( \theta - \frac{1}{\lambda} \nabla_\phi \mathcal L \left( \phi, \mathcal D^{train}
+			\right) \right)}{\mathrm d \theta}\\
+			&= \frac{\mathrm d \theta}{\mathrm \theta} - \frac{1}{\lambda}\frac{ \mathrm d \nabla_\phi \mathcal L \left(
+			\phi, \mathcal D^{train} \right)}{\mathrm d \theta}\\
+			&= I - \frac{1}{\lambda} \nabla^2_\phi \mathcal L \left( \phi, \mathcal D^{train} \right) \frac{\mathrm d
+			\phi}{\mathrm d \theta}
+			\end{align}
 			$$
 
 			Here, to get from the 2nd to 3rd line, we need to apply the chain rule: \( \phi \)
-			is a function of \( \theta \). Hence, we need to calculate the outer derivative (which results in the Hessian)
-			and the inner derivative which is exactly what we want to calculate (also the total derivative \( \frac{\mathrm d \phi}{\mathrm d \theta} \)).
+			is a function of \( \theta \). Hence, we need to calculate the outer derivative (which results in the
+			Hessian)
+			and the inner derivative which is exactly what we want to calculate (also the total derivative \(
+			\frac{\mathrm d \phi}{\mathrm d \theta} \)).
 
 			Finally, we arrive at the following equations (assuming the inverse exists):
 
 			$$\begin{align}
-				&&(I + \frac{1}{\lambda} \nabla^2_\phi \mathcal L \left( \phi, \mathcal D^{train} \right))\frac{\mathrm d \phi}{\mathrm d \theta} = I\\
-				\Rightarrow&& \frac{\mathrm d \phi}{\mathrm d \theta} = (I + \frac{1}{\lambda} \nabla^2_\phi \mathcal L \left( \phi, \mathcal D^{train} \right))^{-1}
+			&&(I + \frac{1}{\lambda} \nabla^2_\phi \mathcal L \left( \phi, \mathcal D^{train} \right))\frac{\mathrm d
+			\phi}{\mathrm d \theta} = I\\
+			\Rightarrow&& \frac{\mathrm d \phi}{\mathrm d \theta} = (I + \frac{1}{\lambda} \nabla^2_\phi \mathcal L
+			\left( \phi, \mathcal D^{train} \right))^{-1}
 			\end{align}$$
 
 			Let that sink in for a moment: By assuming that our inner optimizer
@@ -796,14 +884,14 @@
 			and
 
 			<a href="https://github.com/yaoyao-liu/mini-imagenet-tools" alt="Github page for mini-Imagenet">
-			Mini-ImageNet</a>, two common few-shot classification datasets.
+				Mini-ImageNet</a>, two common few-shot classification datasets.
 			<dt-cite key="rajeswaran_meta-learning_2019"></dt-cite>
 		</p>
 
 		<p>
 			As Ferenc Huszár points out in his wonderful
 			<a href="https://www.inference.vc/notes-on-imaml-meta-learning-without-differentiating-through/#what-is-missing-stochasticity"
-				 alt="Huszár's blog post on iMAML">blog post on iMAML</a>,
+				alt="Huszár's blog post on iMAML">blog post on iMAML</a>,
 			iMAML does not consider the stochasticity of Stochastic Gradient-Descent:
 			SGD may have non-zero proabilities of finding more then one task-level
 			optimum, but iMAML will only derive the gradient in respect to actually
