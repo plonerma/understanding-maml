@@ -70,7 +70,9 @@
 			This research area is called "few-shot learning". It aims to enable models
 			to classify unseen sampels after training only one a few examples ("shots").
 			The little exercise at the top of the article is an exmaple of such a task.
-			The symbols are part of a dataset called "omniglot". <dt-cite key="lake_one_2011"></dt-cite>
+			The symbols are part of a
+			<a href="https://github.com/brendenlake/omniglot" alt="Github-Page">dataset called "omniglot".</a>
+			<dt-cite key="lake_one_2011"></dt-cite>
 			It contains 1623 different characters across 50 alphabets and each character
 			has 20 instances drawn by different people. Because of that, the omniglot
 			was described as a "transpose" of the well-known MNIST dataset, by the authors
@@ -489,6 +491,8 @@
 		</figure>
 
 
+		<h3>Computing the Gradient</h3>
+
 		<p>
 			Now, in order to minimize the meta-objective, we again calculate the gradient:
 
@@ -516,7 +520,7 @@
 
 		<p>
 			But, here comes the awesome part: Since we assume that out inner optimizer
-			found a local minimum, we know that the gradient of the objective
+			found a local minimum, we know that the gradient of the inner objective
 			in regard to the task-parameter is 0. This gives us the following equation:
 
 			$$
@@ -549,7 +553,7 @@
 
 			Here, to get from the 2nd to 3rd line, we need to apply the chain rule: \( \phi \)
 			is a function of \( \theta \). Hence, we need to calculate the outer derivative (which results in the Hessian)
-			and the inner derivative which is exactly what we want to calculate.
+			and the inner derivative which is exactly what we want to calculate (also the total derivative \( \frac{\mathrm d \phi}{\mathrm d \theta} \)).
 
 			Finally, we arrive at the following equations (assuming the inverse exists):
 
@@ -557,6 +561,79 @@
 				&&(I + \frac{1}{\lambda} \nabla^2_\phi L \left( \phi, \mathcal D^{train} \right))\frac{\mathrm d \phi}{\mathrm d \theta} = I\\
 				\Rightarrow&& \frac{\mathrm d \phi}{\mathrm d \theta} = (I + \frac{1}{\lambda} \nabla^2_\phi L \left( \phi, \mathcal D^{train} \right))^{-1}
 			\end{align}$$
+
+			Let that sink in for a moment: By assuming that our inner optimizer
+			found an optimal solution for our inner objective, we can derive a closed-form
+			solution for the total derivative \( \frac{\mathrm d \phi}{\mathrm d \theta} \).
+			To calculate the meta-gradient, we just need to know the solution
+			of the inner optimizaton problem, without knowing the steps to get there!
+		</p>
+
+		<p>
+			The steps leading up to the optimal solution do not need to be stored and
+			we could even use an optimizer which does not use Gradient Descent and
+			where we might not be able to back-propagate the gradient. Instead,
+			the optimizer can be treated as a black-box and we only require
+			the final solution.
+		</p>
+
+		<p>
+			If this implicit differatiation is interesting to you, take a look at the
+			paper "Efficient and Modular Implicit Differentiation". In this paper
+			the authors offer a more general framework of how to compute gradients
+			without needing to backpropagate through the unrolled forward propagation.
+			Instead they use an optimiality condition (in the iMAML case its given by
+			the gradient of the inner loop objective) in order to calculate the
+			gradient implicitly.
+
+			<dt-cite key="blondel_efficient_2021"></dt-cite>
+
+		</p>
+
+		<h3>Discussion</h3>
+
+		<p>
+			As you can see in the gradient above, iMAML requires the computation of
+			a second-order derivative. The huge benefit is that this second-order
+			derivative only needs to be calculated for the last point the optimizer
+			calculated. We do not need to pass the gradient information through
+			the steps of gradient-descent.
+		</p>
+
+		<p>
+			While calculating the gradient is comparitively easy, iMAML requires
+			an optimizer which finds a quasi-optimal solution. Even though we introduced
+			the math behind iMAML with the assumption that the optimizer finds an optimal
+			solution, the authors of "Meta-Learning with Implicit Gradients" show
+			that the gradient is still approximately correct as long as the solution
+			provided by the inner-loop optimizer is approximately correct.
+			Still, we probably need to make many more gradient steps (if we use SGD),
+			then in regular MAML where even one step may suffice.
+			<dt-cite key="rajeswaran_meta-learning_2019"></dt-cite>
+		</p>
+
+		<p>
+			According to the same paper, iMAML produces better results then MAML, while
+			not using more resources (while iMAML requires more inner loop steps),
+			MAML requires either more outer loops steps or expensive computation
+			of a long back-propagation chain. Compared to first-order MAML (FOMAML)
+			and REPTILE, the authors report better results on the
+			<a href="https://github.com/brendenlake/omniglot" alt="Github page of Omniglot">Omniglot</a>
+			(the little exercise at the top of the page is base on Omniglot)
+			and
+
+			<a href="https://github.com/yaoyao-liu/mini-imagenet-tools" alt="Github page for mini-Imagenet">
+			Mini-ImageNet</a>, two common few-shot classification datasets.
+			<dt-cite key="rajeswaran_meta-learning_2019"></dt-cite>
+		</p>
+
+		<p>
+			As Ferenc Huszár points out in his wonderful
+			<a href="https://www.inference.vc/notes-on-imaml-meta-learning-without-differentiating-through/#what-is-missing-stochasticity"
+				 alt="Huszár's blog post on iMAML">blog post on iMAML</a>
+
+			[... (stochasticity)]
+
 		</p>
 
 	</dt-article>
@@ -716,6 +793,22 @@
 	note = {arXiv: 1801.08930},
 	keywords = {Computer Science - Machine Learning},
 }
+
+
+@article{blondel_efficient_2021,
+	title = {Efficient and Modular Implicit Differentiation},
+	url = {http://arxiv.org/abs/2105.15183},
+	abstract = {Automatic differentiation (autodiff) has revolutionized machine learning. It allows expressing complex computations by composing elementary ones in creative ways and removes the burden of computing their derivatives by hand. More recently, differentiation of optimization problem solutions has attracted widespread attention with applications such as optimization as a layer, and in bi-level problems such as hyper-parameter optimization and meta-learning. However, the formulas for these derivatives often involve case-by-case tedious mathematical derivations. In this paper, we propose a uniﬁed, efﬁcient and modular approach for implicit differentiation of optimization problems. In our approach, the user deﬁnes (in Python in the case of our implementation) a function F capturing the optimality conditions of the problem to be differentiated. Once this is done, we leverage autodiff of F and implicit differentiation to automatically differentiate the optimization problem. Our approach thus combines the beneﬁts of implicit differentiation and autodiff. It is efﬁcient as it can be added on top of any state-of-the-art solver and modular as the optimality condition speciﬁcation is decoupled from the implicit differentiation mechanism. We show that seemingly simple principles allow to recover many recently proposed implicit differentiation methods and create new ones easily. We demonstrate the ease of formulating and solving bi-level optimization problems using our framework. We also showcase an application to the sensitivity analysis of molecular dynamics.},
+	language = {en},
+	urldate = {2021-07-03},
+	journal = {arXiv:2105.15183 [cs, math, stat]},
+	author = {Blondel, Mathieu and Berthet, Quentin and Cuturi, Marco and Frostig, Roy and Hoyer, Stephan and Llinares-López, Felipe and Pedregosa, Fabian and Vert, Jean-Philippe},
+	month = may,
+	year = {2021},
+	note = {arXiv: 2105.15183},
+	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning, Mathematics - Numerical Analysis},
+}
+
 
 
 </script>
