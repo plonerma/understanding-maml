@@ -16,7 +16,7 @@
 
                 {#each updates as phi, i}
                 <VariableHandleWithReference bind:position={phi} value={`\\phi_{${i}}`} offset={[0, -15]}
-                    referencePoint={theta} />
+                    referencePoint={theta} draggingDisabled={true} />
                 {/each}
             </Axis>
         </Chart>
@@ -34,7 +34,7 @@
             the gradient descent directions of tasks \(0, 1\), when starting at \(\theta\), respectively.
             You can manipulate the slider for the learning rate, as well as move the \(\theta\) arround to see how the
             descent directions
-            change in each plot. 
+            change in each plot.
         </p>
     </div>
     <div class="column is-half">
@@ -43,7 +43,7 @@
             \(0\) first and then descent according to \(\phi_0\) (just how the model suggests). After you
             move \(\theta\) to where \(\phi_0\) points, you are observing loss space \(1\). Following \(\phi_1\) will
             again lead you away from the local optimum of loss space \(0\). This ping-pong game is repeated until the
-            algorithm ends (involving possibly a lot more tasks). As a result you, the model, will never converge to anything meaningful, because previously 
+            algorithm ends (involving possibly a lot more tasks). As a result you, the model, will never converge to anything meaningful, because previously
             observed information is discarded as soon as a new task is presented.
         </p>
     </div>

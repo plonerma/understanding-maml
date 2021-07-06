@@ -1,7 +1,9 @@
 <script>
-  import { onMount, getContext, createEventDispatcher } from 'svelte';
+  import { onMount, getContext } from 'svelte';
   import * as d3 from 'd3';
 
+
+  export let draggingDisabled = false
 
   export let lines = true
 
@@ -42,31 +44,34 @@
 
     isHovered = false
 
-    handle.call(d3.drag().container(axisGroup())
-      .on("start", function(event){
-        isHovered = true
-        /* Raise this handle to the top, so other handles aren't hovered while
-           dragging */
-        handleGroup.raise()
-        if ('function' === typeof onDragStart) {
-          onDragStart();
-        }
-      })
-      .on("drag", function(event) {
-        position = [
-          Math.max(Math.min(xmax, xScale.invert(event.x)), xmin),
-          Math.max(Math.min(ymax, yScale.invert(event.y)), ymin)
-        ]
-        if ('function' === typeof onDrag) {
-          onDrag();
-        }
-      })
-      .on("end", function(event) {
-        if ('function' === typeof onDragEnd) {
-          onDragEnd();
-        }
-      })
-    );
+
+    if (!draggingDisabled) {
+      handle.call(d3.drag().container(axisGroup())
+        .on("start", function(event){
+          isHovered = true
+          /* Raise this handle to the top, so other handles aren't hovered while
+             dragging */
+          handleGroup.raise()
+          if ('function' === typeof onDragStart) {
+            onDragStart();
+          }
+        })
+        .on("drag", function(event) {
+          position = [
+            Math.max(Math.min(xmax, xScale.invert(event.x)), xmin),
+            Math.max(Math.min(ymax, yScale.invert(event.y)), ymin)
+          ]
+          if ('function' === typeof onDrag) {
+            onDrag();
+          }
+        })
+        .on("end", function(event) {
+          if ('function' === typeof onDragEnd) {
+            onDragEnd();
+          }
+        })
+      );
+    }
 
     handle.on("mouseover", function (event) {
       isHovered = true
@@ -97,15 +102,15 @@
           y1={yScale(ymin)} y2={yScale(ymax)} />
   {/if}
   <g transform={handleTransform}>
-    <slot {isHovered}>
+    <slot {isHovered} {draggingDisabled}>
       <circle stroke="none" fill="white" class="circleMarker"
-              r="{isHovered ? circleRadius_hover : circleRadius}"
+              r="{(isHovered && !draggingDisabled) ? circleRadius_hover : circleRadius}"
               cx=0 cy=0 />
     </slot>
   </g>
 
   <circle bind:this={handleElement} class="handleInvisible"
-          cx={xScale(x)} cy={yScale(y)} r="20"  />
+          cx={xScale(x)} cy={yScale(y)} r="20"  style={draggingDisabled ? "cursor: pointer;" : "cursor: move;"}/>
 </g>
 
 
@@ -113,7 +118,6 @@
   .handleInvisible {
     opacity: 0;
     color: rgba(255, 255, 255, 0);
-    cursor: move;
   }
 
   .circleMarker {
