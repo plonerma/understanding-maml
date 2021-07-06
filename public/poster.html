@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Visual Comparison of Model-Agnostic Meta-Learning</title>
+
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="poster/revealjs/plugin/highlight/monokai.css" id="highlight-theme">
+
+		<script async src="https://distill.pub/template.v1.js"></script>
+		<script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+		<script defer src="build/bundle.js"></script>
+
+		<link rel="stylesheet" href="build/bundle.css">
+
+		<link rel="stylesheet" href="poster/revealjs/reset.css">
+		<link rel="stylesheet" href="poster/revealjs/reveal.css">
+		<link rel="stylesheet" href="poster/revealjs/theme/white.css" id="theme">
+
+
+
+		<link rel="stylesheet" href="poster/style.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section id="overview">
+					<h1 style="font-size: 1em;">A Visual Comparison of <br> Model-Agnostic Meta-Learning</h1>
+
+					<div class="columns is-gapless">
+						<div class="column">
+							<a href="#Teaser">
+								<img src="poster/screenshots/teaser.png">
+							</a>
+						</div>
+						<div class="column">
+							<a href="#SinePretrained">
+							 	<img src="poster/screenshots/sinePretrained.png">
+							</a>
+						</div>
+						<div class="column">
+							<a href="#TwoLosses">
+							 	<img src="poster/screenshots/twoLosses.png">
+						 	</a>
+						</div>
+					</div>
+					<div class="columns is-gapless">
+						<div class="column">
+							<a href="#SineMAML">
+								<img src="poster/screenshots/sineMAML.png">
+							</a>
+						</div>
+						<div class="column">
+							<a href="GradientComparison">
+								<img src="poster/screenshots/gradientComparison.png">
+							</a>
+						</div>
+						<div class="column">
+							 <img src="poster/screenshots/iMAML_loss.png">
+						</div>
+					</div>
+
+					<p style="font-size: 0.5em">Luis Müller  &  Max Ploner</p>
+
+				</section>
+
+
+				<section id="Teaser">
+					<figure>
+						<div id="teaser">
+							<div class="element is-loading" style="height: 400px"></div>
+						</div>
+						<figcaption>
+							Click button or drag sample onto example to classify the sample.
+						</figcaption>
+					</figure>
+				</section>
+
+				<section id="SinePretrained">
+					<figure>
+						<div id="fitSinePretrained">
+							<div class="element is-loading" style="height: 400px"></div>
+						</div>
+					</figure>
+				</section>
+
+			</div>
+		</div>
+
+		<script src="poster/revealjs/reveal.js"></script>
+		<script src="poster/revealjs/plugin/notes/notes.js"></script>
+		<script src="poster/revealjs/plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: false,
+				progress: false,
+				controls: true,
+				controlsTutorial: true,
+				//slideNumber: false,
+				//transition: 'none',
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
