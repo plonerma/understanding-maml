@@ -703,14 +703,14 @@
 					+ \frac{\lambda}{2} \| \phi - \theta \| ^ 2
 
 					 \right)\\
-					 &= \nabla_{\phi} L \left( \phi, \mathcal D^{train} \right) + \lambda \left( \phi - \theta \right)
+					 &= \nabla_{\phi} \mathcal L \left( \phi, \mathcal D^{train} \right) + \lambda \left( \phi - \theta \right)
 				\end{align}
 			$$
 
 			By rearranging we get:
 
 			$$
-				\phi = \theta - \frac{1}{\lambda} \nabla_\phi L \left( \phi, \mathcal D^{train} \right)
+				\phi = \theta - \frac{1}{\lambda} \nabla_\phi \mathcal L \left( \phi, \mathcal D^{train} \right)
 			$$
 
 			Now, we can calculate the total derivative of the task-parameter in regard to the meta-parameter:
@@ -718,9 +718,9 @@
 			$$
 				\begin{align}
 					\frac{\mathrm d \phi}{\mathrm d \theta}
-					&= \frac{\mathrm d \left( \theta - \frac{1}{\lambda} \nabla_\phi L \left( \phi, \mathcal D^{train} \right) \right)}{\mathrm d \theta}\\
-					&= \frac{\mathrm d \theta}{\mathrm \theta} - \frac{1}{\lambda}\frac{ \mathrm d \nabla_\phi L \left( \phi, \mathcal D^{train} \right)}{\mathrm d \theta}\\
-					&= I - \frac{1}{\lambda} \nabla^2_\phi L \left( \phi, \mathcal D^{train} \right) \frac{\mathrm d \phi}{\mathrm d \theta}
+					&= \frac{\mathrm d \left( \theta - \frac{1}{\lambda} \nabla_\phi \mathcal L \left( \phi, \mathcal D^{train} \right) \right)}{\mathrm d \theta}\\
+					&= \frac{\mathrm d \theta}{\mathrm \theta} - \frac{1}{\lambda}\frac{ \mathrm d \nabla_\phi \mathcal L \left( \phi, \mathcal D^{train} \right)}{\mathrm d \theta}\\
+					&= I - \frac{1}{\lambda} \nabla^2_\phi \mathcal L \left( \phi, \mathcal D^{train} \right) \frac{\mathrm d \phi}{\mathrm d \theta}
 				\end{align}
 			$$
 
@@ -731,8 +731,8 @@
 			Finally, we arrive at the following equations (assuming the inverse exists):
 
 			$$\begin{align}
-				&&(I + \frac{1}{\lambda} \nabla^2_\phi L \left( \phi, \mathcal D^{train} \right))\frac{\mathrm d \phi}{\mathrm d \theta} = I\\
-				\Rightarrow&& \frac{\mathrm d \phi}{\mathrm d \theta} = (I + \frac{1}{\lambda} \nabla^2_\phi L \left( \phi, \mathcal D^{train} \right))^{-1}
+				&&(I + \frac{1}{\lambda} \nabla^2_\phi \mathcal L \left( \phi, \mathcal D^{train} \right))\frac{\mathrm d \phi}{\mathrm d \theta} = I\\
+				\Rightarrow&& \frac{\mathrm d \phi}{\mathrm d \theta} = (I + \frac{1}{\lambda} \nabla^2_\phi \mathcal L \left( \phi, \mathcal D^{train} \right))^{-1}
 			\end{align}$$
 
 			Let that sink in for a moment: By assuming that our inner optimizer
@@ -803,7 +803,7 @@
 		<p>
 			As Ferenc Huszár points out in his wonderful
 			<a href="https://www.inference.vc/notes-on-imaml-meta-learning-without-differentiating-through/#what-is-missing-stochasticity"
-				 alt="Huszár's blog post on iMAML">blog post on iMAML</a>
+				 alt="Huszár's blog post on iMAML">blog post on iMAML</a>,
 			iMAML does not consider the stochasticity of Stochastic Gradient-Descent:
 			SGD may have non-zero proabilities of finding more then one task-level
 			optimum, but iMAML will only derive the gradient in respect to actually
