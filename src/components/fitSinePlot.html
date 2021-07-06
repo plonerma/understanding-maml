@@ -6,8 +6,17 @@
     import * as d3 from 'd3';
     import * as tf from '@tensorflow/tfjs'
 
+
+    const getModelURL = (modelName) => {
+      if (window.location.host == "plonerma.github.io") {
+        return `https://plonerma.github.io/understanding-maml${modelName}/model.json`
+      } else {
+        return `${window.location.protocol}//${window.location.host}${modelName}/model.json`
+      }
+    }
+
     const load = async (modelName) => {
-        return await tf.loadLayersModel(`${window.location.protocol}//${window.location.host}${modelName}/model.json`);
+        return await tf.loadLayersModel(getModelURL(modelName));
     }
 
     export let modelName
