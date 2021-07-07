@@ -27,7 +27,7 @@
 	<dt-article>
 		<h1>An Interactive Introduction to Model-Agnostic Meta-Learning</h1>
 		<h2>Exploring the world of model-agnostic meta-learning and its extensions.</h2>
-		<figure class="l-page">
+		<figure class="l-page" style="border-top: 1px solid hsla(0, 0%, 0%, 0.1);">
 			<d-figure id="teaser">
 				<div class="element is-loading" style="height: 400px"></div>
 			</d-figure>
@@ -49,17 +49,19 @@
 		<p>
 			If you tried the little exercise above, you probably got a pretty good score.
 			Even though you likely have never seen some of the characters,
-			you are able to compare them to a another one, potentially without realizing
-			that what you are doing is actually pretty impressive!
+			you are able to classify them given only a single example, potentially
+			without realizing that what you are doing is actually pretty impressive!
 		</p>
 
 		<h3>Few-Shot Learning</h3>
 
 		<p>
 			Typically, in machine learning we need a lot of examples to be able to
-			classify a class. But not always do we have enough data to cater this need:
-			a sufficient amount of data may be expensive or even impossible to acquire.
-			But there is good reasons to believe, that this is not an inherent issue of learning.
+			assign an unseen sample to class. But we do not always have enough data to
+			cater this need: A sufficient amount of data may be expensive or even
+			impossible to acquire.
+			But there is good reasons to believe, that this is not an inherent issue
+			of learning.
 			Humans, for example, are quite good at generalizing after seeing only a few
 			samples. Enabling machine learning methods to achieve the same would allow
 			for many new applications and generally reduce the need to collect huge
@@ -71,12 +73,12 @@
 			to classify unseen sampels after training only one a few examples ("shots").
 			The little exercise at the top of the article is an exmaple of such a task.
 			The symbols are part of a
-			<a href="https://github.com/brendenlake/omniglot" alt="Github-Page">dataset called "omniglot".</a>
-			<dt-cite key="lake_one_2011"></dt-cite>
+			<dt-cite key="lake_omniglot_2015">dataset called "omniglot"</dt-cite>.
 			It contains 1623 different characters across 50 alphabets and each character
 			has 20 instances drawn by different people. Because of that, the omniglot
 			was described as a "transpose" of the well-known MNIST dataset, by the authors
-			who originally proposed omniglot as a machine learning dataset. <dt-cite key="lake_one_2011"></dt-cite>
+			who originally proposed omniglot as a machine learning dataset.
+			<dt-cite key="lake_one_2011"></dt-cite>
 			While MNIST contains only a few classes (the digits 0 to 9) and many instances,
 			of each class, with omniglot it is vice-versa.
 		</p>
@@ -87,9 +89,16 @@
 			By now, you may be asking yourself: How can a model learn from only one example
 			(i.e. "one-shot") and why do I even need a dataset like omniglot
 			if the model is supposed to learn from one sample?
+
+			Looking at a human learner, we might realize that humans do not learn
+			novel concepts "in a vacuum".<dt-cite key="lake_one_2011"></dt-cite>
+			Instead, past experience supports the ability to learn the novel concept.
+		</p>
+
+		<p>
 			While clearly one sample is not enough for a model without prior knowledge,
-			we can pretrain models on tasks that we assume to be similar to the target tasks. This is
-			the general idea of few-shot learning: derive some inductive bias
+			we can pretrain models on tasks that we assume to be similar to the target tasks.
+			This is a common approach to solving few-shot learning: derive some inductive bias
 			from other classes in order to perform better on newly encountered classes.
 			This similarity assumption allows the model to collect meta-knowledge:
 			knowledge which does not describe a single task, but a distribution of tasks.
@@ -639,7 +648,7 @@
 			improve meta-performance for other tasks of the task distribution.
 		</p>
 		<p>
-			After having seen all those extensions, in the next section we would like to compare them visually. 
+			After having seen all those extensions, in the next section we would like to compare them visually.
 		</p>
 		<h3>Comparing the First-Order Methods to MAML</h3>
 		<p>
@@ -879,12 +888,11 @@
 			MAML requires either more outer loops steps or expensive computation
 			of a long back-propagation chain. Compared to first-order MAML (FOMAML)
 			and REPTILE, the authors report better results on the
-			<a href="https://github.com/brendenlake/omniglot" alt="Github page of Omniglot">Omniglot</a>
+			<dt-cite key="lake_omniglot_2015">Omniglot</dt-cite>
 			(the little exercise at the top of the page is base on Omniglot)
 			and
-
-			<a href="https://github.com/yaoyao-liu/mini-imagenet-tools" alt="Github page for mini-Imagenet">
-				Mini-ImageNet</a>, two common few-shot classification datasets.
+			<dt-cite key="liu_tools_2019">Mini-ImageNet</dt-cite>,
+			two common few-shot classification datasets.
 			<dt-cite key="rajeswaran_meta-learning_2019"></dt-cite>
 		</p>
 
@@ -1089,6 +1097,28 @@
 version: 2},
 	keywords = {Computer Science - Artificial Intelligence, Computer Science - Machine Learning, Statistics - Machine Learning},
 	annote = {Comment: NeurIPS 2018. First two authors contributed equally. Supplementary results available at https://sites.google.com/view/probabilistic-maml/},
+}
+
+
+
+@misc{lake_omniglot_2015,
+	title = {Omniglot data set for one-shot learning},
+	url = {https://github.com/brendenlake/omniglot},
+	abstract = {The Omniglot data set is designed for developing more human-like learning algorithms. It contains 1623 different handwritten characters from 50 different alphabets. Each of the 1623 characters was drawn online via Amazon's Mechanical Turk by 20 different people. Each image is paired with stroke data, a sequences of [x,y,t] coordinates with time (t) in milliseconds.},
+	urldate = {2021-07-07},
+	journal = {Omniglot data set for one-shot learning},
+	author = {Lake, Brenden M and Salakhutdinov, Ruslan and Tenenbaum, Joshua B},
+	month = oct,
+	year = {2015},
+}
+
+@misc{liu_tools_2019,
+	title = {Tools for mini-ImageNet Dataset},
+	journal = {Tools for mini-ImageNet Dataset},
+	author = {Liu, Yaoyao},
+	month = jan,
+	year = {2019},
+	url = {https://github.com/yaoyao-liu/mini-imagenet-tools}
 }
 
 
