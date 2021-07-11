@@ -1,6 +1,7 @@
 import Arrow from './arrow.html'
 import Axis from './axis.html'
 import Chart from './chart.html'
+import Circle from './circle.html'
 import Handle from './handle.html'
 import Latex from './latex.html'
 import Line from './line.html'
@@ -17,6 +18,7 @@ export {
     Arrow,
     Axis,
     Chart,
+    Circle,
     Handle,
     Latex,
     Line,

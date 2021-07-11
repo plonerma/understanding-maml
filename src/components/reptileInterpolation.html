@@ -6,18 +6,18 @@
 
                {#each updates as phis, i}
                     {#each phis.slice(1) as phi, j}
-                    <Arrow origin={phis[j]} target={phi} trimStart=0 trimEnd=0.01 stroke="#fff" fill="#fff"
+                    <Arrow origin={phis[j]} target={phi} trimStart=0 trimEnd=0.01 color="#fff"
                         stroke-width="2" />
                     {/each}
                 {/each}
-                
+
                 {#each updates as phis, i}
-                    <Arrow origin={theta} target={phis[phis.length - 1]} trimStart=0 trimEnd=0.01 stroke="#aaa" fill="#aaa"
+                    <Arrow origin={theta} target={phis[phis.length - 1]} trimStart=0 trimEnd=0.01 color="#aaa"
                         stroke-width="1" />
                 {/each}
 
                 {#each updates as phis, i}
-                    <Arrow origin={theta} target={phis[phis.length - 1].map((v, j) => theta[j] + (ir_slide/100) * (v - theta[j]))} trimStart=0 trimEnd=0.01 stroke="#f00" fill="#f00"
+                    <Arrow origin={theta} target={phis[phis.length - 1].map((v, j) => theta[j] + (ir_slide/100) * (v - theta[j]))} trimStart=0 trimEnd=0.01 color="#f00"
                         stroke-width="1" />
                 {/each}
 
@@ -91,7 +91,7 @@
 
         updates = lossGradients.map((lossGradient, i) => {
             let paramList = vgd.update([t], lossGradient).map(v => v.arraySync()[0])
-           
+
             //debugger;
             let updateList = []
             for(let j = 1; j < paramList.length; j++){

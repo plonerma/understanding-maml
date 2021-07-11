@@ -19,7 +19,7 @@
     {/each}
 
     {#each updates as phi, i}
-    <Arrow origin={theta} target={phi} trimStart=0 trimEnd=0.01 stroke="#fff" fill="#fff" stroke-width="2" />
+    <Arrow origin={theta} target={phi} trimStart=0 trimEnd=0.01 stroke-width="2" />
     {/each}
 
     <VariableHandleWithReference bind:position={theta} value="\theta" offset={[0, -15]} referencePoint={null} />
@@ -29,7 +29,7 @@
     {/each}
 
     {#each algos as alg, i}
-    <Arrow origin={theta} target={alg} trimStart=0 trimEnd=0.01 stroke="#fff" fill="#fff" stroke-width="2" />
+    <Arrow origin={theta} target={alg} trimStart=0 trimEnd=0.01 stroke-width="2" />
     {/each}
 
     {#each algos as alg, i}
@@ -105,7 +105,7 @@
 
   const updateDirectionsThrottle = throttle(updateDirections, 100)
 
-  $: {    
+  $: {
     updateDirectionsThrottle(theta)
   }
 

@@ -110,7 +110,7 @@
   </g>
 
   <circle bind:this={handleElement} class="handleInvisible"
-          cx={xScale(x)} cy={yScale(y)} r="20"  style={draggingDisabled ? "cursor: pointer;" : "cursor: move;"}/>
+          cx={xScale(x)} cy={yScale(y)} r={draggingDisabled ? 5 : 20}  style={draggingDisabled ? "cursor: pointer;" : "cursor: move;"}/>
 </g>
 
 

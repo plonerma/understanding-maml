@@ -4,34 +4,30 @@
 
   export let value = ""
   export let position
-  export let rHovered = 6
-  export let r = 3
+  export let rHovered = 4
+  export let r = 2
+  export let color = "white"
+  export let style = ""
+
+  export let fontSize = "1em"
+  export let fontSizeHovered = "1.2em"
 
   export let withPoint = true
 
   export let offset = [-20, -10]
 
-  let otherProps
-
-  $: {
-    ({ ...otherProps } = $$props)
-
-    delete otherProps["value"]
-    delete otherProps["hovered"]
-    delete otherProps["position"]
-    delete otherProps["withPoint"]
-    delete otherProps["offset"]
-  }
+  export let isHovered
 
   let normedVec = [0, 0]
 
+
 </script>
 
-<Handle bind:position={position} let:isHovered let:draggingDisabled {...otherProps}>
+<Handle bind:position={position} bind:isHovered let:draggingDisabled {...$$restProps}>
   {#if withPoint}
-    <Latex {value} style="color: white; font-size: {(isHovered && !draggingDisabled) ? '1.2em' : '1em'}" x={offset[0]} y={offset[1]}/>
-    <circle stroke="none" fill="white" class="circleMarker" r="{(isHovered && !draggingDisabled) ? rHovered : r}" cx=0 cy=0  />
+    <Latex {value} style="color: {color}; font-size: {(isHovered && !draggingDisabled) ? fontSizeHovered : fontSize}" x={offset[0]} y={offset[1]}/>
+    <circle stroke="none" fill={color} class="circleMarker" r="{(isHovered && !draggingDisabled) ? rHovered : r}" cx=0 cy=0  />
   {:else}
-    <Latex {value} style="color: white; font-size: {(isHovered && !draggingDisabled) ? '1.2em' : '1em'}" />
+    <Latex {value} style="color: {color}; font-size: {(isHovered && !draggingDisabled) ? fontSizeHovered : fontSize}" />
   {/if}
 </Handle>

@@ -7,7 +7,7 @@
                 <ContourPlot lossFunc={loss} logScale={false} />
 
                 {#each updates as phi, i}
-                <Arrow origin={theta} target={phi} trimStart=0 trimEnd=0.01 stroke="#fff" fill="#fff"
+                <Arrow origin={theta} target={phi} trimStart=0 trimEnd=0.01 color="#fff"
                     stroke-width="2" />
                 {/each}
 

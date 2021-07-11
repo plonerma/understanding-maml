@@ -9,6 +9,7 @@ import MetaGradient from './components/metaGradient.html'
 import FitSinePretrained from './components/fitSinePretrained.html'
 import FitSineMaml from './components/fitSineMaml.html'
 import IMAMLLoss from './components/imamlLoss.html'
+import IMAMLGradient from './components/imamlGradient.html'
 import TwoLossSpaces from './components/twoLossSpaces.html'
 import ReptileInterpolation from './components/reptileInterpolation.html'
 
@@ -21,7 +22,8 @@ const componentMap = {
   '#fitSineMaml': FitSineMaml,
   '#imamlLoss': IMAMLLoss,
   '#twoLossSpaces' : TwoLossSpaces,
-  '#reptileInterpolation' : ReptileInterpolation
+  '#reptileInterpolation' : ReptileInterpolation,
+  '#imamlGradient': IMAMLGradient
 }
 
 

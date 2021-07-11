@@ -9,7 +9,7 @@
 <svelte:options namespace="svg" />
 
 
-<Line origin={newOrigin} target={newTarget} {...otherProps} marker-end="url(#arrowhead)" />
+<Line origin={newOrigin} target={newTarget} {...$$restProps} stroke={color} marker-end="url(#{marker_id})" />
 
 <script>
   import { getContext, onMount } from 'svelte';
@@ -20,10 +20,12 @@
 
   const addDef = getContext("addDef")
 
-  let origin, target, trimStart, trimEnd, otherProps, newOrigin, newTarget
+  let marker_id
+
+  export let origin, target, trimStart, trimEnd, newOrigin, newTarget
+  export let color = '#fff'
 
   $: {
-    ({origin, target, trimStart, trimEnd, ...otherProps} = $$props)
 
     if (trimStart) {
       newOrigin = add(origin, mul(sub(target, origin), trimStart))
@@ -42,19 +44,26 @@
 
 
   onMount(() => {
-    addDef('arrowhead',
+    if (!color) {
+      color = '#fff'
+    }
+    marker_id = `arrowhead-${color}`.replace(/#/g, '_');
+
+    addDef(marker_id,
       (defs) => {
         defs.append('marker')
-            .attr('id', 'arrowhead')
-            .attr('fill', '#fff')
+            .attr('id', marker_id)
             .attr('markerWidth', 10)
             .attr('markerHeight', 10)
-            .attr('refX', 8.7)
+            .attr('refX', 5)
             .attr('refY', 3)
             .attr('orient', 'auto')
             .attr('markerUnits', "strokeWidth")
-            .append('path')
-            .attr('d', "M0,0 L0,6 L9,3 z")
+            .append('polygon')
+            .attr('points', "0 0, 0 6, 9 3")
+            .attr('fill', color)
+            .attr('stroke', 'none')
+
       }
     )
   })
