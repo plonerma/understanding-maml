@@ -1,5 +1,6 @@
 
 import * as tf from '@tensorflow/tfjs'
+import { square } from '@tensorflow/tfjs'
 
 export const sgd = () => {
     this.a = tf.scalar(-1).variable()
@@ -44,7 +45,7 @@ export class Random2DLinearRegressionLossSpace {
         this.trueParameters = tf.tensor1d(mean)//sampleIndependentMultivariateGaussian(mean, variance)
         this.trueParameters.print()
         var N = 10
-        var x = tf.randomUniform([N], -3, 3)
+        var x = tf.randomUniform([N], -1, 1)
         var z = tf.stack([x, tf.ones([N])])
         var y = tf.dot(this.trueParameters, z).elu()
 
@@ -73,6 +74,26 @@ export class Random2DLinearRegressionLossSpace {
             }
             return param
         })
+    }
+
+    toArray(tensor) {
+        return tensor.bufferSync().values
+    }
+}
+
+export class CurvatureLoss {
+
+    constructor(curvature = 1) {
+        this.trueParameters = tf.tensor1d([.5, .5])
+
+        this.loss = tf.tidy(() => parameters => {
+
+            let diffVec = parameters.sub(this.trueParameters)
+            let f = tf.einsum('ijk,kji->ij', diffVec.matMul(tf.diag([.1, 1]).mul(curvature)), diffVec.transpose())
+            return f.div(f.add(.01))
+        })
+
+        this.lossGrad = tf.grad(this.loss)
     }
 
     toArray(tensor) {

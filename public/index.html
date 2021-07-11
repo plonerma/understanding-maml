@@ -561,6 +561,47 @@
 			\text{test}}
 			.\]
 
+			Simple right? Maybe a bit too simple. Let us have a detailed look at the term we are discarding, namely
+
+			\[ \nabla^2_\theta \mathcal{L}_{\tau_i, \text{train}}(\theta). \]
+
+			This term is known as the <i>Hessian</i> of loss function \(\mathcal{L}_{\tau_i, \text{train}}\), which
+			describes the local curvature a function [REF]. To see what the consequences of dropping such a term from
+			the meta-gradient are,
+			take a look at the following example:
+			Let \(f\) be a function that is quadratic in parameter vector \(x\), i.e.
+
+			\[ f(x) = x^T C x + b^T x + a, \]
+
+			for which
+
+			\[ \nabla f(x) = C x + b \]
+
+			and
+
+			\[ \nabla^2 f(x) = C.\]
+
+			So \(C\) is the Hessian of \(f\) (note that we constructed \(f\) such that it would be).
+			E.g. in two dimensions \(C\) is a matrix of the form
+
+			\[ C = \begin{bmatrix} c_1 & c_2 \\ c_3 & c_4 \end{bmatrix}. \]
+
+			We immediately see what happens to \(f(x)\) if we set
+			\(C = \underline{0}\), namely that \(f(x)\) becomes a linear function, and consequently becomes a better and better approximation
+			the closer the function is to be locally linear.
+			
+			In the <a
+				href="#curvatureDemo">following figure</a> you can study the effect of the four parameters of \(C\) on a simplified 
+			function space
+
+			\[ g(x) = (x - \frac{1}{2})^T C (x - \frac{1}{2}).  \]
+		</p>
+		<figure>
+			<d-figure id="curvatureDemo"></d-figure>
+		</figure>
+
+		<p>
+
 			That's already it. We will be able to see how that change effects the update direction of \(\theta\). But
 			first we study another prominent fist-order method, with a slightly different approach.
 		</p>
@@ -580,21 +621,26 @@
 			<li>3. Update \(\theta\) according to \(\theta = \theta + \beta(\phi_i - \theta)\).</li>
 		</ul>
 		<p>
-		Note the two most obvious differences to MAML: First of all, we sample one task at a time, which is more similar
-		how we trained the <i>pretrained</i>
-		model than to MAML. Remember that in MAML we minimize the expected meta-loss over a number of sampled tasks.
-		Secondly, it seems like we
-		aren't computing a meta-gradient at all, more like a difference of parameters. And in fact, the formula we use for
-		updating \(\theta\), i.e.
+			Note the two most obvious differences to MAML: First of all, we sample one task at a time, which is more
+			similar
+			how we trained the <i>pretrained</i>
+			model than to MAML. Remember that in MAML we minimize the expected meta-loss over a number of sampled tasks.
+			Secondly, it seems like we
+			aren't computing a meta-gradient at all, more like a difference of parameters. And in fact, the formula we
+			use for
+			updating \(\theta\), i.e.
 
-		\[ \theta = \theta + \beta(\phi_i - \theta), \]
+			\[ \theta = \theta + \beta(\phi_i - \theta), \]
 
-		is the formula for linearly interpolating between \( \theta \) and \( \phi_i \), with interpolation rate \(\beta
-		\in [0, 1]\).
-		If you are not sure what that means, take a look at <a href="#reptileInterpolation">this figure</a>. There you
-		can play around with the
-		position of \(\theta\), the optimizer \(U_{\tau_i}\) and the interpolation rate \(\beta\) and see what update
-		step Reptile would take.
+			is the formula for linearly interpolating between \( \theta \) and \( \phi_i \), with interpolation rate
+			\(\beta
+			\in [0, 1]\).
+			If you are not sure what that means, take a look at <a href="#reptileInterpolation">this figure</a>. There
+			you
+			can play around with the
+			position of \(\theta\), the optimizer \(U_{\tau_i}\) and the interpolation rate \(\beta\) and see what
+			update
+			step Reptile would take.
 		</p>
 		<figure>
 			<d-figure id="reptileInterpolation"></d-figure>

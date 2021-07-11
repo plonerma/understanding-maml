@@ -1,0 +1,99 @@
+<div>
+    <div style="text-align: center;">{`Local curvature in action`}</div>
+    <Chart width=600 height=400>
+        <Axis>
+            <DynamicContourPlot loss={loss} logScale={false} />
+
+            
+            <Arrow origin={theta} target={gradvec} trimStart=0 trimEnd=0.01 stroke="#fff" fill="#fff"
+                stroke-width="1" />
+
+            <VariableHandleWithReference bind:position={theta} value="\theta" offset={[0, -15]} referencePoint={null}
+                draggingDisabled={true} />
+
+            <VariableHandleWithReference bind:position={gradvec} value="C x" referencePoint={theta} draggingDisabled={true} />
+
+            <VariableHandleWithReference bind:position={gradvec0} value="C = \underline{0}" referencePoint={theta} draggingDisabled={true} />
+            
+        </Axis>
+    </Chart>
+</div>
+<div class="columns">
+    <div class="column is-half">
+        <Slider min="-50" max="50" bind:value={cond_slide} label={`Curvature: ${cond_slide / 100}`} />
+    </div>
+    <div class="column is-half">
+        <Slider min="-50" max="50" bind:value={cond2_slide} label={`Curvature: ${cond2_slide / 100}`} />
+    </div>
+</div>
+<div class="columns">
+    <div class="column is-half">
+        <Slider min="-50" max="50" bind:value={cond3_slide} label={`Curvature: ${cond3_slide / 100}`} />
+    </div>
+    <div class="column is-half">
+        <Slider min="-50" max="50" bind:value={cond4_slide} label={`Curvature: ${cond4_slide / 100}`} />
+    </div>
+</div>
+
+<style>
+    .column {
+        text-align: center;
+    }
+
+    .caption {
+        color: gray;
+        font-size: 15px
+    }
+</style>
+
+<script>
+    import ContourPlot from './contourPlot.html'
+    import { Slider, Chart, Axis, Arrow, VariableHandleWithReference } from './elements'
+    import * as d3 from 'd3';
+    import { onMount, getContext } from 'svelte';
+    import * as tf from '@tensorflow/tfjs'
+    import { CurvatureLoss } from './util/LossSpace'
+    import { VanillaGradientDescent } from './util/metal-lib'
+    import DynamicContourPlot from './dynamicContourPlot.html'
+
+    import throttle from 'lodash/throttle'
+
+    let theta = [.5, .1]
+
+    let cond_slide = 25
+    let cond2_slide = 25
+    let cond3_slide = 25
+    let cond4_slide = 25
+
+    let trueParameters = tf.tensor1d([.5, .5])
+
+    let gradvec = [.5, .5]
+    let gradvec0 = [.5, .5]
+
+    function updateDirections(c, d, e, g) {
+        let l = {
+            id: c + ' ' + d + ' ' + e + ' ' + g,
+            func: tf.tidy(() => parameters => {
+                let diffVec = parameters.sub(trueParameters)
+                let grad = diffVec.matMul(tf.tensor2d([[c, d], [e, g]]))
+                let f = tf.einsum('ijk,kji->ij', grad, diffVec.transpose())
+                return f //.div(f.add(.01))
+            })
+        }
+        let t = tf.tensor([theta], [1, 2]).transpose()
+       
+        gradvec = t.sub(tf.tensor2d([[c, d], [e, g]]).matMul(t).mul(-0.9)).arraySync().map(v => v[0])
+        //gradvec0 = t.sub(tf.tensor2d([[1, 0], [0, 1]]).matMul(t).mul(-0.6)).arraySync().map(v => v[0])
+        //console.log(gradvec)
+        return l
+    }
+
+    let updateDirectionsSlow = throttle(updateDirections, 0)
+
+    let loss = updateDirectionsSlow(cond_slide / 100, cond2_slide / 100, cond3_slide / 100, cond4_slide / 100)
+
+    $: {
+        loss = updateDirectionsSlow(cond_slide / 100, cond2_slide / 100, cond3_slide / 100, cond4_slide / 100)
+    }
+
+</script>

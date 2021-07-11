@@ -11,6 +11,7 @@ import FitSineMaml from './components/fitSineMaml.html'
 import IMAMLLoss from './components/imamlLoss.html'
 import TwoLossSpaces from './components/twoLossSpaces.html'
 import ReptileInterpolation from './components/reptileInterpolation.html'
+import CurvatureDemo from './components/curvatureDemo.html'
 
 const componentMap = {
   '#teaser': Teaser,
@@ -21,7 +22,8 @@ const componentMap = {
   '#fitSineMaml': FitSineMaml,
   '#imamlLoss': IMAMLLoss,
   '#twoLossSpaces' : TwoLossSpaces,
-  '#reptileInterpolation' : ReptileInterpolation
+  '#reptileInterpolation' : ReptileInterpolation,
+  '#curvatureDemo' : CurvatureDemo
 }
 
 
