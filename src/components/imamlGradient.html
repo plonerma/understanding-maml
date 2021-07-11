@@ -7,10 +7,14 @@
             <Axis>
               <ContourPlot lossFunc={loss_functions[i]} />
 
-              <Circle center={theta} radius={length(sub(theta, phis[i]))} stroke="#99f" fill="none"/>
+              <Circle center={theta} radius={length(sub(theta, phis[i]))} stroke="#fff" opacity="0.7" fill="none"/>
 
               <Arrow origin={phis[i]} target={add(phis[i], mul(sub(phis[i], theta), lambda))} trimStart=0 trimEnd=0
                   color="#f99"
+                  stroke-width="1.5" />
+
+              <Arrow origin={phis[i]} target={add(phis[i], mul(sub(phis[i], theta), -lambda))} trimStart=0 trimEnd=0
+                  color="#9f9"
                   stroke-width="1.5" />
 
 

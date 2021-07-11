@@ -808,6 +808,23 @@
 			<d-figure id="imamlGradient">
 				<div class="element is-loading" style="height: 400px"></div>
 			</d-figure>
+			<figcaption>
+				<p>
+					The red arrow denotes the gradient \( \nabla_\phi \mathcal L \left( \phi, \mathcal D^{train} \right) \). The gradient
+					pulls the task parameters \( \phi \) towards the minimum of the task loss.
+					You can imagine the green arrow as being the counter-force whicht pulls
+					\( \phi \) toward the meta-parameter \( \theta \).
+				</p>
+				<p>
+					At the optimium, these forces need to cancel out, since moving in any direction
+					won't improve the regularized loss.
+					Hence, the gradient need to be orthogonal to the isocurve (white circle):
+					moving along won't change the regularization term; since \( \phi \) is optimal
+					for the joint term, the projection of the task-loss gradient onto the
+					circle must be zero (moving some distance along the circle would improve the joint loss).
+				</p>
+
+			</figcaption>
 		</figure>
 		<p>
 
