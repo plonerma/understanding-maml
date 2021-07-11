@@ -3,11 +3,8 @@
 
   let [xScale, yScale] = getContext("scales")
 
-  let origin, target, otherProps
+  export let origin = [0,0], target = [1,1]
 
-  $: {
-    ({origin, target, ...otherProps} = $$props)
-  }
 
 </script>
 
@@ -15,4 +12,4 @@
       y1={yScale(origin[1])}
       x2={xScale(target[0])}
       y2={yScale(target[1])}
-      {...otherProps} />
+      {...$$restProps} />

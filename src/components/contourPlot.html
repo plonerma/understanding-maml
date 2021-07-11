@@ -23,6 +23,7 @@
   export let nx = 256, ny = 256;
   export let n_thresholds = 20;
 
+
   let grid = tf.stack(tf.meshgrid(
       tf.linspace(...xScale.domain(), nx),
       tf.linspace(...yScale.domain(), ny)

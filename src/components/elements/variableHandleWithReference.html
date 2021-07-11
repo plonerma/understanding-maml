@@ -3,15 +3,7 @@
 
   let offset
   export let position = [0,0]
-
-  let otherProps
-  let referencePoint = [0,0]
-
-  $: {
-    ({referencePoint, offset,  ...otherProps} = $$props)
-  }
-
-
+  export let referencePoint = [0,0]
 
   const offx = 30, offy = 30
 
@@ -31,4 +23,4 @@
 
 </script>
 
-<VariableHandle {...otherProps} {offset} bind:position={position} />
+<VariableHandle {...$$restProps} {offset} bind:position={position} />

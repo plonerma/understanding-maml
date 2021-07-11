@@ -10,6 +10,7 @@
 <body>
 	<script async src="https://distill.pub/template.v1.js"></script>
 	<script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
 	<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 	<script defer src="build/bundle.js"></script>
 
@@ -808,10 +809,10 @@
 			$$
 			\begin{align}
 			\nabla_\theta\, \mathbb E_\tau \left[ \mathcal L \left(
-			\phi_\tau , \mathcal D ^ {test}_\tau
+			{\phi}_\tau , \mathcal D ^ {test}_\tau
 			\right)\right]
-			&= \mathbb E_\tau \left[ \nabla_\theta\, \mathcal L \left(
-			\phi_\tau , \mathcal D ^ {test}_\tau
+			&= \mathbb E_\tau \left[ \nabla_{\theta}\, \mathcal L \left(
+			{\phi}_\tau , \mathcal D ^ {test}_\tau
 			\right)\right]\\
 			&= \mathbb E_\tau \left[ \nabla_{\phi_\tau} \, \mathcal L \left(
 			\phi_\tau , \mathcal D ^ {test}_\tau\right) \cdot \frac{\mathrm d \phi_\tau}{\mathrm d \theta}
@@ -848,16 +849,47 @@
 			$$
 			\phi = \theta - \frac{1}{\lambda} \nabla_\phi \mathcal L \left( \phi, \mathcal D^{train} \right)
 			$$
+		</p>
+		<figure class="l-body-outset">
+			<d-figure id="imamlGradient">
+				<div class="element is-loading" style="height: 400px"></div>
+			</d-figure>
+			<figcaption>
+				<p>
+					The red arrow denotes the gradient \( \nabla_\phi \mathcal L \left( \phi, \mathcal D^{train} \right) \). The gradient
+					pulls the task parameters \( \phi \) towards the minimum of the task loss.
+					You can imagine the green arrow as being the counter-force whicht pulls
+					\( \phi \) toward the meta-parameter \( \theta \).
+				</p>
+				<p>
+					At the optimium, these forces need to cancel out, since moving in any direction
+					won't improve the regularized loss.
+					Hence, the gradient need to be orthogonal to the isocurve (white circle):
+					moving along won't change the regularization term; since \( \phi \) is optimal
+					for the joint term, the projection of the task-loss gradient onto the
+					circle must be zero (moving some distance along the circle would improve the joint loss).
+				</p>
 
-			Now, we can calculate the total derivative of the task-parameter in regard to the meta-parameter:
+			</figcaption>
+		</figure>
+		<p>
+
+			Now, we can calculate the Jacobian of the task-parameter \( \phi \) in regard to the meta-parameter  \( \theta \):
 
 			$$
 			\begin{align}
 			\frac{\mathrm d \phi}{\mathrm d \theta}
-			&= \frac{\mathrm d \left( \theta - \frac{1}{\lambda} \nabla_\phi \mathcal L \left( \phi, \mathcal D^{train}
-			\right) \right)}{\mathrm d \theta}\\
-			&= \frac{\mathrm d \theta}{\mathrm \theta} - \frac{1}{\lambda}\frac{ \mathrm d \nabla_\phi \mathcal L \left(
-			\phi, \mathcal D^{train} \right)}{\mathrm d \theta}\\
+			&= \frac{\mathrm d }{\mathrm d \theta} \left( \theta - \frac{1}{\lambda} \nabla_\phi \mathcal L \left( \phi, \mathcal D^{train}
+			\right) \right)\\
+			&= \frac{\mathrm d \theta}{\mathrm d \theta} - \frac{1}{\lambda}\frac{ \mathrm d }{\mathrm d \theta} \nabla_\phi \mathcal L \left(
+			\phi, \mathcal D^{train} \right)\\
+
+			%&= \frac{\mathrm d \theta}{\mathrm d \theta} - \frac{1}{\lambda}\frac{ \mathrm d }{\mathrm d \theta} \frac{\mathrm d}{\mathrm d \phi} \mathcal L \left(
+			%\phi, \mathcal D^{train} \right)\\
+
+			%&= \frac{\mathrm d \theta}{\mathrm d \theta} - \frac{1}{\lambda}\frac{ \mathrm d \phi}{\mathrm d \theta} \frac{\mathrm d^2}{\mathrm d \phi ^2} \mathcal L \left(
+			%\phi, \mathcal D^{train} \right)\\
+
 			&= I - \frac{1}{\lambda} \nabla^2_\phi \mathcal L \left( \phi, \mathcal D^{train} \right) \frac{\mathrm d
 			\phi}{\mathrm d \theta}
 			\end{align}
