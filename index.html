@@ -244,7 +244,7 @@
 		</p>
 
 		<h2 id="few_shot_maml">Few-shot learning with MAML</h2>
-		<p>Model-Agnostic Meta Learning (MAML) is a meta-learning approach to solve few-shot learning.
+		<p>Model-Agnostic Meta Learning (MAML) is a meta-learning approach to solve few-shot learning <dt-cite key="finn2017modelagnostic"></dt-cite>.
 			To learn more about it, let us build an example from the ground up and then try to apply MAML.
 			We will do this by alternating mathematical walk-throughs and interactive, as well as, coding examples.
 		</p>
@@ -270,7 +270,7 @@
 			controlling the size of the steps we want to take.
 		</p>
 		<p>Unfortunately, when framing this in a few-shot setting (i.e., with a very small dataset), the above method is
-			known to fail almost certaintly [REF]. A key insight to MAML is now to
+			known to perform poorly on e.g. neural networks, since there is simply too little data for too many parameters. A key insight to MAML is now to
 			bypass this problem by learning not only from the data regarding exactly our task, but to learn also from
 			data of similar tasks.
 			To incorporate this we make an additional assumption, namely that \(\tau\) comes from some distribution of
@@ -550,7 +550,8 @@
 
 		<h3>First-Order MAML (FOMAML)</h3>
 		<p>
-			FOMAML was suggested by Finn et al. (the authors of MAML) and is a straightforward heuristic to get rid of
+			FOMAML was suggested by Finn et al. (the authors of MAML, in the very same paper that introduces MAML) and
+			is a straightforward heuristic to get rid of
 			the second order terms:
 			Setting them to zero! As a result
 
@@ -567,49 +568,78 @@
 			\[ \nabla^2_\theta \mathcal{L}_{\tau_i, \text{train}}(\theta). \]
 
 			This term is known as the <i>Hessian</i> of loss function \(\mathcal{L}_{\tau_i, \text{train}}\), which
-			describes the local curvature a function [REF]. To see what the consequences of dropping such a term from
-			the meta-gradient are,
-			take a look at the following example:
-			Let \(f\) be a function that is quadratic in parameter vector \(x\), i.e.
+			describes the local curvature a function <dt-cite key="park_meta-curvature_2020"></dt-cite>. Further, setting it to zero results in a linear
+			approximation of the meta-gradient,
+			being more accurate the more locally linear the meta-gradient is at meta-parameter \(\theta\).
+			To see what the Hessian actually entails, let us resolve it under the assumption of
+			<i>MSE</i> loss, neural net \(M\) and dataset \(\mathcal{D} := (x, y)\). We omit some of the subscripts to
+			make the formulae more readable and write
 
-			\[ f(x) = x^T C x + b^T x + a, \]
+			\[ \nabla^2 \mathcal{L}(\theta) = \nabla^2 \frac{1}{2} (y - M(x; \theta)^T(y - M(x; \theta)) \]
 
-			for which
+			\[ = \nabla M(x; \theta)\nabla M(x; \theta)^T -(y - M(x; \theta))^T \nabla^2 M(x; \theta). \]
 
-			\[ \nabla f(x) = C x + b \]
+			So the only second order term in the Hessian of the loss function is the Hessian of the neural net \(M\).
+			While there is empirical evidence to local curvature
+			of Hessians of neural nets being near zero <b>after training</b> (and near zero local curvature would easily
+			justify dropping the Hessian in the MAML meta-update altogether), the same study also indicates that this is
+			not necessarily the case
+			on randomly initialized weights <dt-cite key="sagun_eigenvalues_2017"></dt-cite>. On the other hand, the authors of MAML hypothesize that
+			the often by design nearly linear nature of neural nets (especially the ones with ReLU layers that they
+			use - see ReLUs <dt-cite key="glorot_deep_nodate"></dt-cite>),
+			might explain the success of FOMAML, since nearly linear functions have nearly zero Hessians. 
+		</p>
+		<p>
+			And successful it is! If you compare e.g. Table 1 in the MAML paper, you will find that FOMAML easily keeps
+			up with its second-order counterpart
+			in terms of classification performance. So depending on your personal taste in theoretical rigor, this
+			explanation might be more or less
+			satisfactory.
+			If you are nonetheless interested in how local curvature affects a function space, take a look at the <a
+				href="#curvatureDemo">following figure</a>. Here we prepared a very simple function space, namely the
+			space of
 
-			and
+			\[ f(x) := \frac{1}{2} (x - \frac{1}{2})^T C (x - \frac{1}{2}), \]
 
-			\[ \nabla^2 f(x) = C.\]
+			with Hessian \(C \in \mathbb{R}^{2 \times 2}\) and gradient \(C(x - \frac{1}{2})\), where we assume that
+			\(C\) is a symmetric matrix, i.e. that it has the form
 
-			So \(C\) is the Hessian of \(f\) (note that we constructed \(f\) such that it would be).
-			E.g. in two dimensions \(C\) is a matrix of the form
+			\[ C = \begin{bmatrix}
+			a & b \\ c & d
+			\end{bmatrix}. \]
 
-			\[ C = \begin{bmatrix} c_1 & c_2 \\ c_3 & c_4 \end{bmatrix}. \]
-
-			We immediately see what happens to \(f(x)\) if we set
-			\(C = \underline{0}\), namely that \(f(x)\) becomes a linear function, and consequently becomes a better and better approximation
-			the closer the function is to be locally linear.
-			
-			In the <a
-				href="#curvatureDemo">following figure</a> you can study the effect of the four parameters of \(C\) on a simplified 
-			function space
-
-			\[ g(x) = (x - \frac{1}{2})^T C (x - \frac{1}{2}).  \]
+			Changing \(a, b, c \) lets you observe the effect of curvature on the form of the function space.
+			While we are at it, let us
+			quickly go over the mathematical effect of \(C\). Setting \(C = \underline{0}\) makes the gradient constant
+			(in this case = 0), but this
+			we already discussed: The function becomes linear. Further, for all other values than \(b = 0\) and \(a =
+			c\), in which case we simply
+			scale the gradient, we are effectively transforming magnitude <b>and</b> direction of the gradient. Note
+			what
+			implications neglecting the information of the Hessian could then potentially have on anything related to
+			<i>gradient</i> descent. We might
+			end up with a completely wrong descent direction.
 		</p>
 		<figure>
 			<d-figure id="curvatureDemo"></d-figure>
 		</figure>
-
 		<p>
+			Hopefully you have gained some understanding of how FOMAML works and what effect second-order terms
+			(encoding local curvature) can have on the loss space,
+			as well as arguments for and against linear approximations of the meta-gradient.
 
-			That's already it. We will be able to see how that change effects the update direction of \(\theta\). But
-			first we study another prominent fist-order method, with a slightly different approach.
+		</p>
+		<p>
+			FOMAML and the fact that it can compete so easily with MAML teaches us that the information necessary to
+			learn across tasks is
+			contained for the most part not in any Hessian, but within the linear parts of the meta-gradient. Following
+			up on this narrative we
+			will now study another prominent fist-order method, with a slightly different approach.
 		</p>
 
 		<h3>Reptile</h3>
 		<p>
-			Reptile, proposed by Nichol et al., [REF] is another first-order version of MAML that uses a simple update
+			Reptile, proposed by Nichol et al. <dt-cite key="nichol_first-order_2018"></dt-cite>, is another first-order version of MAML that uses a simple update
 			procedure to find the
 			optimal initialization \(\theta\). Let's have a look:
 		</p>
@@ -636,7 +666,8 @@
 			is the formula for linearly interpolating between \( \theta \) and \( \phi_i \), with interpolation rate
 			\(\beta
 			\in [0, 1]\).
-			If you are not sure what that means, take a look at <a href="#reptileInterpolation">this figure</a>. There
+			If you are not sure what that means in the context of parameter optimization, take a look at <a
+				href="#reptileInterpolation">this figure</a>. There
 			you
 			can play around with the
 			position of \(\theta\), the optimizer \(U_{\tau_i}\) and the interpolation rate \(\beta\) and see what
@@ -689,10 +720,26 @@
 			problems.
 		</p>
 		<p>
-			As for the <i>why</i> we would like to refer you to the <a
-				href="https://arxiv.org/pdf/1803.02999.pdf">Reptile paper</a> itself.
-			Section 5.1 contains a theoretical analysis of how both MAML and Reptile find updates for one task that also
-			improve meta-performance for other tasks of the task distribution.
+			As for the <i>why</i>, let us revisit the update step of Reptile, which we called <i>linear
+				interpolation</i>:
+
+			\[ \theta = \theta + \beta(\phi_i - \theta). \]
+
+			This formula is also known as the update rule, with which one computes an <i>exponential moving
+				average</i>. Starting with
+			a current estimate for the empirical mean of a distribution \(theta\), we update our belief based on a new
+			observation
+			\(\phi_i\) and discount the update such that we trade-off between our confidence in our previous belief and
+			the new observation
+			being close to the true mean.
+		</p>
+		<p>
+			Hence, we can interpret Reptile as computing an estimate of the average optimal parameter of each task. Note
+			how this confirms what we
+			already discovered with FOMAML, namely that the information important for learning across tasks is contained
+			not within one task (i.e. pretrained approach),
+			and not for the most part in higher-order derivatives (MAML) but within optimizing on a task with respect to
+			the initial parameters.
 		</p>
 		<p>
 			After having seen all those extensions, in the next section we would like to compare them visually.
@@ -856,7 +903,8 @@
 			</d-figure>
 			<figcaption>
 				<p>
-					The red arrow denotes the gradient \( \nabla_\phi \mathcal L \left( \phi, \mathcal D^{train} \right) \). The gradient
+					The red arrow denotes the gradient \( \nabla_\phi \mathcal L \left( \phi, \mathcal D^{train} \right)
+					\). The gradient
 					pulls the task parameters \( \phi \) towards the minimum of the task loss.
 					You can imagine the green arrow as being the counter-force whicht pulls
 					\( \phi \) toward the meta-parameter \( \theta \).
@@ -874,20 +922,25 @@
 		</figure>
 		<p>
 
-			Now, we can calculate the Jacobian of the task-parameter \( \phi \) in regard to the meta-parameter  \( \theta \):
+			Now, we can calculate the Jacobian of the task-parameter \( \phi \) in regard to the meta-parameter \(
+			\theta \):
 
 			$$
 			\begin{align}
 			\frac{\mathrm d \phi}{\mathrm d \theta}
-			&= \frac{\mathrm d }{\mathrm d \theta} \left( \theta - \frac{1}{\lambda} \nabla_\phi \mathcal L \left( \phi, \mathcal D^{train}
+			&= \frac{\mathrm d }{\mathrm d \theta} \left( \theta - \frac{1}{\lambda} \nabla_\phi \mathcal L \left( \phi,
+			\mathcal D^{train}
 			\right) \right)\\
-			&= \frac{\mathrm d \theta}{\mathrm d \theta} - \frac{1}{\lambda}\frac{ \mathrm d }{\mathrm d \theta} \nabla_\phi \mathcal L \left(
+			&= \frac{\mathrm d \theta}{\mathrm d \theta} - \frac{1}{\lambda}\frac{ \mathrm d }{\mathrm d \theta}
+			\nabla_\phi \mathcal L \left(
 			\phi, \mathcal D^{train} \right)\\
 
-			%&= \frac{\mathrm d \theta}{\mathrm d \theta} - \frac{1}{\lambda}\frac{ \mathrm d }{\mathrm d \theta} \frac{\mathrm d}{\mathrm d \phi} \mathcal L \left(
+			%&= \frac{\mathrm d \theta}{\mathrm d \theta} - \frac{1}{\lambda}\frac{ \mathrm d }{\mathrm d \theta}
+			\frac{\mathrm d}{\mathrm d \phi} \mathcal L \left(
 			%\phi, \mathcal D^{train} \right)\\
 
-			%&= \frac{\mathrm d \theta}{\mathrm d \theta} - \frac{1}{\lambda}\frac{ \mathrm d \phi}{\mathrm d \theta} \frac{\mathrm d^2}{\mathrm d \phi ^2} \mathcal L \left(
+			%&= \frac{\mathrm d \theta}{\mathrm d \theta} - \frac{1}{\lambda}\frac{ \mathrm d \phi}{\mathrm d \theta}
+			\frac{\mathrm d^2}{\mathrm d \phi ^2} \mathcal L \left(
 			%\phi, \mathcal D^{train} \right)\\
 
 			&= I - \frac{1}{\lambda} \nabla^2_\phi \mathcal L \left( \phi, \mathcal D^{train} \right) \frac{\mathrm d
@@ -1200,6 +1253,62 @@ version: 2},
 }
 
 
+@article{glorot_deep_nodate,
+	title = {Deep {Sparse} {Rectiﬁer} {Neural} {Networks}},
+	abstract = {While logistic sigmoid neurons are more biologically plausible than hyperbolic tangent neurons, the latter work better for training multi-layer neural networks. This paper shows that rectifying neurons are an even better model of biological neurons and yield equal or better performance than hyperbolic tangent networks in spite of the hard non-linearity and non-diﬀerentiability at zero, creating sparse representations with true zeros, which seem remarkably suitable for naturally sparse data. Even though they can take advantage of semi-supervised setups with extra-unlabeled data, deep rectiﬁer networks can reach their best performance without requiring any unsupervised pre-training on purely supervised tasks with large labeled datasets. Hence, these results can be seen as a new milestone in the attempts at understanding the diﬃculty in training deep but purely supervised neural networks, and closing the performance gap between neural networks learnt with and without unsupervised pre-training.},
+	language = {en},
+	author = {Glorot, Xavier and Bordes, Antoine and Bengio, Yoshua},
+	pages = {9},
+	file = {Glorot et al. - Deep Sparse Rectiﬁer Neural Networks.pdf:/home/luis/Zotero/storage/IF9UR5S4/Glorot et al. - Deep Sparse Rectiﬁer Neural Networks.pdf:application/pdf},
+}
+
+@article{sagun_eigenvalues_2017,
+	title = {Eigenvalues of the {Hessian} in {Deep} {Learning}: {Singularity} and {Beyond}},
+	shorttitle = {Eigenvalues of the {Hessian} in {Deep} {Learning}},
+	url = {http://arxiv.org/abs/1611.07476},
+	abstract = {We look at the eigenvalues of the Hessian of a loss function before and after training. The eigenvalue distribution is seen to be composed of two parts, the bulk which is concentrated around zero, and the edges which are scattered away from zero. We present empirical evidence for the bulk indicating how overparametrized the system is, and for the edges that depend on the input data.},
+	language = {en},
+	urldate = {2021-07-12},
+	journal = {arXiv:1611.07476 [cs]},
+	author = {Sagun, Levent and Bottou, Leon and LeCun, Yann},
+	month = oct,
+	year = {2017},
+	note = {arXiv: 1611.07476},
+	keywords = {Computer Science - Machine Learning},
+	annote = {Comment: ICLR submission, 2016 - updated to match the openreview.net version},
+	file = {Sagun et al. - 2017 - Eigenvalues of the Hessian in Deep Learning Singu.pdf:/home/luis/Zotero/storage/MZ5AFFIZ/Sagun et al. - 2017 - Eigenvalues of the Hessian in Deep Learning Singu.pdf:application/pdf},
+}
+
+@article{park_meta-curvature_2020,
+	title = {Meta-{Curvature}},
+	url = {http://arxiv.org/abs/1902.03356},
+	abstract = {We propose meta-curvature (MC), a framework to learn curvature information for better generalization and fast model adaptation. MC expands on the modelagnostic meta-learner (MAML) by learning to transform the gradients in the inner optimization such that the transformed gradients achieve better generalization performance to a new task. For training large scale neural networks, we decompose the curvature matrix into smaller matrices in a novel scheme where we capture the dependencies of the model’s parameters with a series of tensor products. We demonstrate the effects of our proposed method on several few-shot learning tasks and datasets. Without any task speciﬁc techniques and architectures, the proposed method achieves substantial improvement upon previous MAML variants and outperforms the recent state-of-the-art methods. Furthermore, we observe faster convergence rates of the meta-training process. Finally, we present an analysis that explains better generalization performance with the meta-trained curvature.},
+	language = {en},
+	urldate = {2021-07-12},
+	journal = {arXiv:1902.03356 [cs, stat]},
+	author = {Park, Eunbyung and Oliva, Junier B.},
+	month = jan,
+	year = {2020},
+	note = {arXiv: 1902.03356},
+	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning},
+	annote = {Comment: To appear in NeurIPS 2019},
+	file = {Park and Oliva - 2020 - Meta-Curvature.pdf:/home/luis/Zotero/storage/ZGIXZNK4/Park and Oliva - 2020 - Meta-Curvature.pdf:application/pdf},
+}
+
+@article{nichol_first-order_2018,
+	title = {On {First}-{Order} {Meta}-{Learning} {Algorithms}},
+	url = {http://arxiv.org/abs/1803.02999},
+	abstract = {This paper considers meta-learning problems, where there is a distribution of tasks, and we would like to obtain an agent that performs well (i.e., learns quickly) when presented with a previously unseen task sampled from this distribution. We analyze a family of algorithms for learning a parameter initialization that can be ﬁne-tuned quickly on a new task, using only ﬁrstorder derivatives for the meta-learning updates. This family includes and generalizes ﬁrst-order MAML, an approximation to MAML obtained by ignoring second-order derivatives. It also includes Reptile, a new algorithm that we introduce here, which works by repeatedly sampling a task, training on it, and moving the initialization towards the trained weights on that task. We expand on the results from Finn et al. showing that ﬁrst-order meta-learning algorithms perform well on some well-established benchmarks for few-shot classiﬁcation, and we provide theoretical analysis aimed at understanding why these algorithms work.},
+	language = {en},
+	urldate = {2021-07-12},
+	journal = {arXiv:1803.02999 [cs]},
+	author = {Nichol, Alex and Achiam, Joshua and Schulman, John},
+	month = oct,
+	year = {2018},
+	note = {arXiv: 1803.02999},
+	keywords = {Computer Science - Machine Learning},
+	file = {Nichol et al. - 2018 - On First-Order Meta-Learning Algorithms.pdf:/home/luis/Zotero/storage/L8HLWK9P/Nichol et al. - 2018 - On First-Order Meta-Learning Algorithms.pdf:application/pdf},
+}
 
 </script>
 </body>
