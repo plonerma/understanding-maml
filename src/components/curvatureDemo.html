@@ -4,34 +4,48 @@
         <Axis>
             <DynamicContourPlot loss={loss} logScale={false} />
 
-            
+
             <Arrow origin={theta} target={gradvec} trimStart=0 trimEnd=0.01 stroke="#fff" fill="#fff"
                 stroke-width="1" />
 
             <VariableHandleWithReference bind:position={theta} value="\theta" offset={[0, -15]} referencePoint={null}
                 draggingDisabled={true} />
 
-            <VariableHandleWithReference bind:position={gradvec} value="C x" referencePoint={theta} draggingDisabled={true} />
+            <VariableHandleWithReference bind:position={gradvec} value="\nabla f(x)" referencePoint={theta}
+                draggingDisabled={true} />
 
-            <VariableHandleWithReference bind:position={gradvec0} value="C = \underline{0}" referencePoint={theta} draggingDisabled={true} />
-            
+            <!--  <VariableHandleWithReference bind:position={gradvec0} value="C = \underline{1}" referencePoint={theta} draggingDisabled={true} />
+            <Arrow origin={theta} target={gradvec0} trimStart=0 trimEnd=0.01 stroke="#777" fill="#777"
+                stroke-width="0.5" />
+
+            -->
         </Axis>
     </Chart>
 </div>
 <div class="columns">
     <div class="column is-half">
-        <Slider min="-50" max="50" bind:value={cond_slide} label={`Curvature: ${cond_slide / 100}`} />
+        <Slider min="-50" max="50" bind:value={cond_slide} label={`a: ${cond_slide / 100}`} />
     </div>
     <div class="column is-half">
-        <Slider min="-50" max="50" bind:value={cond2_slide} label={`Curvature: ${cond2_slide / 100}`} />
+        <Slider min="-50" max="50" bind:value={cond2_slide} label={`b: ${cond2_slide / 100}`} />
     </div>
+</div>
+<div class="caption column">
+    Here you can play around with a simple function space and see how it transforms, when you tweak the Hessian. The
+    Hessian of \(f\) is displayed to the bottom right. It is symmetric and hence has three free parameters \(a, b\) and
+    \(c\).
+    What happens to the space if one of the parameters is negative? Can you determine how each parameter is contributing
+    to the space transform?
 </div>
 <div class="columns">
     <div class="column is-half">
-        <Slider min="-50" max="50" bind:value={cond3_slide} label={`Curvature: ${cond3_slide / 100}`} />
+        <Slider min="-50" max="50" bind:value={cond3_slide} label={`c: ${cond3_slide / 100}`} />
     </div>
+
     <div class="column is-half">
-        <Slider min="-50" max="50" bind:value={cond4_slide} label={`Curvature: ${cond4_slide / 100}`} />
+        <p>
+            {hessianString}
+        </p>
     </div>
 </div>
 
@@ -56,44 +70,49 @@
     import { VanillaGradientDescent } from './util/metal-lib'
     import DynamicContourPlot from './dynamicContourPlot.html'
 
+    import Latex from './elements/latex.html'
+
+    import { renderTex } from './util/mathjax'
+
     import throttle from 'lodash/throttle'
 
-    let theta = [.5, .1]
+    let theta = [.1, .1]
 
-    let cond_slide = 25
-    let cond2_slide = 25
+    let cond_slide = 50
+    let cond2_slide = 0
     let cond3_slide = 25
-    let cond4_slide = 25
+
+
+    let hessianString = `\\( \\nabla^2 f(x) := \\begin{bmatrix} a & b \\\\ b & c \\end{bmatrix} \\)`
 
     let trueParameters = tf.tensor1d([.5, .5])
 
     let gradvec = [.5, .5]
     let gradvec0 = [.5, .5]
 
-    function updateDirections(c, d, e, g) {
+    function updateDirections(c, d, e) {
         let l = {
-            id: c + ' ' + d + ' ' + e + ' ' + g,
+            id: c + ' ' + d + ' ' + e,
             func: tf.tidy(() => parameters => {
                 let diffVec = parameters.sub(trueParameters)
-                let grad = diffVec.matMul(tf.tensor2d([[c, d], [e, g]]))
+                let grad = diffVec.matMul(tf.tensor2d([[c, d], [d, e]]))
                 let f = tf.einsum('ijk,kji->ij', grad, diffVec.transpose())
-                return f //.div(f.add(.01))
+                return f.mul(0.5) //.div(f.add(.01))
             })
         }
         let t = tf.tensor([theta], [1, 2]).transpose()
-       
-        gradvec = t.sub(tf.tensor2d([[c, d], [e, g]]).matMul(t).mul(-0.9)).arraySync().map(v => v[0])
-        //gradvec0 = t.sub(tf.tensor2d([[1, 0], [0, 1]]).matMul(t).mul(-0.6)).arraySync().map(v => v[0])
-        //console.log(gradvec)
+
+        gradvec = t.sub(tf.tensor2d([[c, d], [d, e]]).matMul(t.sub(trueParameters)).mul(1.4)).arraySync().map(v => v[0])
+
         return l
     }
 
     let updateDirectionsSlow = throttle(updateDirections, 0)
 
-    let loss = updateDirectionsSlow(cond_slide / 100, cond2_slide / 100, cond3_slide / 100, cond4_slide / 100)
+    let loss = updateDirectionsSlow(cond_slide / 100, cond2_slide / 100, cond3_slide / 100)
 
     $: {
-        loss = updateDirectionsSlow(cond_slide / 100, cond2_slide / 100, cond3_slide / 100, cond4_slide / 100)
+        loss = updateDirectionsSlow(cond_slide / 100, cond2_slide / 100, cond3_slide / 100)
     }
 
 </script>

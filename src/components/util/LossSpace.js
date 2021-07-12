@@ -41,11 +41,11 @@ export class Random2DLinearRegressionLossSpace {
      * 
      * where loss({a, b}) = .5 * (y_true - ax - b)**2, summed over all samples. Note that the input is 1D but the parameter space is 2D.
      */
-    constructor(mean = [.5, .5], variance = [.00, .00]) {
+    constructor(mean = [.5, .5], N = 10) {
         this.trueParameters = tf.tensor1d(mean)//sampleIndependentMultivariateGaussian(mean, variance)
         this.trueParameters.print()
-        var N = 10
-        var x = tf.randomUniform([N], -1, 1)
+        
+        var x = tf.randomUniform([N], -3, 3)
         var z = tf.stack([x, tf.ones([N])])
         var y = tf.dot(this.trueParameters, z).elu()
 
