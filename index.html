@@ -14,7 +14,7 @@
 	<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 	<script defer src="build/bundle.js"></script>
 
-	<script type="text/front-matter">
+<script type="text/front-matter">
   title: "An Interactive Introduction to Model-Agnostic Meta-Learning"
   description: "t.b.d."
   authors:
@@ -587,7 +587,7 @@
 			on randomly initialized weights <dt-cite key="sagun_eigenvalues_2017"></dt-cite>. On the other hand, the authors of MAML hypothesize that
 			the often by design nearly linear nature of neural nets (especially the ones with ReLU layers that they
 			use - see ReLUs <dt-cite key="glorot_deep_nodate"></dt-cite>),
-			might explain the success of FOMAML, since nearly linear functions have nearly zero Hessians. 
+			might explain the success of FOMAML, since nearly linear functions have nearly zero Hessians.
 		</p>
 		<p>
 			And successful it is! If you compare e.g. Table 1 in the MAML paper, you will find that FOMAML easily keeps
@@ -763,7 +763,7 @@
 			computations via
 			the panel under the figure.
 		</p>
-		<figure class="l-body">
+		<figure class="l-screen-inset">
 			<d-figure id="metaGradient">
 				<div class="element is-loading" style="height: 400px"></div>
 			</d-figure>
@@ -936,11 +936,11 @@
 			\phi, \mathcal D^{train} \right)\\
 
 			%&= \frac{\mathrm d \theta}{\mathrm d \theta} - \frac{1}{\lambda}\frac{ \mathrm d }{\mathrm d \theta}
-			\frac{\mathrm d}{\mathrm d \phi} \mathcal L \left(
+			%\frac{\mathrm d}{\mathrm d \phi} \mathcal L \left(
 			%\phi, \mathcal D^{train} \right)\\
 
 			%&= \frac{\mathrm d \theta}{\mathrm d \theta} - \frac{1}{\lambda}\frac{ \mathrm d \phi}{\mathrm d \theta}
-			\frac{\mathrm d^2}{\mathrm d \phi ^2} \mathcal L \left(
+			%\frac{\mathrm d^2}{\mathrm d \phi ^2} \mathcal L \left(
 			%\phi, \mathcal D^{train} \right)\\
 
 			&= I - \frac{1}{\lambda} \nabla^2_\phi \mathcal L \left( \phi, \mathcal D^{train} \right) \frac{\mathrm d
