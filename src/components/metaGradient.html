@@ -1,13 +1,13 @@
-<div>
+<!--<div>
   {#each tasks as task, i}
   <input type="radio" bind:group={selected_task} value={i} id={`loss_${i+1}`}>
   <label for={`loss_${i+1}`}>
     {i+1}
   </label>
   {/each}
-</div>
+</div> -->
 
-
+<!--
 <Chart width=600 height=400>
   <Axis>
     {#each tasks as loss, i}
@@ -38,12 +38,59 @@
 
   </Axis>
 </Chart>
+-->
 
+<div class="columns">
+  <div class="column">
+    <div class="columns is-multiline">
+      {#each algs as alg, i}
+      <div class="column is-half">
+        <div style="text-align: center;">{algNames[i]}</div>
+        <Chart width=400 height=400>
+          <Axis>
+            <ContourPlot lossFunc={tasks[0]} logScale={false} />
+
+            <VariableHandleWithReference bind:position={theta} value="\theta" offset={[0, -15]} referencePoint={null} />
+
+            <Arrow origin={theta} target={alg} trimStart=0 trimEnd=0.01 stroke="#fff" fill="#fff" stroke-width="2" />
+
+            <VariableHandleWithReference bind:position={alg} value={`U(\\theta)`} offset={[0, -15]}
+              referencePoint={theta} />
+
+          </Axis>
+        </Chart>
+
+      </div>
+      {/each}
+    </div>
+  </div>
+  <div class="column is-one-third">
+    <CollapsibleCard title="MAML" bind:group={shownSettings}>
+      <Slider min="0" max="10" label="Outer Learning Rate" />
+      <Slider min="0" max="10" label="Inner Learning Rate" />
+    </CollapsibleCard>
+    <CollapsibleCard title="FOMAML" bind:group={shownSettings}>
+      <Slider min="0" max="10" label="Outer Learning Rate" />
+      <Slider min="0" max="10" label="Inner Learning Rate" />
+    </CollapsibleCard>
+    <CollapsibleCard title="REPTILE" bind:group={shownSettings}>
+      <Slider min="0" max="10" label="Interpolation Rate" />
+      <Slider min="0" max="10" label="Inner Learning Rate" />
+      <Slider min="0" max="10" label="Inner Steps" />
+    </CollapsibleCard>
+    <CollapsibleCard title="iMAML" bind:group={shownSettings}>
+      <Slider min="0" max="10" label="Outer Learning Rate" />
+      <Slider min="0" max="10" label="Inner Learning Rate" />
+      <Slider min="0" max="10" label="Inner Steps" />
+      <Slider min="0" max="10" label="Regularization Coeffiecient" />
+    </CollapsibleCard>
+  </div>
+</div>
 
 
 <script>
   import ContourPlot from './contourPlot.html'
-  import { Chart, Axis, Arrow, VariableHandleWithReference } from './elements'
+  import { Slider, Chart, CollapsibleCard, Axis, Arrow, VariableHandleWithReference } from './elements'
   import * as d3 from 'd3';
   import { onMount, getContext } from 'svelte';
   import * as tf from '@tensorflow/tfjs'
@@ -52,21 +99,9 @@
   import { rosenbrock as loss_1 } from './util/loss'
   import { beale as loss_2 } from './util/loss'
 
-  import { Reptile, FirstOrderMAML, VanillaGradientDescent, MAML } from './util/metal-lib'
+  import { Reptile, FirstOrderMAML, VanillaGradientDescent, MAML, iMAML } from './util/metal-lib'
 
-  // Credit: https://stackoverflow.com/questions/27078285/simple-throttle-in-js
-  function throttle(callback, limit) {
-    var waiting = false;                      // Initially, we're not waiting
-    return function () {                      // We return a throttled function
-      if (!waiting) {                       // If we're not waiting
-        callback.apply(this, arguments);  // Execute users function
-        waiting = true;                   // Prevent future invocations
-        setTimeout(function () {          // After a period of time
-          waiting = false;              // And allow future invocations
-        }, limit);
-      }
-    }
-  }
+  import throttle from 'lodash/throttle'
 
   let theta = [0.5, .9]
   let means = [[0, 0], [1, 0]]
@@ -78,35 +113,56 @@
   let beta = 0.03
   let eta = 0.3
 
-  let reptile = new Reptile(eta, lr, 5)
-  let fomaml = new FirstOrderMAML(beta, lr, 1)
-  let vgd = new VanillaGradientDescent(lr, 1)
-  let maml = new MAML(beta, lr, 1)
+  let shownSettings = null
 
-  let algos = [theta, theta, theta]
+  let reptileOuter = eta,
+    reptileInner = lr,
+    reptileSteps = 5,
+    fomamlOuter = beta,
+    fomamlInner = lr,
+    fomamlSteps = 1,
+    mamlOuter = beta,
+    mamlInner = lr,
+    mamlSteps = 1,
+    imamlOuter = beta,
+    imamlInner = lr,
+    imamlSteps = 1
+
+
+
+  let vgd = new VanillaGradientDescent(lr, 1)
+
+  let algs = [theta, theta, theta, theta]
+  let algNames = ['MAML', 'First-Order MAML', 'Reptile', 'iMAML']
+
   let lossGradients = lossSpaces.map(space => space.lossGrad)
-  let updates = lossGradients.map(space => theta)
 
   let metaLoss = x => tf.stack(lossGradients.map((lossGradient, i) => {
-    //let thetaVar = new MetaVariable(x)
     let optimalParam = vgd.update(x, lossGradient)
     return lossSpaces[i].loss(optimalParam.clone())
   })).sum(0)
   let tasks = [metaLoss, ...lossSpaces.map(space => space.loss)]
 
-  function updateDirections(t){
-   // let thetaVar = new MetaVariable([t])
+  function updateDirections(t, _reptileOuter, _reptileInner, _reptileSteps, _fomamlOuter, _fomamlInner, _fomamlSteps,
+    _mamlOuter, _mamlInner, _mamlSteps, _imamlOuter, _imamlInner, _imamlSteps) {
 
-    updates = lossGradients.map(lossGradient => vgd.update([t], lossGradient).arraySync()[0])
-    algos[0] = reptile.update([t], lossGradients).arraySync()[0]
-    algos[1] = fomaml.update([t], lossGradients).arraySync()[0]
-    algos[2] = maml.update([t], lossGradients).arraySync()[0]
+    let reptile = new Reptile(_reptileOuter, _reptileInner, _reptileSteps)
+    let fomaml = new FirstOrderMAML(_fomamlOuter, _fomamlInner, _fomamlSteps)
+    let maml = new MAML(_mamlOuter, _mamlInner, _mamlSteps)
+    let imaml = new iMAML(_imamlOuter, _imamlInner, _imamlSteps)
+
+
+    algs[0] = maml.update([t], lossGradients).arraySync()[0]
+    algs[1] = fomaml.update([t], lossGradients).arraySync()[0]
+    algs[2] = reptile.update([t], lossGradients).arraySync()[0]
+    algs[3] = imaml.update([t], lossGradients).arraySync()[0]
   }
 
   const updateDirectionsThrottle = throttle(updateDirections, 100)
 
   $: {
-    updateDirectionsThrottle(theta)
+    updateDirectionsThrottle(theta, reptileOuter, reptileInner, reptileSteps, fomamlOuter, fomamlInner, fomamlSteps,
+      mamlOuter, mamlInner, mamlSteps, imamlOuter, imamlInner, imamlSteps)
   }
 
 </script>

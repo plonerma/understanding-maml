@@ -9,11 +9,15 @@
   </label>
 {/if}
 <script>
-  export let id
+  import uniqueId from 'lodash/uniqueId'
+
+  let id = uniqueId('slider_')
+
   export let min = 0
   export let max = 10
   export let value = 0
   export let label = ""
+
 </script>
 
 

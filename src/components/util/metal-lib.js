@@ -119,6 +119,21 @@ export class FirstOrderMAML extends MAML {
     }
 }
 
+export class iMAML extends MAML {
+
+    /**
+     * Performs a first-order MAML step given a fixed set of loss gradients (each obtained from tf.grad(loss)), where loss is the loss-function of 
+     * the respective task.
+     * @param {Array<function>} lossGradients List of loss gradients. Obtained from tf.grad(loss).
+     * @param {tf.Tensor} params Parameters to be updated. 
+     * @returns Updated parameters.
+     */
+    updateParameters(params, lossGradients) {
+        // TODO: @plonerma
+        return params
+    }
+}
+
 export class VanillaGradientDescent extends Model {
     /**
      * Implements vanilla gradient descent

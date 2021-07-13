@@ -1,53 +1,50 @@
-{#each [0,'controls'] as row}
-  <div class="columns">
-    {#if row != 'controls'}
-      {#each [row,row+1] as i}
-        <div class="column is-half">
-          <Chart width=300 height=300>
-            <Axis>
-              <ContourPlot lossFunc={loss_functions[i]} />
+<div class="columns">
+  {#each [0,1] as i}
+    <div class="column is-half">
+      <Chart width=300 height=300>
+        <Axis>
+          <ContourPlot lossFunc={loss_functions[i]} />
 
-              <Circle center={theta} radius={length(sub(theta, phis[i]))} stroke="#fff" opacity="0.7" fill="none"/>
+          <Circle center={theta} radius={length(sub(theta, phis[i]))} stroke="#fff" opacity="0.7" fill="none"/>
 
-              <Arrow origin={phis[i]} target={add(phis[i], mul(sub(phis[i], theta), lambda))} trimStart=0 trimEnd=0
-                  color="#f99"
-                  stroke-width="1.5" />
+          <Arrow origin={phis[i]} target={add(phis[i], mul(sub(phis[i], theta), lambda))} trimStart=0 trimEnd=0
+              color="#f99"
+              stroke-width="1.5" />
 
-              <Arrow origin={phis[i]} target={add(phis[i], mul(sub(phis[i], theta), -lambda))} trimStart=0 trimEnd=0
-                  color="#9f9"
-                  stroke-width="1.5" />
+          <Arrow origin={phis[i]} target={add(phis[i], mul(sub(phis[i], theta), -lambda))} trimStart=0 trimEnd=0
+              color="#9f9"
+              stroke-width="1.5" />
 
 
 
-              <VariableHandleWithReference
-                bind:position={theta} value="\theta"
-                bind:referencePoint={thetaReference}
-                onDragEnd={recalculate} onDrag={recalculateSlow}
-                 />
+          <VariableHandleWithReference
+            bind:position={theta} value="\theta"
+            bind:referencePoint={thetaReference}
+            onDragEnd={recalculate} onDrag={recalculateSlow}
+             />
 
-              {#each phis as phi, i}
-              <VariableHandleWithReference bind:position={phi} value={`\\phi_{${i}}`} offset={[0, -15]}
-                  referencePoint={theta} draggingDisabled={true} fontSize=".7em" />
-              {/each}
-          </Axis>
-          </Chart>
-        </div>
-      {/each}
-    {:else}
-      <div class="column is-half">
-        <Slider min="-4" max="4"
-                bind:value={lambda_slider} id="imaml_lambda"
-                on:change={recalculateSlow}
-                on:input={recalculateSlow}
-                />
-      </div>
-      <div class="column is-half">
-        <small>Regularization coeffiecient \( \lambda \):</small>
-        <span>{lambda.toPrecision(3)}</span>
-      </div>
-    {/if}
+          {#each phis as phi, i}
+          <VariableHandleWithReference bind:position={phi} value={`\\phi_{${i}}`} offset={[0, -15]}
+              referencePoint={theta} draggingDisabled={true} fontSize=".7em" />
+          {/each}
+      </Axis>
+      </Chart>
+    </div>
+  {/each}
+</div>
+<div class="columns">
+  <div class="column is-half">
+    <Slider min="-4" max="4"
+            bind:value={lambda_slider}
+            on:change={recalculateSlow}
+            on:input={recalculateSlow}
+            />
   </div>
-{/each}
+  <div class="column is-half">
+    <small>Regularization coeffiecient \( \lambda \):</small>
+    <span>{lambda.toPrecision(3)}</span>
+  </div>
+</div>
 
 <style>
   .column {

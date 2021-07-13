@@ -12,6 +12,7 @@ import IMAMLLoss from './components/imamlLoss.html'
 import IMAMLGradient from './components/imamlGradient.html'
 import TwoLossSpaces from './components/twoLossSpaces.html'
 import ReptileInterpolation from './components/reptileInterpolation.html'
+import CurvatureDemo from './components/curvatureDemo.html'
 
 const componentMap = {
   '#teaser': Teaser,
@@ -23,6 +24,7 @@ const componentMap = {
   '#imamlLoss': IMAMLLoss,
   '#twoLossSpaces' : TwoLossSpaces,
   '#reptileInterpolation' : ReptileInterpolation,
+  '#curvatureDemo' : CurvatureDemo,
   '#imamlGradient': IMAMLGradient
 }
 

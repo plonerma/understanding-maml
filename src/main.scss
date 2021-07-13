@@ -34,3 +34,10 @@ dt-article pre {
 dt-article figcaption p {
   margin-bottom: 8px;
 }
+
+.columns {
+  .column {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}

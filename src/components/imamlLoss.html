@@ -14,7 +14,7 @@
     {:else}
       <div class="column is-half">
         <Slider min="-5" max="4"
-                bind:value={lambda_slider} id="imaml_lambda"
+                bind:value={lambda_slider}
                 on:change={recalculateSlow}
                 on:input={recalculateSlow}
                 />
