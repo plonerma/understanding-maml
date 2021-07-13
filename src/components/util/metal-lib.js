@@ -149,3 +149,37 @@ export class VanillaGradientDescent extends Model {
     }
 }
 
+
+
+export class IMAML extends Model {
+
+    /**
+     * Implements the Rajeswaran et al. (2019) iMAML update step.
+     * @param {float} metaLearningRate outer learning rate
+     * @param {float} regularizationCoefficient regularization coeffiecient
+     * @param {float} innerLearningRate inner learning rate
+     * @param {int} nSteps inner gradient descent steps
+     */
+    constructor(metaLearningRate, innerLearningRate, nSteps = 10) {
+        super()
+        this.metaLearningRate = metaLearningRate
+        this.regularizationCoefficient = regularizationCoefficient
+        this.vGD = new VanillaGradientDescent(innerLearningRate, nSteps)
+    }
+
+    /**
+     * Performs an iMAML step given a fixed set of loss gradients (each obtained
+     * from tf.grad(loss)), where loss is the loss-function of the respective task.
+     * @param {Array<function>} lossGradients List of loss gradients. Obtained
+     *                                        from tf.grad(loss).
+     * @param {tf.Tensor} params Parameters to be updated.
+     * @returns Updated parameters.
+     */
+    updateParameters(params, lossGradients) {
+        let optimalInnerUpdates = lossGradients.map(lossGradient => this.vGD.update(params, lossGradient))
+
+        return optimalInnerUpdates.reduce((aggregatedParams, optimalInnerParams) => {
+            return aggregatedParams.add(optimalInnerParams.sub(aggregatedParams).mul(this.metaInterpolationRate))
+        }, params)
+    }
+}
