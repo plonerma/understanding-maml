@@ -33,15 +33,15 @@
 </div>
 <div class="columns">
     <div class="column is-half">
-        <Slider min="10" max="50" bind:value={lr_slide} id="reptileInterpolation_lr" label={`Learning Rate: ${(lr_slide /
+        <Slider min="10" max="50" bind:value={lr_slide} label={`Learning Rate: ${(lr_slide /
             1000).toPrecision(2)}`} />
     </div>
     <div class="column is-half">
-        <Slider min="1" max="5" bind:value={steps} id="reptileInterpolation_steps" label={`Inner Steps: ${steps}`} />
+        <Slider min="1" max="5" bind:value={steps} label={`Inner Steps: ${steps}`} />
     </div>
 </div>
 <div class="column is-half">
-    <Slider min="20" max="80" bind:value={ir_slide} id="reptileInterpolation_ir" label={`Interpolation rate: ${(ir_slide / 100).toPrecision(2)}`} />
+    <Slider min="20" max="80" bind:value={ir_slide} label={`Interpolation rate: ${(ir_slide / 100).toPrecision(2)}`} />
 </div>
 
 <style>

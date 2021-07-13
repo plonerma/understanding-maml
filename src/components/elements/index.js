@@ -2,6 +2,7 @@ import Arrow from './arrow.html'
 import Axis from './axis.html'
 import Chart from './chart.html'
 import Circle from './circle.html'
+import CollapsibleCard from './collapsibleCard'
 import Handle from './handle.html'
 import Latex from './latex.html'
 import Line from './line.html'
@@ -19,6 +20,7 @@ export {
     Axis,
     Chart,
     Circle,
+    CollapsibleCard,
     Handle,
     Latex,
     Line,

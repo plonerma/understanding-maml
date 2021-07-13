@@ -39,33 +39,64 @@
   </Axis>
 </Chart>
 -->
-{#each algos as algs, j}
+
 <div class="columns">
-  {#each algs as alg, i}
-  <div class="column is-half">
-    <div style="text-align: center;">{algoNames[j][i]}</div>
-    <Chart width=400 height=400>
-      <Axis>
-        <ContourPlot lossFunc={tasks[0]} logScale={false} />
+  <div class="column">
+    <div class="columns is-multiline">
+      {#each algs as alg, i}
+      <div class="column is-half">
+        <div style="text-align: center;">{algNames[i]}</div>
+        <Chart width=400 height=400>
+          <Axis>
+            <ContourPlot lossFunc={tasks[0]} logScale={false} />
 
-        <VariableHandleWithReference bind:position={theta} value="\theta" offset={[0, -15]} referencePoint={null} />
+            <VariableHandleWithReference bind:position={theta} value="\theta" offset={[0, -15]} referencePoint={null} />
 
-        <Arrow origin={theta} target={alg} trimStart=0 trimEnd=0.01 stroke="#fff" fill="#fff" stroke-width="2" />
+            <Arrow origin={theta} target={alg} trimStart=0 trimEnd=0.01 stroke="#fff" fill="#fff" stroke-width="2" />
 
-        <VariableHandleWithReference bind:position={alg} value={`U(\\theta)`} offset={[0, -15]}
-          referencePoint={theta} />
+            <VariableHandleWithReference bind:position={alg} value={`U(\\theta)`} offset={[0, -15]}
+              referencePoint={theta} />
 
-      </Axis>
-    </Chart>
+          </Axis>
+        </Chart>
 
+      </div>
+      {/each}
+    </div>
   </div>
-  {/each}
+  <div class="column is-one-third">
+    <CollapsibleCard title="MAML" bind:group={shownSettings}>
+      <Slider min="0" max="10" label="Outer Learning Rate" />
+      <Slider min="0" max="10" label="Inner Learning Rate" />
+    </CollapsibleCard>
+    <CollapsibleCard title="FOMAML" bind:group={shownSettings}>
+      <Slider min="0" max="10" label="Outer Learning Rate" />
+      <Slider min="0" max="10" label="Inner Learning Rate" />
+    </CollapsibleCard>
+    <CollapsibleCard title="REPTILE" bind:group={shownSettings}>
+      <Slider min="0" max="10" label="Interpolation Rate" />
+      <Slider min="0" max="10" label="Inner Learning Rate" />
+      <Slider min="0" max="10" label="Inner Steps" />
+    </CollapsibleCard>
+    <CollapsibleCard title="iMAML" bind:group={shownSettings}>
+      <Slider min="0" max="10" label="Outer Learning Rate" />
+      <Slider min="0" max="10" label="Inner Learning Rate" />
+      <Slider min="0" max="10" label="Inner Steps" />
+      <Slider min="0" max="10" label="Regularization Coeffiecient" />
+    </CollapsibleCard>
+  </div>
 </div>
-{/each}
+
+<style>
+  .card {
+    font-size: 14pt;
+    box-shadow: none;
+  }
+</style>
 
 <script>
   import ContourPlot from './contourPlot.html'
-  import { Chart, Axis, Arrow, VariableHandleWithReference } from './elements'
+  import { Slider, Chart, CollapsibleCard, Axis, Arrow, VariableHandleWithReference } from './elements'
   import * as d3 from 'd3';
   import { onMount, getContext } from 'svelte';
   import * as tf from '@tensorflow/tfjs'
@@ -76,19 +107,7 @@
 
   import { Reptile, FirstOrderMAML, VanillaGradientDescent, MAML, iMAML } from './util/metal-lib'
 
-  // Credit: https://stackoverflow.com/questions/27078285/simple-throttle-in-js
-  function throttle(callback, limit) {
-    var waiting = false;                      // Initially, we're not waiting
-    return function () {                      // We return a throttled function
-      if (!waiting) {                       // If we're not waiting
-        callback.apply(this, arguments);  // Execute users function
-        waiting = true;                   // Prevent future invocations
-        setTimeout(function () {          // After a period of time
-          waiting = false;              // And allow future invocations
-        }, limit);
-      }
-    }
-  }
+  import throttle from 'lodash/throttle'
 
   let theta = [0.5, .9]
   let means = [[0, 0], [1, 0]]
@@ -99,6 +118,8 @@
   let lr = 0.04
   let beta = 0.03
   let eta = 0.3
+
+  let shownSettings = null
 
   let reptileOuter = eta,
     reptileInner = lr,
@@ -117,8 +138,8 @@
 
   let vgd = new VanillaGradientDescent(lr, 1)
 
-  let algos = [[theta, theta], [theta, theta]]
-  let algoNames = [['MAML', 'First-Order MAML'], ['Reptile', 'iMAML']]
+  let algs = [theta, theta, theta, theta]
+  let algNames = ['MAML', 'First-Order MAML', 'Reptile', 'iMAML']
 
   let lossGradients = lossSpaces.map(space => space.lossGrad)
 
@@ -128,25 +149,25 @@
   })).sum(0)
   let tasks = [metaLoss, ...lossSpaces.map(space => space.loss)]
 
-  function updateDirections(t, _reptileOuter, _reptileInner, _reptileSteps, _fomamlOuter, _fomamlInner, _fomamlSteps, 
+  function updateDirections(t, _reptileOuter, _reptileInner, _reptileSteps, _fomamlOuter, _fomamlInner, _fomamlSteps,
     _mamlOuter, _mamlInner, _mamlSteps, _imamlOuter, _imamlInner, _imamlSteps) {
 
     let reptile = new Reptile(_reptileOuter, _reptileInner, _reptileSteps)
     let fomaml = new FirstOrderMAML(_fomamlOuter, _fomamlInner, _fomamlSteps)
     let maml = new MAML(_mamlOuter, _mamlInner, _mamlSteps)
     let imaml = new iMAML(_imamlOuter, _imamlInner, _imamlSteps)
-    
 
-    algos[0][0] = maml.update([t], lossGradients).arraySync()[0]
-    algos[0][1] = fomaml.update([t], lossGradients).arraySync()[0]
-    algos[1][0] = reptile.update([t], lossGradients).arraySync()[0]
-    algos[1][1] = imaml.update([t], lossGradients).arraySync()[0]
+
+    algs[0] = maml.update([t], lossGradients).arraySync()[0]
+    algs[1] = fomaml.update([t], lossGradients).arraySync()[0]
+    algs[2] = reptile.update([t], lossGradients).arraySync()[0]
+    algs[3] = imaml.update([t], lossGradients).arraySync()[0]
   }
 
   const updateDirectionsThrottle = throttle(updateDirections, 100)
 
   $: {
-    updateDirectionsThrottle(theta, reptileOuter, reptileInner, reptileSteps, fomamlOuter, fomamlInner, fomamlSteps, 
+    updateDirectionsThrottle(theta, reptileOuter, reptileInner, reptileSteps, fomamlOuter, fomamlInner, fomamlSteps,
       mamlOuter, mamlInner, mamlSteps, imamlOuter, imamlInner, imamlSteps)
   }
 

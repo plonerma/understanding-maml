@@ -1,0 +1,58 @@
+<script>
+  import { slide } from 'svelte/transition';
+
+
+  export let group = null
+  export let title
+
+  const button_click = () => {
+    if (group == title) {
+      group = null
+    } else {
+      group = title
+    }
+  }
+</script>
+
+<div class="card collapsible-card" class:active={(group == title)}>
+  <header class="card-header" on:click={button_click}>
+    <div class="card-header-title">
+      {title}
+    </div>
+    <button class="card-header-icon" aria-label="more options">
+
+      {#if (group == title)}
+        <span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span>
+      {:else}
+        <span class="icon"><i class="fas fa-angle-left" aria-hidden="true"></i></span>
+      {/if}
+
+    </button>
+  </header>
+  {#if (group == title)}
+  <div class="card-content" transition:slide>
+    <div class="content">
+        <slot></slot>
+    </div>
+  </div>
+  {/if}
+</div>
+
+<style>
+  .collapsible-card {
+    margin-bottom: 1rem;
+    cursor: pointer;
+
+    box-shadow: 0 0.25em 2em -0.125em rgba(10, 10, 10, 0.05), 0 0px 0 1px rgba(10, 10, 10, 0.01)
+  }
+
+/*.collapsible-card {
+  &.active .card-content {
+    display: block;
+  }
+
+  .card-content {
+    display: none;
+  }
+}*/
+</style>
