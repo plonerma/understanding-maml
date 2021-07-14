@@ -99,7 +99,7 @@
   import { rosenbrock as loss_1 } from './util/loss'
   import { beale as loss_2 } from './util/loss'
 
-  import { Reptile, FirstOrderMAML, VanillaGradientDescent, MAML, iMAML } from './util/metal-lib'
+  import { Reptile, FirstOrderMAML, VanillaGradientDescent, MAML, IMAML } from './util/metal-lib'
 
   import throttle from 'lodash/throttle'
 
@@ -126,7 +126,7 @@
     mamlSteps = 1,
     imamlOuter = beta,
     imamlInner = lr,
-    imamlSteps = 1
+    imamlSteps = 5
 
 
 
@@ -149,16 +149,19 @@
     let reptile = new Reptile(_reptileOuter, _reptileInner, _reptileSteps)
     let fomaml = new FirstOrderMAML(_fomamlOuter, _fomamlInner, _fomamlSteps)
     let maml = new MAML(_mamlOuter, _mamlInner, _mamlSteps)
-    let imaml = new iMAML(_imamlOuter, _imamlInner, _imamlSteps)
+    let imaml = new IMAML(_imamlOuter, _imamlInner, _imamlSteps)
 
 
-    algs[0] = maml.update([t], lossGradients).arraySync()[0]
-    algs[1] = fomaml.update([t], lossGradients).arraySync()[0]
-    algs[2] = reptile.update([t], lossGradients).arraySync()[0]
-    algs[3] = imaml.update([t], lossGradients).arraySync()[0]
+    setTimeout(() => {
+      ([maml, fomaml, reptile, imaml]).forEach((method, i) => {
+          method.promiseUpdate([t], lossGradients).then(values => {
+            algs[i] = values[0]
+          })
+      })
+    }, 0)
   }
 
-  const updateDirectionsThrottle = throttle(updateDirections, 100)
+  const updateDirectionsThrottle = throttle(updateDirections, 500)
 
   $: {
     updateDirectionsThrottle(theta, reptileOuter, reptileInner, reptileSteps, fomamlOuter, fomamlInner, fomamlSteps,

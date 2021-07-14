@@ -1,5 +1,7 @@
 import * as tf from '@tensorflow/tfjs'
 
+import cg_solve from './cg_solve'
+
 export class Model {
 
     /**
@@ -14,6 +16,14 @@ export class Model {
             return tf.tidy(() => this.updateParameters(params, ...args))
         }
         return tf.tidy(() => this.updateParameters(variable, ...args))
+    }
+
+    promiseUpdate(...args) {
+      return new Promise((resolve) => {
+        resolve(tf.tidy(() =>
+            this.update(...args).arraySync()
+        ))
+      })
     }
 
     updateParameters() {
@@ -53,10 +63,10 @@ export class MAML extends Model {
     }
 
     /**
-     * Performs a MAML step given a fixed set of loss gradients (each obtained from tf.grad(loss)), where loss is the loss-function of 
+     * Performs a MAML step given a fixed set of loss gradients (each obtained from tf.grad(loss)), where loss is the loss-function of
      * the respective task.
      * @param {Array<function>} lossGradients List of loss gradients. Obtained from tf.grad(loss).
-     * @param {tf.Tensor} params Parameters to be updated. 
+     * @param {tf.Tensor} params Parameters to be updated.
      * @returns Updated parameters.
      */
     updateParameters(params, lossGradients) {
@@ -75,10 +85,10 @@ export class MAML extends Model {
 export class Reptile extends Model {
 
     /**
-     * Implements the Nicho et al. (2018) Reptile update step. 
+     * Implements the Nicho et al. (2018) Reptile update step.
      * @param {float} metaInterpolationRate interpolation rate between old and new parameters
      * @param {float} innerLearningRate inner learning rate
-     * @param {int} nSteps inner gradient descent steps 
+     * @param {int} nSteps inner gradient descent steps
      */
     constructor(metaInterpolationRate, innerLearningRate, nSteps = 1) {
         super()
@@ -87,10 +97,10 @@ export class Reptile extends Model {
     }
 
     /**
-     * Performs a Reptile step given a fixed set of loss gradients (each obtained from tf.grad(loss)), where loss is the loss-function of 
+     * Performs a Reptile step given a fixed set of loss gradients (each obtained from tf.grad(loss)), where loss is the loss-function of
      * the respective task.
      * @param {Array<function>} lossGradients List of loss gradients. Obtained from tf.grad(loss).
-     * @param {tf.Tensor} params Parameters to be updated. 
+     * @param {tf.Tensor} params Parameters to be updated.
      * @returns Updated parameters.
      */
     updateParameters(params, lossGradients) {
@@ -105,10 +115,10 @@ export class Reptile extends Model {
 export class FirstOrderMAML extends MAML {
 
     /**
-     * Performs a first-order MAML step given a fixed set of loss gradients (each obtained from tf.grad(loss)), where loss is the loss-function of 
+     * Performs a first-order MAML step given a fixed set of loss gradients (each obtained from tf.grad(loss)), where loss is the loss-function of
      * the respective task.
      * @param {Array<function>} lossGradients List of loss gradients. Obtained from tf.grad(loss).
-     * @param {tf.Tensor} params Parameters to be updated. 
+     * @param {tf.Tensor} params Parameters to be updated.
      * @returns Updated parameters.
      */
     updateParameters(params, lossGradients) {
@@ -116,21 +126,6 @@ export class FirstOrderMAML extends MAML {
         let taskLossGradients = lossGradients.map(
             (lossGradient, i) => lossGradient(optimalInnerUpdates[i]))
         return params.sub(tf.sum(tf.stack(taskLossGradients), 0).mul(this.metaLearningRate))
-    }
-}
-
-export class iMAML extends MAML {
-
-    /**
-     * Performs a first-order MAML step given a fixed set of loss gradients (each obtained from tf.grad(loss)), where loss is the loss-function of 
-     * the respective task.
-     * @param {Array<function>} lossGradients List of loss gradients. Obtained from tf.grad(loss).
-     * @param {tf.Tensor} params Parameters to be updated. 
-     * @returns Updated parameters.
-     */
-    updateParameters(params, lossGradients) {
-        // TODO: @plonerma
-        return params
     }
 }
 
@@ -175,7 +170,7 @@ export class IMAML extends Model {
      * @param {float} innerLearningRate inner learning rate
      * @param {int} nSteps inner gradient descent steps
      */
-    constructor(metaLearningRate, innerLearningRate, nSteps = 10) {
+    constructor(metaLearningRate, innerLearningRate, regularizationCoefficient = 1, nSteps = 10) {
         super()
         this.metaLearningRate = metaLearningRate
         this.regularizationCoefficient = regularizationCoefficient
@@ -191,10 +186,30 @@ export class IMAML extends Model {
      * @returns Updated parameters.
      */
     updateParameters(params, lossGradients) {
-        let optimalInnerUpdates = lossGradients.map(lossGradient => this.vGD.update(params, lossGradient))
+        // Regularize a the gradient of a loss function (instead of adding a
+        // quadratic term to the loss function, add the gradient of the
+        // regularizer to the gradient of the loss function).
+        let regularizedLossGradient = (lossGradient) => (phi) => lossGradient(phi).add(
+          phi.sub(params).mul(this.regularizationCoefficient)
+        )
 
-        return optimalInnerUpdates.reduce((aggregatedParams, optimalInnerParams) => {
-            return aggregatedParams.add(optimalInnerParams.sub(aggregatedParams).mul(this.metaInterpolationRate))
-        }, params)
+        // On the regularized loss space, calculate optimal task parameters
+        let optimalTaskParameters = lossGradients.map(lossGradient => this.vGD.update(params, regularizedLossGradient(lossGradient)))
+
+        // Calculate Meta gradients based on the optimal task parameters
+        let metaGradients = optimalTaskParameters.map((phi, i) => cg_solve(this.cg_Av(lossGradients[i], phi), lossGradients[i](phi)))
+
+        metaGradients = tf.stack(metaGradients)
+        // Apply meta gradient update step
+        return params.sub(tf.sum(metaGradients, 0).mul(this.metaLearningRate))
+    }
+
+    cg_Av(lossGradient, phi) {
+      return (v) => (v.add(this.hessian_vector_product(lossGradient, phi, v)))
+    }
+
+    hessian_vector_product(lossGradient, phi, v) {
+      let f = (x) => lossGradient(x).dot(v.transpose())
+      return tf.grad(f)(phi)
     }
 }
