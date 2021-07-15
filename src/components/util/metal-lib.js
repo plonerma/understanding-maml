@@ -205,7 +205,7 @@ export class IMAML extends Model {
     }
 
     cg_Av(lossGradient, phi) {
-      return (v) => (v.add(this.hessian_vector_product(lossGradient, phi, v)))
+      return (v) => (v.add(this.hessian_vector_product(lossGradient, phi, v).div(this.regularizationCoefficient)))
     }
 
     hessian_vector_product(lossGradient, phi, v) {
