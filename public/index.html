@@ -14,7 +14,7 @@
 	<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 	<script defer src="build/bundle.js"></script>
 
-<script type="text/front-matter">
+	<script type="text/front-matter">
   title: "An Interactive Introduction to Model-Agnostic Meta-Learning"
   description: "t.b.d."
   authors:
@@ -33,58 +33,59 @@
 				<div class="element is-loading" style="height: 400px"></div>
 			</d-figure>
 			<figcaption>
-				Click button or drag sample onto example to classify the sample.
+				What you have in front of you is a 5-way-1-shot problem, one that most conventional machine learning
+				systems struggle with.
+				To classify a sample (top), either drag it to or click on the desired class (bottom) and see if you can
+				do better.
 			</figcaption>
 		</figure>
 
 		<dt-byline></dt-byline>
 
 		<p>
+			If you tried the exercise above, you have most likely received a pretty high accuracy score.
+			Even though you likely have never seen some of the characters,
+			you are able to classify them given only a single example, potentially
+			without realizing that what you are able to do off the top of you head is pretty impressive to the average
+			Deep Neural Net!
+		</p>
+
+		<p>
 			<i style="font-size: .8em;">
 				If you are already familiar with few-shot learning, and are only interested
-				in learning about MAML specifically, you may want to skip this section and
+				in MAML specifically, you may want to skip this section and
 				jump straight to the <a href="#few_shot_maml">next part</a>.
 			</i>
 		</p>
 
-		<p>
-			If you tried the little exercise above, you probably got a pretty good score.
-			Even though you likely have never seen some of the characters,
-			you are able to classify them given only a single example, potentially
-			without realizing that what you are doing is actually pretty impressive!
-		</p>
-
 		<h3>Few-Shot Learning</h3>
-
 		<p>
-			Typically, in machine learning we need a lot of examples to be able to
-			assign an unseen sample to class. But we do not always have enough data to
+			Typically, in machine learning we need a lot of samples to be able to
+			assign unseen data to a class. But we do not always have enough data available to
 			cater this need: A sufficient amount of data may be expensive or even
 			impossible to acquire.
-			But there is good reasons to believe, that this is not an inherent issue
+			But there are good reasons to believe that this is not an inherent issue
 			of learning.
-			Humans, for example, are quite good at generalizing after seeing only a few
-			samples. Enabling machine learning methods to achieve the same would allow
-			for many new applications and generally reduce the need to collect huge
-			datasets.[<b>TODO: reference needed</b>]
+			Humans, such as yourself, are known to excel at generalizing after seeing only a few
+			samples <dt-cite key="salakhutdinov_one-shot_nodate"></dt-cite>.
+			Enabling machine learning methods to achieve the same would bring us a step closer to learning on the data-
+			and energy-efficiency
+			level of humans.
 		</p>
 
 		<p>
-			This research area is called "few-shot learning". It aims to enable models
-			to classify unseen sampels after training only one a few examples ("shots").
-			The little exercise at the top of the article is an exmaple of such a task.
-			The symbols are part of a
-			<dt-cite key="lake_omniglot_2015">dataset called "omniglot"</dt-cite>.
-			It contains 1623 different characters across 50 alphabets and each character
-			has 20 instances drawn by different people. Because of that, the omniglot
-			was described as a "transpose" of the well-known MNIST dataset, by the authors
-			who originally proposed omniglot as a machine learning dataset.
-			<dt-cite key="lake_one_2011"></dt-cite>
-			While MNIST contains only a few classes (the digits 0 to 9) and many instances,
-			of each class, with omniglot it is vice-versa.
+			Achieving rapid convergence of machine learning models on but a few samples is generally refered to as
+			"few-shot learning".
+			The exercise at the top of the article is a prominent example of a few-shot learning task, whose symbols are
+			taken from
+			the <dt-cite key="lake_omniglot_2015"><i>omniglot</i> dataset</dt-cite>.
+			It contains 1623 different characters across 50 alphabets with each character
+			being represented by 20 instances, each drawn by a different person. Because of that, the original authors
+			of the omniglot dataset
+			described it as a "transpose" of the well-known MNIST dataset <dt-cite key="lake_one_2011"></dt-cite>,
+			with MNIST containing only a few classes (the digits 0 to 9) and many instances and omniglot containing a
+			lot of classes but only a few instances for each.
 		</p>
-
-
 
 		<p>
 			By now, you may be asking yourself: How can a model learn from only one example
@@ -186,8 +187,6 @@
 			</figcaption>
 		</figure>
 
-
-
 		<p>
 			Plenty of methods have been proposed in the last years to tackle few-shot
 			learning using the meta-learning assumption,
@@ -209,7 +208,7 @@
 			metric-based and model-based approaches.
 		</p>
 		<p>
-			The core idea of metric-based approaches is two compare two samples in a
+			The core idea of metric-based approaches is to compare two samples in a
 			latent (metric) space: In this space, samples of the same class are supposed
 			to be close to each other, while two samplese from different classes are
 			supposed to have a large distance (the notion of a distance is what makes
@@ -229,7 +228,7 @@
 		</p>
 
 		<p>
-			MAML goes a different route: The nerual network is designed the same way
+			MAML goes a different route: The neural network is designed the same way
 			your usual model might be (in the many-shot case). All the magic happens during the
 			optimization. Hence, it is called "optimization-based".
 			Unlike, metric-based and model-based approaches, MAML lets
@@ -244,7 +243,8 @@
 		</p>
 
 		<h2 id="few_shot_maml">Few-shot learning with MAML</h2>
-		<p>Model-Agnostic Meta Learning (MAML) is a meta-learning approach to solve few-shot learning <dt-cite key="finn2017modelagnostic"></dt-cite>.
+		<p>Model-Agnostic Meta Learning (MAML) is a meta-learning approach to solve few-shot learning <dt-cite
+				key="finn2017modelagnostic"></dt-cite>.
 			To learn more about it, let us build an example from the ground up and then try to apply MAML.
 			We will do this by alternating mathematical walk-throughs and interactive, as well as, coding examples.
 		</p>
@@ -270,7 +270,8 @@
 			controlling the size of the steps we want to take.
 		</p>
 		<p>Unfortunately, when framing this in a few-shot setting (i.e., with a very small dataset), the above method is
-			known to perform poorly on e.g. neural networks, since there is simply too little data for too many parameters. A key insight to MAML is now to
+			known to perform poorly on e.g. neural networks, since there is simply too little data for too many
+			parameters. A key insight to MAML is now to
 			bypass this problem by learning not only from the data regarding exactly our task, but to learn also from
 			data of similar tasks.
 			To incorporate this we make an additional assumption, namely that \(\tau\) comes from some distribution of
@@ -568,7 +569,8 @@
 			\[ \nabla^2_\theta \mathcal{L}_{\tau_i, \text{train}}(\theta). \]
 
 			This term is known as the <i>Hessian</i> of loss function \(\mathcal{L}_{\tau_i, \text{train}}\), which
-			describes the local curvature a function <dt-cite key="park_meta-curvature_2020"></dt-cite>. Further, setting it to zero results in a linear
+			describes the local curvature a function <dt-cite key="park_meta-curvature_2020"></dt-cite>. Further,
+			setting it to zero results in a linear
 			approximation of the meta-gradient,
 			being more accurate the more locally linear the meta-gradient is at meta-parameter \(\theta\).
 			To see what the Hessian actually entails, let us resolve it under the assumption of
@@ -584,7 +586,8 @@
 			of Hessians of neural nets being near zero <b>after training</b> (and near zero local curvature would easily
 			justify dropping the Hessian in the MAML meta-update altogether), the same study also indicates that this is
 			not necessarily the case
-			on randomly initialized weights <dt-cite key="sagun_eigenvalues_2017"></dt-cite>. On the other hand, the authors of MAML hypothesize that
+			on randomly initialized weights <dt-cite key="sagun_eigenvalues_2017"></dt-cite>. On the other hand, the
+			authors of MAML hypothesize that
 			the often by design nearly linear nature of neural nets (especially the ones with ReLU layers that they
 			use - see ReLUs <dt-cite key="glorot_deep_nodate"></dt-cite>),
 			might explain the success of FOMAML, since nearly linear functions have nearly zero Hessians.
@@ -639,7 +642,8 @@
 
 		<h3>Reptile</h3>
 		<p>
-			Reptile, proposed by Nichol et al. <dt-cite key="nichol_first-order_2018"></dt-cite>, is another first-order version of MAML that uses a simple update
+			Reptile, proposed by Nichol et al. <dt-cite key="nichol_first-order_2018"></dt-cite>, is another first-order
+			version of MAML that uses a simple update
 			procedure to find the
 			optimal initialization \(\theta\). Let's have a look:
 		</p>
@@ -1308,6 +1312,15 @@ version: 2},
 	note = {arXiv: 1803.02999},
 	keywords = {Computer Science - Machine Learning},
 	file = {Nichol et al. - 2018 - On First-Order Meta-Learning Algorithms.pdf:/home/luis/Zotero/storage/L8HLWK9P/Nichol et al. - 2018 - On First-Order Meta-Learning Algorithms.pdf:application/pdf},
+}
+
+@article{salakhutdinov_one-shot_nodate,
+	title = {One-{Shot} {Learning} with a {Hierarchical} {Nonparametric} {Bayesian} {Model}},
+	abstract = {We develop a hierarchical Bayesian model that learns categories from single training examples. The model transfers acquired knowledge from previously learned categories to a novel category, in the form of a prior over category means and variances. The model discovers how to group categories into meaningful super-categories that express diﬀerent priors for new classes. Given a single example of a novel category, we can eﬃciently infer which supercategory the novel category belongs to, and thereby estimate not only the new category’s mean but also an appropriate similarity metric based on parameters inherited from the super-category. On MNIST and MSR Cambridge image datasets the model learns useful representations of novel categories based on just a single training example, and performs signiﬁcantly better than simpler hierarchical Bayesian approaches. It can also discover new categories in a completely unsupervised fashion, given just one or a few examples.},
+	language = {en},
+	author = {Salakhutdinov, Ruslan and Tenenbaum, Josh and Torralba, Antonio},
+	pages = {13},
+	file = {Salakhutdinov et al. - One-Shot Learning with a Hierarchical Nonparametri.pdf:/home/luis/Zotero/storage/NNTJPA7H/Salakhutdinov et al. - One-Shot Learning with a Hierarchical Nonparametri.pdf:application/pdf},
 }
 
 </script>
