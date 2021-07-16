@@ -17,6 +17,7 @@ import CurvatureDemo from './components/curvatureDemo.html'
 import Menu from './components/menu.html'
 
 const componentMap = {
+  '#menu': Menu,
   '#teaser': Teaser,
   '#fewShotMethods': FewShotMethods,
   '#fewShotVenn': FewShotVenn,
@@ -28,8 +29,6 @@ const componentMap = {
   '#reptileInterpolation' : ReptileInterpolation,
   '#curvatureDemo' : CurvatureDemo,
   '#imamlGradient': IMAMLGradient,
-
-  '#menu': Menu
 }
 
 
