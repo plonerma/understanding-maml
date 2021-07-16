@@ -14,6 +14,8 @@ import TwoLossSpaces from './components/twoLossSpaces.html'
 import ReptileInterpolation from './components/reptileInterpolation.html'
 import CurvatureDemo from './components/curvatureDemo.html'
 
+import Menu from './components/menu.html'
+
 const componentMap = {
   '#teaser': Teaser,
   '#fewShotMethods': FewShotMethods,
@@ -25,7 +27,9 @@ const componentMap = {
   '#twoLossSpaces' : TwoLossSpaces,
   '#reptileInterpolation' : ReptileInterpolation,
   '#curvatureDemo' : CurvatureDemo,
-  '#imamlGradient': IMAMLGradient
+  '#imamlGradient': IMAMLGradient,
+
+  '#menu': Menu
 }
 
 
@@ -38,9 +42,9 @@ for (let target in componentMap) {
     new componentMap[target]({
       target: element
     })
-  } else {
+  } /*else {
     console.log(`Element ${target} not found.`)
-  }
+  }*/
 }
 
 // All components monted, reexecute mathjax

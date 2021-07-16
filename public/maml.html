@@ -28,17 +28,8 @@
 	<dt-article>
 		<h1>An Interactive Introduction to Model-Agnostic Meta-Learning</h1>
 		<h2>Exploring the world of model-agnostic meta-learning and its extensions.</h2>
-		<figure class="l-page" style="border-top: 1px solid hsla(0, 0%, 0%, 0.1);">
-			<d-figure id="teaser">
-				<div class="element is-loading" style="height: 400px"></div>
-			</d-figure>
-			<figcaption>
-				Click button or drag sample onto example to classify the sample.
-			</figcaption>
-		</figure>
 
 		<dt-byline></dt-byline>
-
 
 		<div class="l-middle side">
 			<div id="menu">
@@ -58,201 +49,311 @@
 
 
 
-		<p>
-			If you tried the little exercise above, you probably got a pretty good score.
-			Even though you likely have never seen some of the characters,
-			you are able to classify them given only a single example, potentially
-			without realizing that what you are doing is actually pretty impressive!
+
+		<h2 id="few_shot_maml">Few-shot learning with MAML</h2>
+		<p>Model-Agnostic Meta Learning (MAML) is a meta-learning approach to solve few-shot learning <dt-cite key="finn2017modelagnostic"></dt-cite>.
+			To learn more about it, let us build an example from the ground up and then try to apply MAML.
+			We will do this by alternating mathematical walk-throughs and interactive, as well as, coding examples.
 		</p>
-
-		<h3>Few-Shot Learning</h3>
-
+		<!--TODO: Maybe card to github repo for all code: https://github.com/lepture/github-cards-->
 		<p>
-			Typically, in machine learning we need a lot of examples to be able to
-			assign an unseen sample to class. But we do not always have enough data to
-			cater this need: A sufficient amount of data may be expensive or even
-			impossible to acquire.
-			But there is good reasons to believe, that this is not an inherent issue
-			of learning.
-			Humans, for example, are quite good at generalizing after seeing only a few
-			samples. Enabling machine learning methods to achieve the same would allow
-			for many new applications and generally reduce the need to collect huge
-			datasets.[<b>TODO: reference needed</b>]
-		</p>
+			If you have done machine learning
+			before you have probably already solved or attempted to solve a problem like the following:
+			Learning a model to solve one specific task, for example to classify cats from dogs or to
+			teach an agent
+			to find its way through a specific maze. In those settings, if we are able to define a loss
+			\(\mathcal{L}_\tau\) for our task \(\tau\) which depends on the parameters
+			\(\phi\) of a model, we can express our learning objective as
 
+			\[ \underset{\phi}{\text{min}} \, \mathcal{L}_\tau (\phi) .\]
+
+			We usually find the optimal \(\phi\) by progressively walking along the direction of the gradient of
+			\(\mathcal{L}_\tau\) with respect to \(\phi\), i.e.
+
+			\[ \phi \leftarrow \phi - \alpha \nabla_\phi \mathcal{L}_\tau (\phi) ,\]
+
+			also known as gradient descent, where \(\mathcal{L}_\tau\) usually also depends on some data and \(\alpha\)
+			is a fixed learning rate,
+			controlling the size of the steps we want to take.
+		</p>
+		<p>Unfortunately, when framing this in a few-shot setting (i.e., with a very small dataset), the above method is
+			known to perform poorly on e.g. neural networks, since there is simply too little data for too many parameters. A key insight to MAML is now to
+			bypass this problem by learning not only from the data regarding exactly our task, but to learn also from
+			data of similar tasks.
+			To incorporate this we make an additional assumption, namely that \(\tau\) comes from some distribution of
+			tasks \(p(\tau)\) and that we
+			can sample freely from this distribution. We can then generalize the above objective to learn how to find an
+			optimization strategy for a randomly sampled task from \(p(\tau)\), which we can express as follows:
+
+			\[ \text{min} \, \mathbb{E}_\tau [ \mathcal{L}_\tau (\phi_\tau) ] ,\]
+
+			where \(\tau\) is now a random variable and \(\phi_\tau\) are a set of parameters for task \(\tau\).
+			We may use different parameters for each task, use the same parameters for every task or something in
+			between. So we have to decide on a parameterization and decide how we actually minimize this new objective.
+			In the following we will explore two possible
+			answers to these issues.
+		</p>
+		<h3>Part 1: Just do gradient descent, silly!</h3>
+		<p>Of course! The answer to most problems. We can simply learn a single set of parameters \(\phi\) which
+			minimizes the expected loss
+			over all tasks. Or formally speaking our objective becomes
+
+			\[ \underset{\phi}{\text{min}} \, \mathbb{E}_\tau [ \mathcal{L}_\tau (\phi) ] .\]
+
+			As you can see we chose the most simple parameterization: We learn one parameter vector \(\phi\) that
+			minimizes the objective
+			across all tasks.
+			Further, to actually implement this strategy we can do what is known as <i>Expected Risk Minimization
+				(ERM)</i>, which tells us to sample a lot of tasks \(\tau\) and then descent according to
+
+			\[ \phi \leftarrow \phi - \alpha \nabla_\phi \sum_i \mathcal{L}_{\tau_i} (\phi) .\]
+
+			Finn et al. (the authors of MAML) call this type of model <i>pretrained</i>, referring to it simply
+			pretraining over all available data and
+			then trying to converge on a small amount of samples later.
+		</p>
+		<h4>Implementing the Pretrained Model</h4>
 		<p>
-			This research area is called "few-shot learning". It aims to enable models
-			to classify unseen sampels after training only one a few examples ("shots").
-			The little exercise at the top of the article is an exmaple of such a task.
-			The symbols are part of a
-			<dt-cite key="lake_omniglot_2015">dataset called "omniglot"</dt-cite>.
-			It contains 1623 different characters across 50 alphabets and each character
-			has 20 instances drawn by different people. Because of that, the omniglot
-			was described as a "transpose" of the well-known MNIST dataset, by the authors
-			who originally proposed omniglot as a machine learning dataset.
-			<dt-cite key="lake_one_2011"></dt-cite>
-			While MNIST contains only a few classes (the digits 0 to 9) and many instances,
-			of each class, with omniglot it is vice-versa.
+			If the above has gotten all too theoretic for you, take a look at the following <i>gist</i>. It contains a
+			simplistic
+			implementation of an update step for this <i>pretrained</i> model. It is implemented such as to emphesize
+			that
+			even if we differentiate between tasks when sampling the batch, the actual optimizer treats each sample the
+			same.
 		</p>
-
-
-
+		<script src="https://gist.github.com/pupuis/cf31417164bc5513302788b906d2a3c2.js"></script>
 		<p>
-			By now, you may be asking yourself: How can a model learn from only one example
-			(i.e. "one-shot") and why do I even need a dataset like omniglot
-			if the model is supposed to learn from one sample?
-
-			Looking at a human learner, we might realize that humans do not learn
-			novel concepts "in a vacuum".<dt-cite key="lake_one_2011"></dt-cite>
-			Instead, past experience supports the ability to learn the novel concept.
+			The implementation is agnostic to the choice of optimizer that you use. To train their <i>pretrained</i>
+			model, the MAML creators use
+			the <i>Adam</i> optimizer.
 		</p>
-
+		<h4>Pretrained Model on a Sinusoid Problem</h4>
 		<p>
-			While clearly one sample is not enough for a model without prior knowledge,
-			we can pretrain models on tasks that we assume to be similar to the target tasks.
-			This is a common approach to solving few-shot learning: derive some inductive bias
-			from other classes in order to perform better on newly encountered classes.
-			This similarity assumption allows the model to collect meta-knowledge:
-			knowledge which does not describe a single task, but a distribution of tasks.
-			The learning of this meta-knowledge is referred to as "meta-learning".
+			In the following figure you can experiment with a <i>pretrained</i> model, which was trained by a collection
+			of
+			sinusoid regression tasks. The task distribution works as follows: Each task is represented by an amplitude
+			\(A\) and a
+			phase \(\varphi\) and requires the prediction of sinusoid \(f\):
+
+			\[ f(x) := A \sin(x + \varphi),\]
+
+			where \(A, \varphi\) are sampled uniformly from some predefined range.
+
+			The jist is that different parameters yield different functions \(f_1\) and \(f_2\) with possibly completely
+			different function values and gradients.
+			Take for example the following two tasks:
+			Tasks \(\tau_1, \tau_2\) are both regression tasks on sinusoids \(f_1(x) := \sin (x - \frac{\pi}{2})\) and
+			\(f_2(x) := \sin (x + \frac{\pi}{2})\) respectively. These two tasks' function values give completely
+			contradicting information, as
+
+			\[ f_1(x) = - f_2(x). \]
 		</p>
-
-		<figure class="l-page side">
-			<d-figure id="fewShotMethods">
-				<div class="element is-loading" style="height: 400px"></div>
-			</d-figure>
-			<figcaption>
-				<p>Results of different methods on the omniglot dataset
-					(if not stated differently: 1-shot, 20-way;
-					some differences in the evaluation procedure exist).
-					As usual, accuracy numbers need to be taken with a grain of salt as
-					differences in the evaluation method, implementation, and the model
-					complexity may a have a non-negligible impact on the performance.
-				</p>
-				<p id="caption_generative_stroke_model" class="fewShotMethods-reference">
-					The generative stroke model was introduced in the paper which also
-					introduced omniglot. The model is based on a latent stroke representation
-					(including the number and directions of strokes). While it is an
-					interesting approach, it can hardly be generalized to other
-					few-shot problems.<dt-cite key="lake_one_2011"></dt-cite>
-				</p>
-				<p id="caption_hierachical_bayesian_program_learning" class="fewShotMethods-reference">
-					The same authors improved the model by learning latent
-					primitive motor elements and called this process "Hierarchial
-					Bayesian Program Learning" (HBPL).
-					While the accuracy was greatly increased, it also
-					is focused on symbol learning.
-					<dt-cite key="lake_one-shot_2013"></dt-cite>
-				</p>
-				<p id="caption_siamese_nets" class="fewShotMethods-reference">
-					Siames Nets consist of two identical networks which produce a latent representation.
-					From the representations of two samples, a distance is calculated to
-					assess the similarity of the two samples.<dt-cite key="koch_siamese_2015"></dt-cite>
-					The result (accuracy of 88.1%) results from a reimplementaion of the method which
-					makes it more comparable.
-					<dt-cite key="vinyals_matching_2017"></dt-cite>
-				</p>
-				<p id="caption_matching_nets" class="fewShotMethods-reference">
-					Matching Networks also work by comparing new samples to labeled
-					examples. They do so by utilizing an attention kernel.
-					Though the second version of the paper is cited here,
-					it was first published in 2016.
-					<dt-cite key="vinyals_matching_2017"></dt-cite>
-				</p>
-
-				<p id="caption_prototypical_networks" class="fewShotMethods-reference">
-					Prototypical Networks use prototype vectors to represent each class
-					in the metric space. The nearest neighbor (i.e. the closest prototype)
-					of a sample then determines the prediction.
-					<dt-cite key="snell_prototypical_2017"></dt-cite>
-				</p>
-
-				<p id="caption_memory_augmented_nets" class="fewShotMethods-reference">
-					Memory-Augmented Networks (MANNs) use an external memory to make accurate
-					predictions using a small number of samples.
-					<dt-cite key="santoro_meta-learning_2016"></dt-cite>
-				</p>
-
-				<p id="caption_meta_nets" class="fewShotMethods-reference">
-					Meta Networks utilize a base learner (task level) and a meta learner
-					as well as a set of slow and rapid weights in order to allow
-					meta learning as well as task-specific concepts.
-					<dt-cite key="munkhdalai_meta_2017"></dt-cite>
-				</p>
-
-			</figcaption>
+		<p>
+			Before you fit the model, think what
+			you would expect to happen based on the position and the
+			amount of samples you provided. Feel free to also experiment with the different settings: Distributing the
+			samples equispaced or squeezing all of them to a small range
+			of the x-axis.
+		</p>
+		<figure>
+			<d-figure id="fitSinePretrained"></d-figure>
 		</figure>
+		<p>Ouch! That doesn't seem to work that well. Maybe you have already guessed that this would have been to easy.
+			The problem that the above approach faces is that the optimal parameters of
+			different tasks might live in completely different loss spaces. Given a loss function \(\mathcal{L}\) w.r.t
+			some parameters \(\rho\), as well as
+			constant parameter-set \(C\) (e.g. a dataset on which the loss is defined), the parameter space defined the
+			function values of
 
-		<figure class="l-page side">
-			<d-figure id="fewShotVenn">
-				<div class="element is-loading" style="height: 300px"></div>
-			</d-figure>
-			<figcaption>
-				<p id="caption_lstm_based" class="fewShotMethods-reference">
-					Applications of Meta-Learning outside the domain of few-shot learning
-					include the optimization of the task-level optimizer using
-					a LSTM network.
-					<dt-cite key="andrychowicz_learning_2016"></dt-cite>
-				</p>
-			</figcaption>
+			\[ \mathcal{L}(\rho; C) .\]
+
+			You can investigate the problem of different loss spaces for different tasks a little deeper in
+			<a href="#twoLossSpaces">this figure</a>. The loss spaces displayed stem from a curve fitting (toy) problem,
+			where
+			we are interested in parameters \(a, b\)
+			and the task requires the prediction of
+
+			\[g(x) = \textbf{elu}(ax + b),\]
+
+			where \(\textbf{elu}\) is the <i>Exponential Linear Unit</i>, which is usually employed as an activation
+			function in neural nets, but serves
+			us here to make the resulting loss spaces a bit more funky. For reference, this is how the \(\textbf{elu}\)
+			is
+			defined:
+
+			\[ \textbf{elu} = \begin{cases}
+			x & \, x >= 0 \\
+			\alpha (\exp(x) - 1) & \, \text{otherwise}.
+			\end{cases}
+			\]
+		</p>
+		<figure>
+			<d-figure id="twoLossSpaces"></d-figure>
 		</figure>
-
-
-
 		<p>
-			Plenty of methods have been proposed in the last years to tackle few-shot
-			learning using the meta-learning assumption,
-			and many are able to produce decent results.
-			In this article, we will focus
-			on one of them: "Model-Agnostic Meta-Learning" (MAML).
+			At this point we can conclude that optimizating for parameter-vector \(\phi\) minimizing all task
+			distributions at the same time
+			is maybe not the best parameter to optimize for. The next approach rather optimizes another variable of the
+			problem. Maybe you already have a hunch?
 		</p>
 
-		<h3>Model-Agnostic Meta-Learning</h3>
+		<h3>Part 2: Just do Model-Agnostic Meta-Learning, silly!</h3>
+		<p>
+			MAML comes to our rescue. We have already seen how different tasks might give us contradicting function
+			values at the same query point and how that leads to an undesired ping-pong from one local optimum to
+			another, resulting in no meaningful convergence. The idea of MAML is now to
+			learn an optimal initialization \(\theta\) in the sense that initializating a task optimizer with these
+			parameters and taking gradient descent steps
+			from there minimizes the loss for that task. We can express this formally as follows:
 
+			\[ \underset{\theta}{\text{min}} \, \mathbb{E}_\tau [ \mathcal{L}_\tau (U_\tau(\theta)) ] .\]
+
+			where \(U_\tau\) is an optimizer that takes a number of gradient descent steps given the samples of task
+			\(\tau\). This is also why MAML is called mode-agnostic, it does
+			not make any further assumptions about \(U_\tau\), thus allowing any gradient-based inner optimizer.
+		</p>
+		<h4>Outline of the Algorithm</h4>
 		<p>
-			Before we get started with the explanation of how MAML works,
-			we want to take a moment to look at what is Model-Agnostic about MAML.
-			In order to understand, why this method is called "model-agnostic", we need
-			to look at how the few-shot problem was tackled by other approaches.
-			While there are methods, which try to mitigate the issues introduced by the
-			the few-shot constraint, many do resort to adopting the meta-learning
-			assumption. These methods can broadly be divided into two classes:
-			metric-based and model-based approaches.
+			Now that we fixed the objective function, let us briefly take a look at the three main steps of the method,
+			given a (current)
+			meta-parameter \(\theta\):
+		</p>
+		<ul>
+			<li>1. Sample a number of tasks \(\tau_i\) from \(p(\tau)\).</li>
+			<li>2. For each task obtain \(\phi_i = U_{\tau_i}(\theta)\), by minimizing \(\mathcal{L}_{\tau_i,
+				\text{train}}(\theta)\)
+				on a few training samples.</li>
+			<li>3. Update \(\theta\) by gradient descent such that it minimizes \(\mathcal{L}(\theta) := \sum_i
+				\mathcal{L}_{\tau_i, \text{test}}(\phi_i)\) on a few
+				test samples.</li>
+		</ul>
+		<p>
+			Note that \(\mathcal{L}_{\tau_i, \text{train}}\) and \(\mathcal{L}_{\tau_i, \text{test}}\) are two instances
+			of the same loss function
+			for different tasks and corresponding training or test data from these tasks.
+			Obtaining the \(\phi_i\) is easy, we just do gradient descent:
+
+			\[ \phi_i = \theta - \alpha \nabla_\theta \mathcal{L}_{\tau_i, \text{train}}(\theta).\]
+
+			Further, updating \(\theta\) requires us to evaluate the gradient of the individual task losses on a set of
+			test data. We obtain
+			the gradient of the overall loss as follows:
+
+			\[ \nabla_\theta \mathcal{L}(\theta) = \sum_{i} \nabla_\theta
+			\mathcal{L}_{\tau_i, \text{test}}(\phi_i)
+			.\]
+
+			Note that \(\phi_i = U_{\tau_i}(\theta)\) depends on \(\theta\), which means that we have to take a gradient
+			through the optimizer
+			\(U\). We can then update \(\theta\) via gradient descent, using a new learning rate \(\beta\):
+
+			\[ \theta' = \theta - \beta \nabla_\theta \mathcal{L}(\theta).\]
+
+			And that 🥁... is more or less everything that comprises the original MAML algorithm.
+		</p>
+		<h4>Implementing the Algorithm</h4>
+		<p>
+			However, a machine learning algorithm is not very usefull unless we can execute it on a computer. While
+			implementing the <i>pretrained</i>
+			model was more or less straightforward, implementing MAML requires some more thinking. Firstly, computing
+			\(\phi_i\) is still straightforward, simply call
+			the optimization algorithm of your choice (as long as it is gradient-based).
+			However, how do we then take the gradient through that optimization algorithm?
+			It's actually not that complicated. Almost every modern machine learning framework (e.g. tensorflow), can
+			differentiate through
+			nearly arbitrary python code. Hence, if we can express our optimizer in a python function, then tensorflow
+			can differentiate through it.
 		</p>
 		<p>
-			The core idea of metric-based approaches is two compare two samples in a
-			latent (metric) space: In this space, samples of the same class are supposed
-			to be close to each other, while two samplese from different classes are
-			supposed to have a large distance (the notion of a distance is what makes
-			the latent space a metric space).
-			<dt-cite key="snell_prototypical_2017"></dt-cite>
-			<dt-cite key="koch_siamese_2015"></dt-cite>
-			<dt-cite key="vinyals_matching_2017"></dt-cite>
+			Below you find a <i>gist</i> that implements a simplistic version of the MAML update step. We coded our
+			optimizer ourselves within the function
+			<i>fastWeights</i>, but the function also directly applies an input tensor to the optimized weights. We did
+			this mainly for simplicity but if you
+			are interested in a more thorough reasoning about this design choice, you can read more about it <a
+				href="https://gist.github.com/pupuis/f23f483c405b0a169bf279f7b02209bc">in the comments under the
+				gist</a>.
+		</p>
+		<script src="https://gist.github.com/pupuis/f23f483c405b0a169bf279f7b02209bc.js"></script>
+		<h4>Will it really work?</h4>
+		<p>
+			Before we study the MAML model on the sinusoid task distribution, let us spend some
+			time on trying to understand MAML intuitively. Why would we expect it to produce better results than the
+			pretrained model? To answer this, recall the exercise of <a href="#twoLossSpaces">comparing loss spaces</a>
+			from before.
+			As stated above, MAML tries to learn an optimal initialization \(\theta\), from which we can easily descent
+			both \(\phi_i\) point to the minimum of their respective tasks. This is exactly what MAML does! And now you
+			know first hand, why it might actually work.
+		</p>
+		<h4>Returning to Sinusoids</h4>
+		<p>
+			After having studied the math behind the MAML objective, as well as its intuition and implementation, it is
+			time to evaluate it on the sinusoid example.
+			Hopefully, MAML will produce better results
+			than the pretrained model (although by now you should be convinced that it will).
+			You will have the opportunity to repeat the above experiements on a model that has been trained with
+			MAML in <a href="#fitSineMaml">this figure</a>.
+			Try to compare the optimization behavior of both the pretrained model and MAML and evaluate for yourself
+			whether
+			you think the MAML-trained model has found a good meta-initialization parameter \(\theta\).
+		</p>
+		<figure>
+			<d-figure id="fitSineMaml"></d-figure>
+		</figure>
+		<p>
+			So as you were hopefully able to verify, MAML produces results that are way closer to the actual sinusoid,
+			despite being exposed to at most 5 samples.
 		</p>
 		<p>
-			Model-based approaches are neural architectures which are deliberately designed
-			for fast adaption to new tasks without inclining to overfit.
-			Memory-Augmented Neural Networks and MetaNet are two examples. Both employ
-			an external memory while still maintaining the ability to be trained
-			end-to-end.
-			<dt-cite key="santoro_meta-learning_2016"></dt-cite>
-			<dt-cite key="munkhdalai_meta_2017"></dt-cite>
+			The rest of this article is dedicated to introducing interesting extensions of MAML, making the method
+			either more robust or more efficient.
+			If you are interested in the former, <a href="#section_imaml">jump to iMAML</a>. If you are more interested
+			in the latter, the following section sheds
+			a light on the computational (in-)efficiency of MAML and what possible solutions to that problem are.
+		</p>
+		<h2>First-Order Methods: Why differentiating through an optimizer is actually as complicated as it sounds</h2>
+		<p>
+			In this section we want to gain some understanding of what it actually means to differentiate through \(U\),
+			the optimizer.
+			Recall the gradient that MAML requires us to compute:
+
+			\[ \nabla_\theta \mathcal{L}(\theta) = \sum_{i} \nabla_\theta
+			\mathcal{L}_{\tau_i, \text{test}}(\phi_i)
+			.\]
+
+			Expanding
+			the summands by applying the chain rule yields
+
+			\[ \nabla_\theta
+			\mathcal{L}_{\tau_i, \text{test}}(\phi_i) = \nabla_\theta
+			\mathcal{L}_{\tau_i, \text{test}}(U_{\tau_i}(\theta)) = \nabla_{U_{\tau_i}(\theta)} \mathcal{L}_{\tau_i,
+			\text{test}}
+			\nabla_\theta U_{\tau_i}(\theta) .\]
+
+			Here, \( \nabla_{U_{\tau_i}(\theta)} \mathcal{L}_{\tau_i, \text{test}} \) represents the gradient of the
+			loss of task
+			\(\tau_i\) by the optimized parameter \(\phi_i\)
+			and \(\nabla_\theta U_{\tau_i}(\theta)\) is a gradient through an optimization algorithm. Even if we assume
+			that
+			the optimizer takes only one gradient descent step, this term becomes
+
+			\[ \nabla_\theta U_{\tau_i}(\theta) = \nabla_\theta (\theta - \alpha \nabla_\theta
+			\mathcal{L}_{\tau_i, \text{train}}(\theta) )\]
+
+			which is equal to
+
+			\[ I - \alpha \nabla^2_\theta \mathcal{L}_{\tau_i, \text{train}}(\theta). \]
+
+			Hence, MAML requires us to compute second derivatives in order to optimize \(\theta\), which is
+			computationally inefficient, especially
+			in high-dimensional problems (such as learning neural nets).
+		</p>
+		<p>
+			We will now spend some time on introducing the two most prominent solutions to this problem, as well as
+			comparing them to MAML and to each other.
 		</p>
 
-		<p>
-			MAML goes a different route: The nerual network is designed the same way
-			your usual model might be (in the many-shot case). All the magic happens during the
-			optimization. Hence, it is called "optimization-based".
-			Unlike, metric-based and model-based approaches, MAML lets
-			you choose the model architecture as you like.
-			This has the great benefit of being applicable can not only for
-			classical supervised learning classification tasks but can also
-			for reinforcement learning.
-			<dt-cite key="finn2017modelagnostic"></dt-cite>
-		</p>
-		<p>
-			<a href="maml.html">In the next part</a>, you will learn how this is achieved.
-		</p>
+
+
 
 	</dt-article>
 
