@@ -14,7 +14,7 @@
 	<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 	<script defer src="build/bundle.js"></script>
 
-	<script type="text/front-matter">
+<script type="text/front-matter">
   title: "An Interactive Introduction to Model-Agnostic Meta-Learning"
   description: "t.b.d."
   authors:
@@ -28,34 +28,14 @@
 	<dt-article>
 		<h1>An Interactive Introduction to Model-Agnostic Meta-Learning</h1>
 		<h2>Exploring the world of model-agnostic meta-learning and its extensions.</h2>
-		<figure class="l-page" style="border-top: 1px solid hsla(0, 0%, 0%, 0.1);">
-			<d-figure id="teaser">
-				<div class="element is-loading" style="height: 400px"></div>
-			</d-figure>
-			<figcaption>
-				What you have in front of you is a 5-way-1-shot problem, one that most conventional machine learning
-				systems struggle with.
-				To classify a sample (top), either drag it to or click on the desired class (bottom) and see if you can
-				do better.
-			</figcaption>
-		</figure>
 
 		<dt-byline></dt-byline>
-
 
 		<div class="l-middle side">
 			<div id="menu">
 				<div class="element is-loading" style="height: 400px"></div>
 			</div>
 		</div>
-
-		<p>
-			If you tried the exercise above, you have most likely received a pretty high accuracy score.
-			Even though you likely have never seen some of the characters,
-			you are able to classify them given only a single example, potentially
-			without realizing that what you are able to do off the top of you head is pretty impressive to the average
-			Deep Neural Net!
-		</p>
 
 		<p>
 			<i style="font-size: .8em;">
@@ -69,195 +49,96 @@
 
 
 
+
+
+
+		<h3>First-Order MAML (FOMAML)</h3>
 		<p>
-			If you tried the little exercise above, you probably got a pretty good score.
-			Even though you likely have never seen some of the characters,
-			you are able to classify them given only a single example, potentially
-			without realizing that what you are doing is actually pretty impressive!
-		</p>
+			FOMAML was suggested by Finn et al. (the authors of MAML, in the very same paper that introduces MAML) and
+			is a straightforward heuristic to get rid of
+			the second order terms:
+			Setting them to zero! As a result
 
-		<h3>Few-Shot Learning</h3>
+			\[\nabla_\theta U_{\tau_i}(\theta) = I\]
+
+			and the overall meta loss gradient reduces to
+
+			\[ \nabla_\theta \mathcal{L}(\theta) = \sum_{i} \nabla_{U_{\tau_i}(\theta)} \mathcal{L}_{\tau_i,
+			\text{test}}
+			.\]
+
+			Simple right? Maybe a bit too simple. Let us have a detailed look at the term we are discarding, namely
+
+			\[ \nabla^2_\theta \mathcal{L}_{\tau_i, \text{train}}(\theta). \]
+
+			This term is known as the <i>Hessian</i> of loss function \(\mathcal{L}_{\tau_i, \text{train}}\), which
+			describes the local curvature a function <dt-cite key="park_meta-curvature_2020"></dt-cite>. Further, setting it to zero results in a linear
+			approximation of the meta-gradient,
+			being more accurate the more locally linear the meta-gradient is at meta-parameter \(\theta\).
+			To see what the Hessian actually entails, let us resolve it under the assumption of
+			<i>MSE</i> loss, neural net \(M\) and dataset \(\mathcal{D} := (x, y)\). We omit some of the subscripts to
+			make the formulae more readable and write
+
+			\[ \nabla^2 \mathcal{L}(\theta) = \nabla^2 \frac{1}{2} (y - M(x; \theta)^T(y - M(x; \theta)) \]
+
+			\[ = \nabla M(x; \theta)\nabla M(x; \theta)^T -(y - M(x; \theta))^T \nabla^2 M(x; \theta). \]
+
+			So the only second order term in the Hessian of the loss function is the Hessian of the neural net \(M\).
+			While there is empirical evidence to local curvature
+			of Hessians of neural nets being near zero <b>after training</b> (and near zero local curvature would easily
+			justify dropping the Hessian in the MAML meta-update altogether), the same study also indicates that this is
+			not necessarily the case
+			on randomly initialized weights <dt-cite key="sagun_eigenvalues_2017"></dt-cite>. On the other hand, the authors of MAML hypothesize that
+			the often by design nearly linear nature of neural nets (especially the ones with ReLU layers that they
+			use - see ReLUs <dt-cite key="glorot_deep_nodate"></dt-cite>),
+			might explain the success of FOMAML, since nearly linear functions have nearly zero Hessians.
+		</p>
 		<p>
-			Typically, in machine learning we need a lot of samples to be able to
-			assign unseen data to a class. But we do not always have enough data available to
-			cater this need: A sufficient amount of data may be expensive or even
-			impossible to acquire.
-			But there are good reasons to believe that this is not an inherent issue
-			of learning.
-			Humans, such as yourself, are known to excel at generalizing after seeing only a few
-			samples <dt-cite key="salakhutdinov_one-shot_nodate"></dt-cite>.
-			Enabling machine learning methods to achieve the same would bring us a step closer to learning on the data-
-			and energy-efficiency
-			level of humans.
+			And successful it is! If you compare e.g. Table 1 in the MAML paper, you will find that FOMAML easily keeps
+			up with its second-order counterpart
+			in terms of classification performance. So depending on your personal taste in theoretical rigor, this
+			explanation might be more or less
+			satisfactory.
+			If you are nonetheless interested in how local curvature affects a function space, take a look at the <a
+				href="#curvatureDemo">following figure</a>. Here we prepared a very simple function space, namely the
+			space of
+
+			\[ f(x) := \frac{1}{2} (x - \frac{1}{2})^T C (x - \frac{1}{2}), \]
+
+			with Hessian \(C \in \mathbb{R}^{2 \times 2}\) and gradient \(C(x - \frac{1}{2})\), where we assume that
+			\(C\) is a symmetric matrix, i.e. that it has the form
+
+			\[ C = \begin{bmatrix}
+			a & b \\ c & d
+			\end{bmatrix}. \]
+
+			Changing \(a, b, c \) lets you observe the effect of curvature on the form of the function space.
+			While we are at it, let us
+			quickly go over the mathematical effect of \(C\). Setting \(C = \underline{0}\) makes the gradient constant
+			(in this case = 0), but this
+			we already discussed: The function becomes linear. Further, for all other values than \(b = 0\) and \(a =
+			c\), in which case we simply
+			scale the gradient, we are effectively transforming magnitude <b>and</b> direction of the gradient. Note
+			what
+			implications neglecting the information of the Hessian could then potentially have on anything related to
+			<i>gradient</i> descent. We might
+			end up with a completely wrong descent direction.
 		</p>
-
-		<p>
-			Achieving rapid convergence of machine learning models on but a few samples is generally refered to as
-			"few-shot learning".
-			The exercise at the top of the article is a prominent example of a few-shot learning task, whose symbols are
-			taken from
-			the <dt-cite key="lake_omniglot_2015"><i>omniglot</i> dataset</dt-cite>.
-			It contains 1623 different characters across 50 alphabets with each character
-			being represented by 20 instances, each drawn by a different person. Because of that, the original authors
-			of the omniglot dataset
-			described it as a "transpose" of the well-known MNIST dataset <dt-cite key="lake_one_2011"></dt-cite>,
-			with MNIST containing only a few classes (the digits 0 to 9) and many instances and omniglot containing a
-			lot of classes but only a few instances for each.
-		</p>
-
-		<p>
-			By now, you may be asking yourself: How can a model learn from only one example
-			(i.e. "one-shot") and why do I even need a dataset like omniglot
-			if the model is supposed to learn from one sample?
-
-			Looking at a human learner, we might realize that humans do not learn
-			novel concepts "in a vacuum".<dt-cite key="lake_one_2011"></dt-cite>
-			Instead, past experience supports the ability to learn the novel concept.
-		</p>
-
-		<p>
-			While clearly one sample is not enough for a model without prior knowledge,
-			we can pretrain models on tasks that we assume to be similar to the target tasks.
-			This is a common approach to solving few-shot learning: derive some inductive bias
-			from other classes in order to perform better on newly encountered classes.
-			This similarity assumption allows the model to collect meta-knowledge:
-			knowledge which does not describe a single task, but a distribution of tasks.
-			The learning of this meta-knowledge is referred to as "meta-learning".
-		</p>
-
-		<figure class="l-page side">
-			<d-figure id="fewShotMethods">
-				<div class="element is-loading" style="height: 400px"></div>
-			</d-figure>
-			<figcaption>
-				<p>Results of different methods on the omniglot dataset
-					(if not stated differently: 1-shot, 20-way;
-					some differences in the evaluation procedure exist).
-					As usual, accuracy numbers need to be taken with a grain of salt as
-					differences in the evaluation method, implementation, and the model
-					complexity may a have a non-negligible impact on the performance.
-				</p>
-				<p id="caption_generative_stroke_model" class="fewShotMethods-reference">
-					The generative stroke model was introduced in the paper which also
-					introduced omniglot. The model is based on a latent stroke representation
-					(including the number and directions of strokes). While it is an
-					interesting approach, it can hardly be generalized to other
-					few-shot problems.<dt-cite key="lake_one_2011"></dt-cite>
-				</p>
-				<p id="caption_hierachical_bayesian_program_learning" class="fewShotMethods-reference">
-					The same authors improved the model by learning latent
-					primitive motor elements and called this process "Hierarchial
-					Bayesian Program Learning" (HBPL).
-					While the accuracy was greatly increased, it also
-					is focused on symbol learning.
-					<dt-cite key="lake_one-shot_2013"></dt-cite>
-				</p>
-				<p id="caption_siamese_nets" class="fewShotMethods-reference">
-					Siames Nets consist of two identical networks which produce a latent representation.
-					From the representations of two samples, a distance is calculated to
-					assess the similarity of the two samples.<dt-cite key="koch_siamese_2015"></dt-cite>
-					The result (accuracy of 88.1%) results from a reimplementaion of the method which
-					makes it more comparable.
-					<dt-cite key="vinyals_matching_2017"></dt-cite>
-				</p>
-				<p id="caption_matching_nets" class="fewShotMethods-reference">
-					Matching Networks also work by comparing new samples to labeled
-					examples. They do so by utilizing an attention kernel.
-					Though the second version of the paper is cited here,
-					it was first published in 2016.
-					<dt-cite key="vinyals_matching_2017"></dt-cite>
-				</p>
-
-				<p id="caption_prototypical_networks" class="fewShotMethods-reference">
-					Prototypical Networks use prototype vectors to represent each class
-					in the metric space. The nearest neighbor (i.e. the closest prototype)
-					of a sample then determines the prediction.
-					<dt-cite key="snell_prototypical_2017"></dt-cite>
-				</p>
-
-				<p id="caption_memory_augmented_nets" class="fewShotMethods-reference">
-					Memory-Augmented Networks (MANNs) use an external memory to make accurate
-					predictions using a small number of samples.
-					<dt-cite key="santoro_meta-learning_2016"></dt-cite>
-				</p>
-
-				<p id="caption_meta_nets" class="fewShotMethods-reference">
-					Meta Networks utilize a base learner (task level) and a meta learner
-					as well as a set of slow and rapid weights in order to allow
-					meta learning as well as task-specific concepts.
-					<dt-cite key="munkhdalai_meta_2017"></dt-cite>
-				</p>
-
-			</figcaption>
+		<figure>
+			<d-figure id="curvatureDemo"></d-figure>
 		</figure>
-
-		<figure class="l-page side">
-			<d-figure id="fewShotVenn">
-				<div class="element is-loading" style="height: 300px"></div>
-			</d-figure>
-			<figcaption>
-				<p id="caption_lstm_based" class="fewShotMethods-reference">
-					Applications of Meta-Learning outside the domain of few-shot learning
-					include the optimization of the task-level optimizer using
-					a LSTM network.
-					<dt-cite key="andrychowicz_learning_2016"></dt-cite>
-				</p>
-			</figcaption>
-		</figure>
-
 		<p>
-			Plenty of methods have been proposed in the last years to tackle few-shot
-			learning using the meta-learning assumption,
-			and many are able to produce decent results.
-			In this article, we will focus
-			on one of them: "Model-Agnostic Meta-Learning" (MAML).
-		</p>
+			Hopefully you have gained some understanding of how FOMAML works and what effect second-order terms
+			(encoding local curvature) can have on the loss space,
+			as well as arguments for and against linear approximations of the meta-gradient.
 
-		<h3>Model-Agnostic Meta-Learning</h3>
-
-		<p>
-			Before we get started with the explanation of how MAML works,
-			we want to take a moment to look at what is Model-Agnostic about MAML.
-			In order to understand, why this method is called "model-agnostic", we need
-			to look at how the few-shot problem was tackled by other approaches.
-			While there are methods, which try to mitigate the issues introduced by the
-			the few-shot constraint, many do resort to adopting the meta-learning
-			assumption. These methods can broadly be divided into two classes:
-			metric-based and model-based approaches.
 		</p>
 		<p>
-			The core idea of metric-based approaches is to compare two samples in a
-			latent (metric) space: In this space, samples of the same class are supposed
-			to be close to each other, while two samplese from different classes are
-			supposed to have a large distance (the notion of a distance is what makes
-			the latent space a metric space).
-			<dt-cite key="snell_prototypical_2017"></dt-cite>
-			<dt-cite key="koch_siamese_2015"></dt-cite>
-			<dt-cite key="vinyals_matching_2017"></dt-cite>
-		</p>
-		<p>
-			Model-based approaches are neural architectures which are deliberately designed
-			for fast adaption to new tasks without inclining to overfit.
-			Memory-Augmented Neural Networks and MetaNet are two examples. Both employ
-			an external memory while still maintaining the ability to be trained
-			end-to-end.
-			<dt-cite key="santoro_meta-learning_2016"></dt-cite>
-			<dt-cite key="munkhdalai_meta_2017"></dt-cite>
-		</p>
-
-		<p>
-			MAML goes a different route: The neural network is designed the same way
-			your usual model might be (in the many-shot case). All the magic happens during the
-			optimization. Hence, it is called "optimization-based".
-			Unlike, metric-based and model-based approaches, MAML lets
-			you choose the model architecture as you like.
-			This has the great benefit of being applicable can not only for
-			classical supervised learning classification tasks but can also
-			for reinforcement learning.
-			<dt-cite key="finn2017modelagnostic"></dt-cite>
-		</p>
-		<p>
-			<a href="maml.html">In the next part</a>, you will learn how this is achieved.
+			FOMAML and the fact that it can compete so easily with MAML teaches us that the information necessary to
+			learn across tasks is
+			contained for the most part not in any Hessian, but within the linear parts of the meta-gradient. Following
+			up on this narrative we
+			will now study another prominent fist-order method, with a slightly different approach.
 		</p>
 
 	</dt-article>
@@ -526,15 +407,6 @@ version: 2},
 	note = {arXiv: 1803.02999},
 	keywords = {Computer Science - Machine Learning},
 	file = {Nichol et al. - 2018 - On First-Order Meta-Learning Algorithms.pdf:/home/luis/Zotero/storage/L8HLWK9P/Nichol et al. - 2018 - On First-Order Meta-Learning Algorithms.pdf:application/pdf},
-}
-
-@article{salakhutdinov_one-shot_nodate,
-	title = {One-{Shot} {Learning} with a {Hierarchical} {Nonparametric} {Bayesian} {Model}},
-	abstract = {We develop a hierarchical Bayesian model that learns categories from single training examples. The model transfers acquired knowledge from previously learned categories to a novel category, in the form of a prior over category means and variances. The model discovers how to group categories into meaningful super-categories that express diﬀerent priors for new classes. Given a single example of a novel category, we can eﬃciently infer which supercategory the novel category belongs to, and thereby estimate not only the new category’s mean but also an appropriate similarity metric based on parameters inherited from the super-category. On MNIST and MSR Cambridge image datasets the model learns useful representations of novel categories based on just a single training example, and performs signiﬁcantly better than simpler hierarchical Bayesian approaches. It can also discover new categories in a completely unsupervised fashion, given just one or a few examples.},
-	language = {en},
-	author = {Salakhutdinov, Ruslan and Tenenbaum, Josh and Torralba, Antonio},
-	pages = {13},
-	file = {Salakhutdinov et al. - One-Shot Learning with a Hierarchical Nonparametri.pdf:/home/luis/Zotero/storage/NNTJPA7H/Salakhutdinov et al. - One-Shot Learning with a Hierarchical Nonparametri.pdf:application/pdf},
 }
 
 </script>

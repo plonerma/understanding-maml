@@ -14,7 +14,7 @@
 	<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 	<script defer src="build/bundle.js"></script>
 
-	<script type="text/front-matter">
+<script type="text/front-matter">
   title: "An Interactive Introduction to Model-Agnostic Meta-Learning"
   description: "t.b.d."
   authors:
@@ -28,34 +28,15 @@
 	<dt-article>
 		<h1>An Interactive Introduction to Model-Agnostic Meta-Learning</h1>
 		<h2>Exploring the world of model-agnostic meta-learning and its extensions.</h2>
-		<figure class="l-page" style="border-top: 1px solid hsla(0, 0%, 0%, 0.1);">
-			<d-figure id="teaser">
-				<div class="element is-loading" style="height: 400px"></div>
-			</d-figure>
-			<figcaption>
-				What you have in front of you is a 5-way-1-shot problem, one that most conventional machine learning
-				systems struggle with.
-				To classify a sample (top), either drag it to or click on the desired class (bottom) and see if you can
-				do better.
-			</figcaption>
-		</figure>
+
 
 		<dt-byline></dt-byline>
-
 
 		<div class="l-middle side">
 			<div id="menu">
 				<div class="element is-loading" style="height: 400px"></div>
 			</div>
 		</div>
-
-		<p>
-			If you tried the exercise above, you have most likely received a pretty high accuracy score.
-			Even though you likely have never seen some of the characters,
-			you are able to classify them given only a single example, potentially
-			without realizing that what you are able to do off the top of you head is pretty impressive to the average
-			Deep Neural Net!
-		</p>
 
 		<p>
 			<i style="font-size: .8em;">
@@ -69,195 +50,279 @@
 
 
 
-		<p>
-			If you tried the little exercise above, you probably got a pretty good score.
-			Even though you likely have never seen some of the characters,
-			you are able to classify them given only a single example, potentially
-			without realizing that what you are doing is actually pretty impressive!
-		</p>
 
-		<h3>Few-Shot Learning</h3>
+
+		<h2 id="section_imaml">iMAML: Implicit Gradients</h2>
+
+
 		<p>
-			Typically, in machine learning we need a lot of samples to be able to
-			assign unseen data to a class. But we do not always have enough data available to
-			cater this need: A sufficient amount of data may be expensive or even
-			impossible to acquire.
-			But there are good reasons to believe that this is not an inherent issue
-			of learning.
-			Humans, such as yourself, are known to excel at generalizing after seeing only a few
-			samples <dt-cite key="salakhutdinov_one-shot_nodate"></dt-cite>.
-			Enabling machine learning methods to achieve the same would bring us a step closer to learning on the data-
-			and energy-efficiency
-			level of humans.
+			To explain how Implicit Model-Agnostic Meta-Learning (iMAML) works,
+			we will start with an observation:
+			If we do many gradient steps in regular MAML (apart from a large
+			computational burden), we face the issue that the model-parameters
+			\( \phi \) depend less and less on the meta-paramer \( \theta \).
+			If the parameters (\( \phi \) and \( \theta \)) are largely independent,
+			placing \( \theta \) becomes more difficult, since its effect on \( \phi \)
+			diminishes.
 		</p>
 
 		<p>
-			Achieving rapid convergence of machine learning models on but a few samples is generally refered to as
-			"few-shot learning".
-			The exercise at the top of the article is a prominent example of a few-shot learning task, whose symbols are
-			taken from
-			the <dt-cite key="lake_omniglot_2015"><i>omniglot</i> dataset</dt-cite>.
-			It contains 1623 different characters across 50 alphabets with each character
-			being represented by 20 instances, each drawn by a different person. Because of that, the original authors
-			of the omniglot dataset
-			described it as a "transpose" of the well-known MNIST dataset <dt-cite key="lake_one_2011"></dt-cite>,
-			with MNIST containing only a few classes (the digits 0 to 9) and many instances and omniglot containing a
-			lot of classes but only a few instances for each.
+			Regular MAML mitigates this by using only few gradient steps. This early
+			stopping is equivalent to a Bayesian prior.
+			<dt-cite key="grant_recasting_2018"></dt-cite>
+
+			iMAML utilizes a more explicit regularization.
+			<dt-cite key="rajeswaran_meta-learning_2019"></dt-cite>
 		</p>
 
 		<p>
-			By now, you may be asking yourself: How can a model learn from only one example
-			(i.e. "one-shot") and why do I even need a dataset like omniglot
-			if the model is supposed to learn from one sample?
+			Let's take another look at problem formulation. The objective in
+			meta-learning is to minimize the expected loss over a task distribution:
 
-			Looking at a human learner, we might realize that humans do not learn
-			novel concepts "in a vacuum".<dt-cite key="lake_one_2011"></dt-cite>
-			Instead, past experience supports the ability to learn the novel concept.
+			$$
+			\min_\theta \mathbb E_\tau \left[ \mathcal L \left(
+			\phi_\tau , \mathcal D ^ {test}_\tau
+			\right)\right]
+			$$
+
+			Here \( \phi_\tau \) is the task parameter that we acquire after solving
+			the inner optimization problem, \( \mathcal D ^ {test}_\tau \) is the
+			task-level test dataset.
 		</p>
 
 		<p>
-			While clearly one sample is not enough for a model without prior knowledge,
-			we can pretrain models on tasks that we assume to be similar to the target tasks.
-			This is a common approach to solving few-shot learning: derive some inductive bias
-			from other classes in order to perform better on newly encountered classes.
-			This similarity assumption allows the model to collect meta-knowledge:
-			knowledge which does not describe a single task, but a distribution of tasks.
-			The learning of this meta-knowledge is referred to as "meta-learning".
+			In regular MAML \( \phi_\tau \) is obtained by Computing
+			a single update (or a few) gradient descent steps:
+
+			$$
+			\phi_\tau = U_\tau (\theta) = \theta - \alpha \nabla_\theta \mathcal L \left( \theta, \mathcal
+			D^{train}_\theta \right)
+			$$
 		</p>
 
-		<figure class="l-page side">
-			<d-figure id="fewShotMethods">
+		<p>
+			Now, instead of using only few update steps, we will use an abitrary
+			optimizer which optimizes the task-parameter until it reaches a minimum,
+			but instead of only minimizing the task-loss we add a \( L_2 \) normalization term.
+			term:
+
+			$$
+			\phi_\tau = U^\ast_\tau (\theta)
+			= \arg\min_\phi \left( \mathcal L \left( \phi, \mathcal D^{train}_\tau \right)
+			+ \frac{\lambda}{2} \| \phi - \theta \| ^ 2 \right)
+			$$
+
+			Here, the objective is the almost the same, with the addition, that
+			the moving to far away from the meta-parameter \( \theta \)
+			results in higher loss.
+		</p>
+
+		<figure class="l-body-outset">
+			<d-figure id="imamlLoss">
 				<div class="element is-loading" style="height: 400px"></div>
 			</d-figure>
 			<figcaption>
-				<p>Results of different methods on the omniglot dataset
-					(if not stated differently: 1-shot, 20-way;
-					some differences in the evaluation procedure exist).
-					As usual, accuracy numbers need to be taken with a grain of salt as
-					differences in the evaluation method, implementation, and the model
-					complexity may a have a non-negligible impact on the performance.
-				</p>
-				<p id="caption_generative_stroke_model" class="fewShotMethods-reference">
-					The generative stroke model was introduced in the paper which also
-					introduced omniglot. The model is based on a latent stroke representation
-					(including the number and directions of strokes). While it is an
-					interesting approach, it can hardly be generalized to other
-					few-shot problems.<dt-cite key="lake_one_2011"></dt-cite>
-				</p>
-				<p id="caption_hierachical_bayesian_program_learning" class="fewShotMethods-reference">
-					The same authors improved the model by learning latent
-					primitive motor elements and called this process "Hierarchial
-					Bayesian Program Learning" (HBPL).
-					While the accuracy was greatly increased, it also
-					is focused on symbol learning.
-					<dt-cite key="lake_one-shot_2013"></dt-cite>
-				</p>
-				<p id="caption_siamese_nets" class="fewShotMethods-reference">
-					Siames Nets consist of two identical networks which produce a latent representation.
-					From the representations of two samples, a distance is calculated to
-					assess the similarity of the two samples.<dt-cite key="koch_siamese_2015"></dt-cite>
-					The result (accuracy of 88.1%) results from a reimplementaion of the method which
-					makes it more comparable.
-					<dt-cite key="vinyals_matching_2017"></dt-cite>
-				</p>
-				<p id="caption_matching_nets" class="fewShotMethods-reference">
-					Matching Networks also work by comparing new samples to labeled
-					examples. They do so by utilizing an attention kernel.
-					Though the second version of the paper is cited here,
-					it was first published in 2016.
-					<dt-cite key="vinyals_matching_2017"></dt-cite>
-				</p>
-
-				<p id="caption_prototypical_networks" class="fewShotMethods-reference">
-					Prototypical Networks use prototype vectors to represent each class
-					in the metric space. The nearest neighbor (i.e. the closest prototype)
-					of a sample then determines the prediction.
-					<dt-cite key="snell_prototypical_2017"></dt-cite>
-				</p>
-
-				<p id="caption_memory_augmented_nets" class="fewShotMethods-reference">
-					Memory-Augmented Networks (MANNs) use an external memory to make accurate
-					predictions using a small number of samples.
-					<dt-cite key="santoro_meta-learning_2016"></dt-cite>
-				</p>
-
-				<p id="caption_meta_nets" class="fewShotMethods-reference">
-					Meta Networks utilize a base learner (task level) and a meta learner
-					as well as a set of slow and rapid weights in order to allow
-					meta learning as well as task-specific concepts.
-					<dt-cite key="munkhdalai_meta_2017"></dt-cite>
-				</p>
-
+				Play around with \( \theta \) and \( \lambda \) to get a feeling for the
+				resulting loss space of the inner optimization objective.
+				High \( \lambda \) will encourage the the algorithm to place the task-parameter
+				close to the meta-parameter \( \theta \). \( \lambda = 0\) results in the
+				original loss function.
 			</figcaption>
 		</figure>
 
-		<figure class="l-page side">
-			<d-figure id="fewShotVenn">
-				<div class="element is-loading" style="height: 300px"></div>
+
+		<h3>Computing the Gradient</h3>
+
+		<p>
+			Now, in order to minimize the meta-objective, we again calculate the gradient:
+
+			$$
+			\begin{align}
+			\nabla_\theta\, \mathbb E_\tau \left[ \mathcal L \left(
+			{\phi}_\tau , \mathcal D ^ {test}_\tau
+			\right)\right]
+			&= \mathbb E_\tau \left[ \nabla_{\theta}\, \mathcal L \left(
+			{\phi}_\tau , \mathcal D ^ {test}_\tau
+			\right)\right]\\
+			&= \mathbb E_\tau \left[ \nabla_{\phi_\tau} \, \mathcal L \left(
+			\phi_\tau , \mathcal D ^ {test}_\tau\right) \cdot \frac{\mathrm d \phi_\tau}{\mathrm d \theta}
+			\right]
+			\end{align}
+			$$
+
+			Calculating the first part \( \nabla_{\phi_\tau} \, \mathcal L \left(
+			\phi_\tau , \mathcal D ^ {test}_\tau\right) \) can be done using back-propagation.
+			This is the gradient of \(\phi_\tau\) at the parameter which was found by
+			the optimizer. \( \frac{\mathrm d \phi_\tau}{\mathrm d \theta} \) is the part
+			that MAML has its problems with: depending on how complex the optimization
+			algorithm is, this may be difficult to compute using back-propagation.
+		</p>
+
+		<p>
+			But, here comes the awesome part: Since we assume that out inner optimizer
+			found a local minimum, we know that the gradient of the inner objective
+			in regard to the task-parameter is 0. This gives us the following equation:
+
+			$$
+			\begin{align}
+			\mathbf {0} &= \nabla_{\phi} \left(
+			\mathcal L \left( \phi, \mathcal D^{train} \right)
+			+ \frac{\lambda}{2} \| \phi - \theta \| ^ 2
+
+			\right)\\
+			&= \nabla_{\phi} \mathcal L \left( \phi, \mathcal D^{train} \right) + \lambda \left( \phi - \theta \right)
+			\end{align}
+			$$
+
+			By rearranging we get:
+
+			$$
+			\phi = \theta - \frac{1}{\lambda} \nabla_\phi \mathcal L \left( \phi, \mathcal D^{train} \right)
+			$$
+		</p>
+		<figure class="l-body-outset">
+			<d-figure id="imamlGradient">
+				<div class="element is-loading" style="height: 400px"></div>
 			</d-figure>
 			<figcaption>
-				<p id="caption_lstm_based" class="fewShotMethods-reference">
-					Applications of Meta-Learning outside the domain of few-shot learning
-					include the optimization of the task-level optimizer using
-					a LSTM network.
-					<dt-cite key="andrychowicz_learning_2016"></dt-cite>
+				<p>
+					The red arrow denotes the gradient \( \nabla_\phi \mathcal L \left( \phi, \mathcal D^{train} \right)
+					\). The gradient
+					pulls the task parameters \( \phi \) towards the minimum of the task loss.
+					You can imagine the green arrow as being the counter-force whicht pulls
+					\( \phi \) toward the meta-parameter \( \theta \).
 				</p>
+				<p>
+					At the optimium, these forces need to cancel out, since moving in any direction
+					won't improve the regularized loss.
+					Hence, the gradient need to be orthogonal to the isocurve (white circle):
+					moving along won't change the regularization term; since \( \phi \) is optimal
+					for the joint term, the projection of the task-loss gradient onto the
+					circle must be zero (moving some distance along the circle would improve the joint loss).
+				</p>
+
 			</figcaption>
 		</figure>
+		<p>
+
+			Now, we can calculate the Jacobian of the task-parameter \( \phi \) in regard to the meta-parameter \(
+			\theta \):
+
+			$$
+			\begin{align}
+			\frac{\mathrm d \phi}{\mathrm d \theta}
+			&= \frac{\mathrm d }{\mathrm d \theta} \left( \theta - \frac{1}{\lambda} \nabla_\phi \mathcal L \left( \phi,
+			\mathcal D^{train}
+			\right) \right)\\
+			&= \frac{\mathrm d \theta}{\mathrm d \theta} - \frac{1}{\lambda}\frac{ \mathrm d }{\mathrm d \theta}
+			\nabla_\phi \mathcal L \left(
+			\phi, \mathcal D^{train} \right)\\
+
+			%&= \frac{\mathrm d \theta}{\mathrm d \theta} - \frac{1}{\lambda}\frac{ \mathrm d }{\mathrm d \theta}
+			%\frac{\mathrm d}{\mathrm d \phi} \mathcal L \left(
+			%\phi, \mathcal D^{train} \right)\\
+
+			%&= \frac{\mathrm d \theta}{\mathrm d \theta} - \frac{1}{\lambda}\frac{ \mathrm d \phi}{\mathrm d \theta}
+			%\frac{\mathrm d^2}{\mathrm d \phi ^2} \mathcal L \left(
+			%\phi, \mathcal D^{train} \right)\\
+
+			&= I - \frac{1}{\lambda} \nabla^2_\phi \mathcal L \left( \phi, \mathcal D^{train} \right) \frac{\mathrm d
+			\phi}{\mathrm d \theta}
+			\end{align}
+			$$
+
+			Here, to get from the 2nd to 3rd line, we need to apply the chain rule: \( \phi \)
+			is a function of \( \theta \). Hence, we need to calculate the outer derivative (which results in the
+			Hessian)
+			and the inner derivative which is exactly what we want to calculate (also the total derivative \(
+			\frac{\mathrm d \phi}{\mathrm d \theta} \)).
+
+			Finally, we arrive at the following equations (assuming the inverse exists):
+
+			$$\begin{align}
+			&&(I + \frac{1}{\lambda} \nabla^2_\phi \mathcal L \left( \phi, \mathcal D^{train} \right))\frac{\mathrm d
+			\phi}{\mathrm d \theta} = I\\
+			\Rightarrow&& \frac{\mathrm d \phi}{\mathrm d \theta} = (I + \frac{1}{\lambda} \nabla^2_\phi \mathcal L
+			\left( \phi, \mathcal D^{train} \right))^{-1}
+			\end{align}$$
+
+			Let that sink in for a moment: By assuming that our inner optimizer
+			found an optimal solution for our inner objective, we can derive a closed-form
+			solution for the total derivative \( \frac{\mathrm d \phi}{\mathrm d \theta} \).
+			To calculate the meta-gradient, we just need to know the solution
+			of the inner optimizaton problem, without knowing the steps to get there!
+		</p>
 
 		<p>
-			Plenty of methods have been proposed in the last years to tackle few-shot
-			learning using the meta-learning assumption,
-			and many are able to produce decent results.
-			In this article, we will focus
-			on one of them: "Model-Agnostic Meta-Learning" (MAML).
-		</p>
-
-		<h3>Model-Agnostic Meta-Learning</h3>
-
-		<p>
-			Before we get started with the explanation of how MAML works,
-			we want to take a moment to look at what is Model-Agnostic about MAML.
-			In order to understand, why this method is called "model-agnostic", we need
-			to look at how the few-shot problem was tackled by other approaches.
-			While there are methods, which try to mitigate the issues introduced by the
-			the few-shot constraint, many do resort to adopting the meta-learning
-			assumption. These methods can broadly be divided into two classes:
-			metric-based and model-based approaches.
-		</p>
-		<p>
-			The core idea of metric-based approaches is to compare two samples in a
-			latent (metric) space: In this space, samples of the same class are supposed
-			to be close to each other, while two samplese from different classes are
-			supposed to have a large distance (the notion of a distance is what makes
-			the latent space a metric space).
-			<dt-cite key="snell_prototypical_2017"></dt-cite>
-			<dt-cite key="koch_siamese_2015"></dt-cite>
-			<dt-cite key="vinyals_matching_2017"></dt-cite>
-		</p>
-		<p>
-			Model-based approaches are neural architectures which are deliberately designed
-			for fast adaption to new tasks without inclining to overfit.
-			Memory-Augmented Neural Networks and MetaNet are two examples. Both employ
-			an external memory while still maintaining the ability to be trained
-			end-to-end.
-			<dt-cite key="santoro_meta-learning_2016"></dt-cite>
-			<dt-cite key="munkhdalai_meta_2017"></dt-cite>
+			The steps leading up to the optimal solution do not need to be stored and
+			we could even use an optimizer which does not use Gradient Descent and
+			where we might not be able to back-propagate the gradient. Instead,
+			the optimizer can be treated as a black-box and we only require
+			the final solution.
 		</p>
 
 		<p>
-			MAML goes a different route: The neural network is designed the same way
-			your usual model might be (in the many-shot case). All the magic happens during the
-			optimization. Hence, it is called "optimization-based".
-			Unlike, metric-based and model-based approaches, MAML lets
-			you choose the model architecture as you like.
-			This has the great benefit of being applicable can not only for
-			classical supervised learning classification tasks but can also
-			for reinforcement learning.
-			<dt-cite key="finn2017modelagnostic"></dt-cite>
+			If this implicit differatiation is interesting to you, take a look at the
+			paper "Efficient and Modular Implicit Differentiation". In this paper
+			the authors offer a more general framework of how to compute gradients
+			without needing to backpropagate through the unrolled forward propagation.
+			Instead they use an optimiality condition (in the iMAML case its given by
+			the gradient of the inner loop objective) in order to calculate the
+			gradient implicitly.
+
+			<dt-cite key="blondel_efficient_2021"></dt-cite>
+
+		</p>
+
+		<h3>Discussion</h3>
+
+		<p>
+			As you can see in the gradient above, iMAML requires the computation of
+			a second-order derivative. The huge benefit is that this second-order
+			derivative only needs to be calculated for the last point the optimizer
+			calculated. We do not need to pass the gradient information through
+			the steps of gradient-descent.
+		</p>
+
+		<p>
+			While calculating the gradient is comparitively easy, iMAML requires
+			an optimizer which finds a quasi-optimal solution. Even though we introduced
+			the math behind iMAML with the assumption that the optimizer finds an optimal
+			solution, the authors of "Meta-Learning with Implicit Gradients" show
+			that the gradient is still approximately correct as long as the solution
+			provided by the inner-loop optimizer is approximately correct.
+			Still, we probably need to make many more gradient steps (if we use SGD),
+			then in regular MAML where even one step may suffice.
+			<dt-cite key="rajeswaran_meta-learning_2019"></dt-cite>
+		</p>
+
+		<p>
+			According to the same paper, iMAML produces better results then MAML, while
+			not using more resources (while iMAML requires more inner loop steps),
+			MAML requires either more outer loops steps or expensive computation
+			of a long back-propagation chain. Compared to first-order MAML (FOMAML)
+			and REPTILE, the authors report better results on the
+			<dt-cite key="lake_omniglot_2015">Omniglot</dt-cite>
+			(the little exercise at the top of the page is base on Omniglot)
+			and
+			<dt-cite key="liu_tools_2019">Mini-ImageNet</dt-cite>,
+			two common few-shot classification datasets.
+			<dt-cite key="rajeswaran_meta-learning_2019"></dt-cite>
+		</p>
+
+		<p>
+			As Ferenc Huszár points out in his wonderful
+			<a href="https://www.inference.vc/notes-on-imaml-meta-learning-without-differentiating-through/#what-is-missing-stochasticity"
+				alt="Huszár's blog post on iMAML">blog post on iMAML</a>,
+			iMAML does not consider the stochasticity of Stochastic Gradient-Descent:
+			SGD may have non-zero proabilities of finding more then one task-level
+			optimum, but iMAML will only derive the gradient in respect to actually
+			found optimum.
 		</p>
 		<p>
-			<a href="maml.html">In the next part</a>, you will learn how this is achieved.
+			If you are interested int this condideration, you may want to also take
+			a look at the paper titled "Probabilistic Model-Agnostic Meta-Learning".
+			<dt-cite key="finn_probabilistic_2019"></dt-cite>
 		</p>
 
 	</dt-article>
@@ -526,15 +591,6 @@ version: 2},
 	note = {arXiv: 1803.02999},
 	keywords = {Computer Science - Machine Learning},
 	file = {Nichol et al. - 2018 - On First-Order Meta-Learning Algorithms.pdf:/home/luis/Zotero/storage/L8HLWK9P/Nichol et al. - 2018 - On First-Order Meta-Learning Algorithms.pdf:application/pdf},
-}
-
-@article{salakhutdinov_one-shot_nodate,
-	title = {One-{Shot} {Learning} with a {Hierarchical} {Nonparametric} {Bayesian} {Model}},
-	abstract = {We develop a hierarchical Bayesian model that learns categories from single training examples. The model transfers acquired knowledge from previously learned categories to a novel category, in the form of a prior over category means and variances. The model discovers how to group categories into meaningful super-categories that express diﬀerent priors for new classes. Given a single example of a novel category, we can eﬃciently infer which supercategory the novel category belongs to, and thereby estimate not only the new category’s mean but also an appropriate similarity metric based on parameters inherited from the super-category. On MNIST and MSR Cambridge image datasets the model learns useful representations of novel categories based on just a single training example, and performs signiﬁcantly better than simpler hierarchical Bayesian approaches. It can also discover new categories in a completely unsupervised fashion, given just one or a few examples.},
-	language = {en},
-	author = {Salakhutdinov, Ruslan and Tenenbaum, Josh and Torralba, Antonio},
-	pages = {13},
-	file = {Salakhutdinov et al. - One-Shot Learning with a Hierarchical Nonparametri.pdf:/home/luis/Zotero/storage/NNTJPA7H/Salakhutdinov et al. - One-Shot Learning with a Hierarchical Nonparametri.pdf:application/pdf},
 }
 
 </script>
