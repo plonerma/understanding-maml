@@ -34,7 +34,7 @@
 			</d-figure>
 			<figcaption>
 				What you have in front of you is a 5-way-1-shot problem, one that most conventional machine learning
-				systems struggle with.
+				systems struggle to solve.
 				To classify a sample (top), either drag it to or click on the desired class (bottom) and see if you can
 				do better.
 			</figcaption>
@@ -50,14 +50,6 @@
 		</div>
 
 		<p>
-			If you tried the exercise above, you have most likely received a pretty high accuracy score.
-			Even though you likely have never seen some of the characters,
-			you are able to classify them given only a single example, potentially
-			without realizing that what you are able to do off the top of you head is pretty impressive to the average
-			Deep Neural Net!
-		</p>
-
-		<p>
 			<i style="font-size: .8em;">
 				This page is part of a multi-part series on Model-Agnostic Meta-Learning.
 				If you are already familiar with the topic, use the menu on the right
@@ -66,14 +58,13 @@
 			</i>
 		</p>
 
-
-
-
 		<p>
-			If you tried the little exercise above, you probably got a pretty good score.
+			If you tried the exercise above, you have undoubtedly received a very high accuracy score.
 			Even though you likely have never seen some of the characters,
 			you are able to classify them given only a single example, potentially
-			without realizing that what you are doing is actually pretty impressive!
+			without realizing that what you are able to do off the top of your head would be pretty impressive to the
+			average
+			Deep Neural Net!
 		</p>
 
 		<h3>Few-Shot Learning</h3>
@@ -86,6 +77,9 @@
 			of learning.
 			Humans, such as yourself, are known to excel at generalizing after seeing only a few
 			samples <dt-cite key="salakhutdinov_one-shot_nodate"></dt-cite>.
+			It should, however, also be noted that humans do not learn
+			novel concepts "in a vacuum"<dt-cite key="lake_one_2011"></dt-cite> but based off a lot of prior
+			knowledge.
 			Enabling machine learning methods to achieve the same would bring us a step closer to learning on the data-
 			and energy-efficiency
 			level of humans.
@@ -93,8 +87,11 @@
 
 		<p>
 			Achieving rapid convergence of machine learning models on but a few samples is generally refered to as
-			"few-shot learning".
-			The exercise at the top of the article is a prominent example of a few-shot learning task, whose symbols are
+			"few-shot learning". If you are presented with \(N\) samples and are expected to learn a classification
+			problem with \(M\)
+			classes, we speak of an \(M\)-way-\(N\)-shot problem.
+			The exercise at the top of the article, which we offer either as a \(20\)- or \(5\)-way-1-shot problem, is a
+			prominent example of a few-shot learning task, whose symbols are
 			taken from
 			the <dt-cite key="lake_omniglot_2015"><i>omniglot</i> dataset</dt-cite>.
 			It contains 1623 different characters across 50 alphabets with each character
@@ -104,25 +101,8 @@
 			with MNIST containing only a few classes (the digits 0 to 9) and many instances and omniglot containing a
 			lot of classes but only a few instances for each.
 		</p>
-
 		<p>
-			By now, you may be asking yourself: How can a model learn from only one example
-			(i.e. "one-shot") and why do I even need a dataset like omniglot
-			if the model is supposed to learn from one sample?
 
-			Looking at a human learner, we might realize that humans do not learn
-			novel concepts "in a vacuum".<dt-cite key="lake_one_2011"></dt-cite>
-			Instead, past experience supports the ability to learn the novel concept.
-		</p>
-
-		<p>
-			While clearly one sample is not enough for a model without prior knowledge,
-			we can pretrain models on tasks that we assume to be similar to the target tasks.
-			This is a common approach to solving few-shot learning: derive some inductive bias
-			from other classes in order to perform better on newly encountered classes.
-			This similarity assumption allows the model to collect meta-knowledge:
-			knowledge which does not describe a single task, but a distribution of tasks.
-			The learning of this meta-knowledge is referred to as "meta-learning".
 		</p>
 
 		<figure class="l-page side">
@@ -206,11 +186,20 @@
 		</figure>
 
 		<p>
-			Plenty of methods have been proposed in the last years to tackle few-shot
-			learning using the meta-learning assumption,
-			and many are able to produce decent results.
-			In this article, we will focus
-			on one of them: "Model-Agnostic Meta-Learning" (MAML).
+			In <a href="#fewShotMethods">the figure to the right</a> you can find a selection of methods that tackle few-shot
+			learning, their performance on <i>omniglot</i> as well as your own accuracy score from the above exercise.
+			The method marked in red, MAML, is a rarity among the others, as it falls under the category of 
+			<i>optimization-based meta-learning</i>.
+		</p>
+
+		<p>
+			While clearly one sample is not enough for a model without prior knowledge,
+			we can pretrain models on tasks that we assume to be similar to the target tasks.
+			This is a common approach to solving few-shot learning: derive some inductive bias
+			from other classes in order to perform better on newly encountered classes.
+			This similarity assumption allows the model to collect meta-knowledge:
+			knowledge which does not describe a single task, but a distribution of tasks.
+			The learning of this meta-knowledge is referred to as "meta-learning".
 		</p>
 
 		<h3>Model-Agnostic Meta-Learning</h3>
