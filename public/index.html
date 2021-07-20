@@ -27,16 +27,25 @@
 
 	<dt-article>
 		<h1>An Interactive Introduction to Model-Agnostic Meta-Learning</h1>
-		<h2>Exploring the world of model-agnostic meta-learning and its extensions.</h2>
+		<h2>Exploring MAML and its extensions.</h2>
 		<figure class="l-page" style="border-top: 1px solid hsla(0, 0%, 0%, 0.1);">
 			<d-figure id="teaser">
 				<div class="element is-loading" style="height: 400px"></div>
 			</d-figure>
+			<p>
+				<i style="font-size: .8em;">
+					<b>MAML</b> learns tasks like the ones above by aciquiring meta-knowledge about similar problems.
+				</i>
+			</p>
 			<figcaption>
-				What you have in front of you is a 5-way-1-shot problem, one that most conventional machine learning
+				What you have in front of you is a 5- or 20-way-1-shot problem, one that most conventional machine
+				learning
 				systems struggle to solve.
 				To classify a sample (top), either drag it to or click on the desired class (bottom) and see if you can
-				do better.
+				do better. To switch between 5-way and 20-way (which decides how many classes are available), use the
+				drop-down menu on the top
+				right. If you are tired of the current task or want to reset your score, use the buttons on the bottom
+				right.
 			</figcaption>
 		</figure>
 
@@ -66,14 +75,21 @@
 			average
 			Deep Neural Net!
 		</p>
-
-		<h3>Few-Shot Learning</h3>
 		<p>
-			Typically, in machine learning we need a lot of samples to be able to
-			assign unseen data to a class. But we do not always have enough data available to
+			In this article we would like to give you an interactive introduction to a research field
+			that attempts to equip conventional machine learning architectures with the power to gain meta-knowledge
+			about a range of
+			tasks in order to solve problems like the one above on a human level of accuracy.
+		</p>
+
+		<h3>Getting Started</h3>
+		<p>
+			A common wisdom shared across the machine learning community is the need to train models on a truck-load of
+			samples before they are able to
+			make meaningful predictions on unseen data. But we do not always have enough data available to
 			cater this need: A sufficient amount of data may be expensive or even
 			impossible to acquire.
-			But there are good reasons to believe that this is not an inherent issue
+			Yet, there are good reasons to believe that this is not an inherent issue
 			of learning.
 			Humans, such as yourself, are known to excel at generalizing after seeing only a few
 			samples <dt-cite key="salakhutdinov_one-shot_nodate"></dt-cite>.
@@ -82,14 +98,37 @@
 			knowledge.
 			Enabling machine learning methods to achieve the same would bring us a step closer to learning on the data-
 			and energy-efficiency
-			level of humans.
+			level of humans. Consequently we would require algorithms to do the following two things, already
+			successfully implemented in humans:
+		</p>
+		<ul>
+			<li>(a) Obtaining as much prior knowledge about the world as possible and</li>
+			<li>(b) using that to generalize well on only a few samples.</li>
+		</ul>
+		<p>
+			The method we present in this article has prominently emerged from research
+			in two fields which each address one of the above requirements. While introducing these fields to you, we
+			will
+			also equip you with the most important terms and concepts we will need along the rest of the article.
 		</p>
 
+		<h3>(a) Obtaining Prior Knowledge</h3>
 		<p>
-			Achieving rapid convergence of machine learning models on but a few samples is generally refered to as
+			While clearly one sample is not enough for a model without prior knowledge,
+			we can pretrain models on tasks that we assume to be similar to the target tasks.
+			The idea in its core is to derive an inductive bias
+			from a set of problem-classes in order to perform better on other, newly encountered, problem-classes.
+			This similarity assumption allows the model to collect meta-knowledge:
+			knowledge which is not obtained from a single task, but from a distribution of tasks.
+			The learning of this meta-knowledge is called "meta-learning".
+		</p>
+
+		<h3>(b) Generalization on a Few Samples</h3>
+		<p>
+			Achieving rapid convergence of machine learning models on but a few samples is known as
 			"few-shot learning". If you are presented with \(N\) samples and are expected to learn a classification
-			problem with \(M\)
-			classes, we speak of an \(M\)-way-\(N\)-shot problem.
+			problem with \( M \)
+			classes, we speak of an \( M \)-way-\(N\)-shot problem.
 			The exercise at the top of the article, which we offer either as a \(20\)- or \(5\)-way-1-shot problem, is a
 			prominent example of a few-shot learning task, whose symbols are
 			taken from
@@ -101,9 +140,7 @@
 			with MNIST containing only a few classes (the digits 0 to 9) and many instances and omniglot containing a
 			lot of classes but only a few instances for each.
 		</p>
-		<p>
 
-		</p>
 
 		<figure class="l-page side">
 			<d-figure id="fewShotMethods">
@@ -171,82 +208,37 @@
 			</figcaption>
 		</figure>
 
-		<figure class="l-page side">
-			<d-figure id="fewShotVenn">
-				<div class="element is-loading" style="height: 300px"></div>
-			</d-figure>
-			<figcaption>
-				<p id="caption_lstm_based" class="fewShotMethods-reference">
-					Applications of Meta-Learning outside the domain of few-shot learning
-					include the optimization of the task-level optimizer using
-					a LSTM network.
-					<dt-cite key="andrychowicz_learning_2016"></dt-cite>
-				</p>
-			</figcaption>
-		</figure>
 
-		<p>
-			In <a href="#fewShotMethods">the figure to the right</a> you can find a selection of methods that tackle few-shot
-			learning, their performance on <i>omniglot</i> as well as your own accuracy score from the above exercise.
-			The method marked in red, MAML, is a rarity among the others, as it falls under the category of 
-			<i>optimization-based meta-learning</i>.
-		</p>
-
-		<p>
-			While clearly one sample is not enough for a model without prior knowledge,
-			we can pretrain models on tasks that we assume to be similar to the target tasks.
-			This is a common approach to solving few-shot learning: derive some inductive bias
-			from other classes in order to perform better on newly encountered classes.
-			This similarity assumption allows the model to collect meta-knowledge:
-			knowledge which does not describe a single task, but a distribution of tasks.
-			The learning of this meta-knowledge is referred to as "meta-learning".
-		</p>
 
 		<h3>Model-Agnostic Meta-Learning</h3>
+		<p>
+			In <a href="#fewShotMethods">the figure to the right</a> you can find a selection of meta-learning methods
+			that tackle
+			few-shot
+			learning, their performance on <i>omniglot</i> as well as your own accuracy score from the above exercise.
+			The method marked in \(\textcolor{red}{red}\), MAML, stands for Model-Agnostic Meta-Learning and is the only
+			one among the above methods that
+			falls under the category of
+			<i>optimization-based meta-learning</i>, which will be our main interest in the rest of the article.
+		</p>
+		<p>
+			What exactly is model-agnostic about MAML, you ask? Well, there is a short answer and a long answer. The
+			short answer is that
+			MAML does not restrict you on the architecture that is supposed to gain meta-knowledge, i.e. your
+			meta-learning-model, other than that it
+			is differentiable.
+		</p>
+		<p>
+			The long answer requires a bit more knowledge of the meta-learning field and can be found in our <a
+				href="history.html">history primer</a>, where we summarize the most important sub-fields, what separates
+			them from each other and where in all that MAML is situated.
+		</p>
+		<p>
+			Having set the scene, we now have all the tools we need to get to know MAML and its
+			extensions.
+			Once you feel ready, click
+			<a href="maml.html">here</a> or navigate straight to the part you are most interested in using the menu.
 
-		<p>
-			Before we get started with the explanation of how MAML works,
-			we want to take a moment to look at what is Model-Agnostic about MAML.
-			In order to understand, why this method is called "model-agnostic", we need
-			to look at how the few-shot problem was tackled by other approaches.
-			While there are methods, which try to mitigate the issues introduced by the
-			the few-shot constraint, many do resort to adopting the meta-learning
-			assumption. These methods can broadly be divided into two classes:
-			metric-based and model-based approaches.
-		</p>
-		<p>
-			The core idea of metric-based approaches is to compare two samples in a
-			latent (metric) space: In this space, samples of the same class are supposed
-			to be close to each other, while two samplese from different classes are
-			supposed to have a large distance (the notion of a distance is what makes
-			the latent space a metric space).
-			<dt-cite key="snell_prototypical_2017"></dt-cite>
-			<dt-cite key="koch_siamese_2015"></dt-cite>
-			<dt-cite key="vinyals_matching_2017"></dt-cite>
-		</p>
-		<p>
-			Model-based approaches are neural architectures which are deliberately designed
-			for fast adaption to new tasks without inclining to overfit.
-			Memory-Augmented Neural Networks and MetaNet are two examples. Both employ
-			an external memory while still maintaining the ability to be trained
-			end-to-end.
-			<dt-cite key="santoro_meta-learning_2016"></dt-cite>
-			<dt-cite key="munkhdalai_meta_2017"></dt-cite>
-		</p>
-
-		<p>
-			MAML goes a different route: The neural network is designed the same way
-			your usual model might be (in the many-shot case). All the magic happens during the
-			optimization. Hence, it is called "optimization-based".
-			Unlike, metric-based and model-based approaches, MAML lets
-			you choose the model architecture as you like.
-			This has the great benefit of being applicable can not only for
-			classical supervised learning classification tasks but can also
-			for reinforcement learning.
-			<dt-cite key="finn2017modelagnostic"></dt-cite>
-		</p>
-		<p>
-			<a href="maml.html">In the next part</a>, you will learn how this is achieved.
 		</p>
 
 	</dt-article>
