@@ -14,7 +14,7 @@
 	<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 	<script defer src="build/bundle.js"></script>
 
-<script type="text/front-matter">
+	<script type="text/front-matter">
   title: "An Interactive Introduction to Model-Agnostic Meta-Learning"
   description: "t.b.d."
   authors:
@@ -27,13 +27,24 @@
 
 	<dt-article>
 		<h1>An Interactive Introduction to Model-Agnostic Meta-Learning</h1>
-		<h2>Exploring the world of model-agnostic meta-learning and its extensions.</h2>
+		<h2>Exploring MAML and its extensions.</h2>
 		<figure class="l-page" style="border-top: 1px solid hsla(0, 0%, 0%, 0.1);">
 			<d-figure id="teaser">
 				<div class="element is-loading" style="height: 400px"></div>
 			</d-figure>
 			<figcaption>
-				Click button or drag sample onto example to classify the sample.
+				<p style="font-size: 1.5em; margin-bottom: 1.2rem; margin-top: 1.5em">
+					<i><b>MAML</b> learns tasks like the ones above by aciquiring meta-knowledge about similar problems.</i>
+				</p>
+				<p>
+					What you have in front of you is a 5- or 20-way-1-shot problem, one that most conventional machine
+					learning
+					systems struggle to solve.
+					To classify a sample (top), either drag it to or click on the desired class (bottom) and see if you can
+					do better. To switch between 5-way and 20-way (which decides how many classes are available), use the
+					drop-down menu on the top
+					right.
+				</p>
 			</figcaption>
 		</figure>
 
@@ -55,67 +66,82 @@
 			</i>
 		</p>
 
-
-
-
 		<p>
-			If you tried the little exercise above, you probably got a pretty good score.
+			If you tried the exercise above, you have undoubtedly received a very high accuracy score.
 			Even though you likely have never seen some of the characters,
 			you are able to classify them given only a single example, potentially
-			without realizing that what you are doing is actually pretty impressive!
+			without realizing that what you are able to do off the top of your head would be pretty impressive to the
+			average
+			Deep Neural Net!
+		</p>
+		<p>
+			In this article we would like to give you an interactive introduction to
+			Model-Agnostic Meta-Learning,
+			a research field
+			that attempts to equip conventional machine learning architectures with the power to gain meta-knowledge
+			about a range of
+			tasks in order to solve problems like the one above on a human level of accuracy.
 		</p>
 
-		<h3>Few-Shot Learning</h3>
-
+		<h3>Getting Started</h3>
 		<p>
-			Typically, in machine learning we need a lot of examples to be able to
-			assign an unseen sample to class. But we do not always have enough data to
+			A common wisdom shared across the machine learning community is the need to train models on a truck-load of
+			samples before they are able to
+			make meaningful predictions on unseen data. But we do not always have enough data available to
 			cater this need: A sufficient amount of data may be expensive or even
 			impossible to acquire.
-			But there is good reasons to believe, that this is not an inherent issue
+			Yet, there are good reasons to believe that this is not an inherent issue
 			of learning.
-			Humans, for example, are quite good at generalizing after seeing only a few
-			samples. Enabling machine learning methods to achieve the same would allow
-			for many new applications and generally reduce the need to collect huge
-			datasets.[<b>TODO: reference needed</b>]
+			Humans, such as yourself, are known to excel at generalizing after seeing only a few
+			samples <dt-cite key="salakhutdinov_one-shot_nodate"></dt-cite>.
+			It should, however, also be noted that humans do not learn
+			novel concepts "in a vacuum"<dt-cite key="lake_one_2011"></dt-cite> but based off a lot of prior
+			knowledge.
+			Enabling machine learning methods to achieve the same would bring us a step closer to learning on the data-
+			and energy-efficiency
+			level of humans. Consequently we would require algorithms to do the following two things, already
+			successfully implemented in humans:
 		</p>
-
+		<ul>
+			<li>(a) Obtaining as much prior knowledge about the world as possible and</li>
+			<li>(b) using that to generalize well on only a few samples.</li>
+		</ul>
 		<p>
-			This research area is called "few-shot learning". It aims to enable models
-			to classify unseen sampels after training only one a few examples ("shots").
-			The little exercise at the top of the article is an exmaple of such a task.
-			The symbols are part of a
-			<dt-cite key="lake_omniglot_2015">dataset called "omniglot"</dt-cite>.
-			It contains 1623 different characters across 50 alphabets and each character
-			has 20 instances drawn by different people. Because of that, the omniglot
-			was described as a "transpose" of the well-known MNIST dataset, by the authors
-			who originally proposed omniglot as a machine learning dataset.
-			<dt-cite key="lake_one_2011"></dt-cite>
-			While MNIST contains only a few classes (the digits 0 to 9) and many instances,
-			of each class, with omniglot it is vice-versa.
+			The method we present in this article has prominently emerged from research
+			in two fields which each address one of the above requirements. While introducing these fields to you, we
+			will
+			also equip you with the most important terms and concepts we will need along the rest of the article.
 		</p>
 
-
-
-		<p>
-			By now, you may be asking yourself: How can a model learn from only one example
-			(i.e. "one-shot") and why do I even need a dataset like omniglot
-			if the model is supposed to learn from one sample?
-
-			Looking at a human learner, we might realize that humans do not learn
-			novel concepts "in a vacuum".<dt-cite key="lake_one_2011"></dt-cite>
-			Instead, past experience supports the ability to learn the novel concept.
-		</p>
-
+		<h4>(a) Obtaining Prior Knowledge</h4>
 		<p>
 			While clearly one sample is not enough for a model without prior knowledge,
 			we can pretrain models on tasks that we assume to be similar to the target tasks.
-			This is a common approach to solving few-shot learning: derive some inductive bias
-			from other classes in order to perform better on newly encountered classes.
+			The idea in its core is to derive an inductive bias
+			from a set of problem-classes in order to perform better on other, newly encountered, problem-classes.
 			This similarity assumption allows the model to collect meta-knowledge:
-			knowledge which does not describe a single task, but a distribution of tasks.
-			The learning of this meta-knowledge is referred to as "meta-learning".
+			knowledge which is not obtained from a single task, but from a distribution of tasks.
+			The learning of this meta-knowledge is called "meta-learning".
 		</p>
+
+		<h4>(b) Generalization on a Few Samples</h4>
+		<p>
+			Achieving rapid convergence of machine learning models on but a few samples is known as
+			"few-shot learning". If you are presented with \(N\) samples and are expected to learn a classification
+			problem with \( M \)
+			classes, we speak of an \( M \)-way-\(N\)-shot problem.
+			The exercise at the top of the article, which we offer either as a \(20\)- or \(5\)-way-1-shot problem, is a
+			prominent example of a few-shot learning task, whose symbols are
+			taken from
+			the <dt-cite key="lake_omniglot_2015"><i>omniglot</i> dataset</dt-cite>.
+			It contains 1623 different characters across 50 alphabets with each character
+			being represented by 20 instances, each drawn by a different person. Because of that, the original authors
+			of the omniglot dataset
+			described it as a "transpose" of the well-known MNIST dataset <dt-cite key="lake_one_2011"></dt-cite>,
+			with MNIST containing only a few classes (the digits 0 to 9) and many instances and omniglot containing a
+			lot of classes but only a few instances for each.
+		</p>
+
 
 		<figure class="l-page side">
 			<d-figure id="fewShotMethods">
@@ -183,6 +209,28 @@
 			</figcaption>
 		</figure>
 
+
+		<p>
+			Having set the scene, we can now dig into MAML and its
+			extensions. Continue reading on this page to find out why MAML is called
+			"model-agnostic",
+			go straight to an explanation of <a href="maml.html">MAML</a>,
+			or navigate straight to the part you are most interested in using the <a href="#menu">menu at the top</a>.
+		</p>
+
+
+		<h2>Why MAML is Model-Agnostic</h2>
+		<p>
+			In the figure on the right you can find a selection of meta-learning methods
+			that tackle
+			few-shot
+			learning, their performance on <i>omniglot</i> as well as your own accuracy score from exercise above.
+			Model-Agnostic Meta-Learning (short: "MAML", marked in <span style="color: #d62728">red</span>)
+			is the only one among the above methods that falls under the category of
+			<i>optimization-based meta-learning</i>, which will be our main interest in the rest of the article.
+		</p>
+
+
 		<figure class="l-page side">
 			<d-figure id="fewShotVenn">
 				<div class="element is-loading" style="height: 300px"></div>
@@ -200,16 +248,6 @@
 
 
 		<p>
-			Plenty of methods have been proposed in the last years to tackle few-shot
-			learning using the meta-learning assumption,
-			and many are able to produce decent results.
-			In this article, we will focus
-			on one of them: "Model-Agnostic Meta-Learning" (MAML).
-		</p>
-
-		<h3>Model-Agnostic Meta-Learning</h3>
-
-		<p>
 			Before we get started with the explanation of how MAML works,
 			we want to take a moment to look at what is Model-Agnostic about MAML.
 			In order to understand, why this method is called "model-agnostic", we need
@@ -220,7 +258,7 @@
 			metric-based and model-based approaches.
 		</p>
 		<p>
-			The core idea of metric-based approaches is two compare two samples in a
+			The core idea of metric-based approaches is to compare two samples in a
 			latent (metric) space: In this space, samples of the same class are supposed
 			to be close to each other, while two samplese from different classes are
 			supposed to have a large distance (the notion of a distance is what makes
@@ -240,7 +278,7 @@
 		</p>
 
 		<p>
-			MAML goes a different route: The nerual network is designed the same way
+			MAML goes a different route: The neural network is designed the same way
 			your usual model might be (in the many-shot case). All the magic happens during the
 			optimization. Hence, it is called "optimization-based".
 			Unlike, metric-based and model-based approaches, MAML lets
@@ -251,7 +289,9 @@
 			<dt-cite key="finn2017modelagnostic"></dt-cite>
 		</p>
 		<p>
-			<a href="maml.html">In the next part</a>, you will learn how this is achieved.
+			Go to <a href="maml.html">the next part</a>, to learn how this is achieved
+			or jump <a href="#menu">menu at the top</a> to navigate to the parts your
+			are most interested in.
 		</p>
 
 	</dt-article>
@@ -520,6 +560,15 @@ version: 2},
 	note = {arXiv: 1803.02999},
 	keywords = {Computer Science - Machine Learning},
 	file = {Nichol et al. - 2018 - On First-Order Meta-Learning Algorithms.pdf:/home/luis/Zotero/storage/L8HLWK9P/Nichol et al. - 2018 - On First-Order Meta-Learning Algorithms.pdf:application/pdf},
+}
+
+@article{salakhutdinov_one-shot_nodate,
+	title = {One-{Shot} {Learning} with a {Hierarchical} {Nonparametric} {Bayesian} {Model}},
+	abstract = {We develop a hierarchical Bayesian model that learns categories from single training examples. The model transfers acquired knowledge from previously learned categories to a novel category, in the form of a prior over category means and variances. The model discovers how to group categories into meaningful super-categories that express diﬀerent priors for new classes. Given a single example of a novel category, we can eﬃciently infer which supercategory the novel category belongs to, and thereby estimate not only the new category’s mean but also an appropriate similarity metric based on parameters inherited from the super-category. On MNIST and MSR Cambridge image datasets the model learns useful representations of novel categories based on just a single training example, and performs signiﬁcantly better than simpler hierarchical Bayesian approaches. It can also discover new categories in a completely unsupervised fashion, given just one or a few examples.},
+	language = {en},
+	author = {Salakhutdinov, Ruslan and Tenenbaum, Josh and Torralba, Antonio},
+	pages = {13},
+	file = {Salakhutdinov et al. - One-Shot Learning with a Hierarchical Nonparametri.pdf:/home/luis/Zotero/storage/NNTJPA7H/Salakhutdinov et al. - One-Shot Learning with a Hierarchical Nonparametri.pdf:application/pdf},
 }
 
 </script>

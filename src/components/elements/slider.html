@@ -1,15 +1,23 @@
+<div class="slider-container">
+  {#if label}
+    <label for={id}>
+      {label}
+    </label>
+  {/if}
 
 
-<input type="range" min={min} max={max} bind:value={value} class="slider" id={id} on:change on:input>
+  <input type="range" min={min} max={max} bind:value={value} class="slider" id={id} on:change on:input>
 
-{#if label}
-  <br>
-  <label for={id}>
-    {label}
-  </label>
-{/if}
+
+  {#if output != null}
+    <output class="slider-label">{output}</output>
+  {/if}
+</div>
+
 <script>
   import uniqueId from 'lodash/uniqueId'
+
+  import { renderTex } from '../util/mathjax';
 
   let id = uniqueId('slider_')
 
@@ -17,21 +25,44 @@
   export let max = 10
   export let value = 0
   export let label = ""
+  export let output = null
+
+  $: {
+    if (label) {
+      renderTex()
+    }
+  }
 
 </script>
 
 
 <style>
-  label {
-    font-size: .8em;
+  .slider-container {
+    width: 100%;
+    flex-direction: row;
+    display: flex;
+    margin: 10px 0;
   }
 
+  label, output {
+    font-size: .7em;
+    flex-grow: 0;
+    fley-shrink: 0;
+  }
+
+  label {
+    margin-right: 20px;
+  }
+
+  output {
+    margin-left: 20px;
+  }
 
   input[type=range] {
     height: 25px;
     -webkit-appearance: none;
-    margin: 10px 0;
-    width: 100%;
+    flex-grow: 1;
+    padding-top: 7px;
   }
   input[type=range]:focus {
     outline: none;
