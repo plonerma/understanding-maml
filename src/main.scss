@@ -26,12 +26,12 @@ Source: https://github.com/jgthms/bulma/issues/847#issuecomment-314110630
 
 /* Reset bulma's pre formatting */
 
-dt-article pre {
+d-article pre {
   padding: 0;
 }
 
 
-dt-article figcaption p {
+d-article figcaption p {
   margin-bottom: 8px;
 }
 
@@ -39,5 +39,88 @@ dt-article figcaption p {
   .column {
     margin-left: 0;
     margin-right: 0;
+  }
+}
+
+
+d-article {
+  d-contents {
+
+    @media (min-width: 1000px) {
+      align-self: start;
+      grid-column: 1 / 4;
+      grid-row: auto / span 4;
+      justify-self: end;
+      margin-top: 0em;
+      padding-right: 3em;
+      padding-left: 2em;
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+
+
+
+    @media (max-width: 1000px) {
+      margin-top: 1em;
+      margin-bottom: 1em;
+    }
+
+    h4 {
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 14px;
+      line-height: 1.4em;
+    }
+
+    nav > div {
+      display: block;
+      outline: none;
+      margin-bottom: 0.5em;
+    }
+
+    nav ul {
+      margin-top: 0;
+      margin-bottom: 6px;
+
+      li {
+        margin-bottom: 0.25em;
+      }
+    }
+  }
+}
+
+
+.teaser-figure {
+    border-top: 1px solid hsla(0, 0%, 0%, 0.1);
+}
+
+
+.margin-diagram {
+
+}
+.margin-diagram {
+  @media (min-width: 1000px) {
+    grid-column: 12 / 15;
+    grid-row: auto / span 3;
+    margin-top: 6px;
+  }
+
+  @media (min-width: 1800px) {
+    margin-left: 60px;
+  }
+}
+
+d-appendix {
+  .title {
+    font-size: 1em;
+    line-height: 1.7em;
+    color: rgba(0,0,0,0.5);
+  }
+}
+
+d-title {
+  h2 {
+    grid-column: text;
+    font-size: 24px;
   }
 }
