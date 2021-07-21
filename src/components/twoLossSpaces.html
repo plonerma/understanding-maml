@@ -25,8 +25,7 @@
 </div>
 <div class="columns">
     <div class="column is-half">
-        <Slider min="10" max="50" bind:value={lr_slide} label={`Learning Rate: ${(lr_slide /
-            1000).toPrecision(2)}`} />
+        <Slider min="10" max="50" bind:value={lr_slide} label="Learning Rate" output={(lr_slide / 1000).toPrecision(2)} />
         <p class="caption">The two loss spaces displayed comprise the true parameters on the top of each plot,
             10 random samples
             and the corresponding <i>Mean Squared Error (MSE)</i> as the loss function. A darker color corresponds to a
