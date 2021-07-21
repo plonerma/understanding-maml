@@ -24,10 +24,10 @@
 </div>
 <div class="columns">
     <div class="column is-half">
-        <Slider min="-50" max="50" bind:value={cond_slide} label={`a: ${cond_slide / 100}`} />
+        <Slider min="-50" max="50" bind:value={cond_slide} label="a" output={cond_slide / 100}/>
     </div>
     <div class="column is-half">
-        <Slider min="-50" max="50" bind:value={cond2_slide} label={`b: ${cond2_slide / 100}`} />
+        <Slider min="-50" max="50" bind:value={cond2_slide} label="b" output={cond2_slide / 100} />
     </div>
 </div>
 <div class="caption column">
@@ -39,7 +39,7 @@
 </div>
 <div class="columns">
     <div class="column is-half">
-        <Slider min="-50" max="50" bind:value={cond3_slide} label={`c: ${cond3_slide / 100}`} />
+        <Slider min="-50" max="50" bind:value={cond3_slide} label="c" output={cond3_slide / 100} />
     </div>
 
     <div class="column is-half">

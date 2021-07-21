@@ -33,15 +33,16 @@
 </div>
 <div class="columns">
     <div class="column is-half">
-        <Slider min="10" max="50" bind:value={lr_slide} label={`Learning Rate: ${(lr_slide /
-            1000).toPrecision(2)}`} />
+        <Slider min="10" max="50" bind:value={lr_slide} label="Learning Rate" output={(lr_slide / 1000).toPrecision(2)} />
     </div>
     <div class="column is-half">
-        <Slider min="1" max="5" bind:value={steps} label={`Inner Steps: ${steps}`} />
+        <Slider min="1" max="5" bind:value={steps} label="Inner Steps" output={steps} />
     </div>
 </div>
-<div class="column is-half">
-    <Slider min="20" max="80" bind:value={ir_slide} label={`Interpolation rate: ${(ir_slide / 100).toPrecision(2)}`} />
+<div class="columns">
+  <div class="column is-half">
+      <Slider min="20" max="80" bind:value={ir_slide} label="Interpolation rate" output={(ir_slide / 100).toPrecision(2)} />
+  </div>
 </div>
 
 <style>
