@@ -310,50 +310,6 @@
 			in the latter, the following section sheds
 			a light on the computational (in-)efficiency of MAML and what possible solutions to that problem are.
 		</p>
-		<h2>First-Order Methods: Why differentiating through an optimizer is actually as complicated as it sounds</h2>
-		<p>
-			In this section we want to gain some understanding of what it actually means to differentiate through \(U\),
-			the optimizer.
-			Recall the gradient that MAML requires us to compute:
-
-			\[ \nabla_\theta \mathcal{L}(\theta) = \sum_{i} \nabla_\theta
-			\mathcal{L}_{\tau_i, \text{test}}(\phi_i)
-			.\]
-
-			Expanding
-			the summands by applying the chain rule yields
-
-			\[ \nabla_\theta
-			\mathcal{L}_{\tau_i, \text{test}}(\phi_i) = \nabla_\theta
-			\mathcal{L}_{\tau_i, \text{test}}(U_{\tau_i}(\theta)) = \nabla_{U_{\tau_i}(\theta)} \mathcal{L}_{\tau_i,
-			\text{test}}
-			\nabla_\theta U_{\tau_i}(\theta) .\]
-
-			Here, \( \nabla_{U_{\tau_i}(\theta)} \mathcal{L}_{\tau_i, \text{test}} \) represents the gradient of the
-			loss of task
-			\(\tau_i\) by the optimized parameter \(\phi_i\)
-			and \(\nabla_\theta U_{\tau_i}(\theta)\) is a gradient through an optimization algorithm. Even if we assume
-			that
-			the optimizer takes only one gradient descent step, this term becomes
-
-			\[ \nabla_\theta U_{\tau_i}(\theta) = \nabla_\theta (\theta - \alpha \nabla_\theta
-			\mathcal{L}_{\tau_i, \text{train}}(\theta) )\]
-
-			which is equal to
-
-			\[ I - \alpha \nabla^2_\theta \mathcal{L}_{\tau_i, \text{train}}(\theta). \]
-
-			Hence, MAML requires us to compute second derivatives in order to optimize \(\theta\), which is
-			computationally inefficient, especially
-			in high-dimensional problems (such as learning neural nets).
-		</p>
-		<p>
-			We will now spend some time on introducing the two most prominent solutions to this problem, as well as
-			comparing them to MAML and to each other.
-		</p>
-
-
-
 
 	</dt-article>
 
