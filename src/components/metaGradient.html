@@ -153,10 +153,12 @@
     }
 
     setTimeout(() => {
-      ([maml, fomaml, reptile, imaml]).filter((m, i) => activeMethod[i]).forEach((method, i) => {
-        method.promiseUpdate([t], lossGradients).then(values => {
-          algs[i] = values[0]
-        })
+      ([maml, fomaml, reptile, imaml]).forEach((method, i) => {
+        if (activeMethod[i]) {
+          method.promiseUpdate([t], lossGradients).then(values => {
+            algs[i] = values[0]
+          })
+        }
       })
     }, 0)
   }
