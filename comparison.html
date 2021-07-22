@@ -8,34 +8,54 @@
 </head>
 
 <body>
-	<script async src="https://distill.pub/template.v1.js"></script>
+	<script async src="https://distill.pub/template.v2.js"></script>
 	<script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 
 	<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 	<script defer src="build/bundle.js"></script>
 
-<script type="text/front-matter">
-  title: "An Interactive Introduction to Model-Agnostic Meta-Learning"
-  description: "t.b.d."
-  authors:
-  - Luis Müller: https://github.com/pupuis
-  - Max Ploner:
-  affiliations:
-  - NI @ TU Berlin: https://www.ni.tu-berlin.de/menue/neural_information_processing_group/
-  - NI @ TU Berlin: https://www.ni.tu-berlin.de/menue/neural_information_processing_group/
-</script>
+	<d-front-matter>
 
-	<dt-article>
+		<script type="text/json">
+			{
+				"title": "An Interactive Introduction to Model-Agnostic Meta-Learning",
+				"description": "Exploring the world of model-agnostic meta-learning and its extensions.",
+				"authors": [
+					{
+						"author":"Luis Müller",
+						"authorURL":"https://github.com/pupuis",
+						"affiliations": [
+							{"name": "NI @ TU Berlin", "url": "https://www.ni.tu-berlin.de/menue/neural_information_processing_group/"}
+						]
+					},
+					{
+						"author":"Max Ploner",
+						"authorURL":"https://maxploner.de",
+						"affiliations": [
+							{"name": "NI @ TU Berlin", "url": "https://www.ni.tu-berlin.de/menue/neural_information_processing_group/"},
+							{"name": "ML&nbsp;@&nbsp;HU&nbsp;Berlin", "url": "https://www.informatik.hu-berlin.de/en/forschung-en/gebiete/ml-en"}
+						]
+					}
+				]
+			}
+
+		</script>
+	</d-front-matter>
+
+	<d-title>
 		<h1>An Interactive Introduction to Model-Agnostic Meta-Learning</h1>
-		<h2>Exploring MAML and its extensions.</h2>
+		<h2>Exploring the world of model-agnostic meta-learning and its extensions.</h2>
+	</d-title>
 
-		<dt-byline></dt-byline>
+	<d-byline></d-byline>
 
-    <div class="l-middle side">
-			<div id="menu">
-				<div class="element is-loading" style="height: 400px"></div>
-			</div>
-		</div>
+	<d-article>
+
+		<d-contents>
+			<nav class="toc figcaption" id="menu">
+			</nav>
+			<div class="toc-line"></div>
+		</d-contents>
 
 		<p>
 			<i style="font-size: .8em;">
@@ -46,13 +66,7 @@
 			</i>
 		</p>
 
-
-
-
-
-
-
-		<h3>Comparing the MAML, First-Order Methods and iMAML</h3>
+		<h2>Comparing the MAML, First-Order Methods and iMAML</h2>
 		<p>
 			In order to compare the above methods visually, we return to the \(\textbf{elu}\)-fitting problem from
 			before, see <a href="#metaGradient">this figure</a>. This time, however,
@@ -71,281 +85,29 @@
 			computations via
 			the panel under the figure.
 		</p>
-		<figure class="l-screen-inset">
+
+		<p>
+			<b>Before you jump in:</b> After letting your browser compute a bunch of meta-updates, you may want
+			to cool it off and take a look at our computationally lightweight but not-to-miss
+			<a href="further-reading.html">further reading section</a>. 
+		</p><p>
+			But for now, have fun with comparing the methods you
+			have been studying
+			so tirelessly:
+		</p>
+
+		<figure style="grid-column: 2/14;">
 			<d-figure id="metaGradient">
 				<div class="element is-loading" style="height: 400px"></div>
 			</d-figure>
 		</figure>
 
-	</dt-article>
+	</d-article>
 
-	<dt-appendix>
-	</dt-appendix>
+	<d-appendix>
+		<d-bibliography src="references.bib"></d-bibliography>
+	</d-appendix>
 
-
-	<script type="text/bibliography">
-@misc{finn2017modelagnostic,
-    title={Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks},
-    author={Chelsea Finn and Pieter Abbeel and Sergey Levine},
-    year={2017},
-    eprint={1703.03400},
-    archivePrefix={arXiv},
-    primaryClass={cs.LG},
-		url={https://arxiv.org/abs/1703.03400},
-}
-
-
-@article{lake_one_2011,
-	title = {One shot learning of simple visual concepts},
-	abstract = {People can learn visual concepts from just one example, but it remains a mystery how this is accomplished. Many authors have proposed that transferred knowledge from more familiar concepts is a route to one shot learning, but what is the form of this abstract knowledge? One hypothesis is that the sharing of parts is core to one shot learning, and we evaluate this idea in the domain of handwritten characters, using a massive new dataset. These simple visual concepts have a rich internal part structure, yet they are particularly tractable for computational models. We introduce a generative model of how characters are composed from strokes, where knowledge from previous characters helps to infer the latent strokes in novel characters. The stroke model outperforms a competing stateof-the-art character model on a challenging one shot learning task, and it provides a good ﬁt to human perceptual data.},
-	language = {en},
-	author = {Lake, Brenden M and Salakhutdinov, Ruslan and Gross, Jason and Tenenbaum, Joshua B},
-	year = {2011},
-	url = {https://cims.nyu.edu/~brenden/LakeEtAl2011CogSci.pdf},
-}
-
-
-@article{lake_one-shot_2013,
-	title = {One-shot learning by inverting a compositional causal process},
-	abstract = {People can learn a new visual class from just one example, yet machine learning algorithms typically require hundreds or thousands of examples to tackle the same problems. Here we present a Hierarchical Bayesian model based on compositionality and causality that can learn a wide range of natural (although simple) visual concepts, generalizing in human-like ways from just one image. We evaluated performance on a challenging one-shot classiﬁcation task, where our model achieved a human-level error rate while substantially outperforming two deep learning models. We also tested the model on another conceptual task, generating new examples, by using a “visual Turing test” to show that our model produces human-like performance.},
-	language = {en},
-	author = {Lake, Brenden M and Salakhutdinov, Ruslan},
-	year = {2013},
-	url = {https://cims.nyu.edu/~brenden/LakeEtAlNips2013.pdf}
-}
-
-
-
-@article{koch_siamese_2015,
-	title = {Siamese Neural Networks for One-shot Image Recognition},
-	abstract = {The process of learning good features for machine learning applications can be very computationally expensive and may prove difﬁcult in cases where little data is available. A prototypical example of this is the one-shot learning setting, in which we must correctly make predictions given only a single example of each new class. In this paper, we explore a method for learning siamese neural networks which employ a unique structure to naturally rank similarity between inputs. Once a network has been tuned, we can then capitalize on powerful discriminative features to generalize the predictive power of the network not just to new data, but to entirely new classes from unknown distributions. Using a convolutional architecture, we are able to achieve strong results which exceed those of other deep learning models with near state-of-the-art performance on one-shot classiﬁcation tasks.},
-	language = {en},
-	author = {Koch, Gregory and Zemel, Richard and Salakhutdinov, Ruslan},
-	year = {2015},
-	url = {https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf},
-}
-
-
-@article{vinyals_matching_2017,
-	title = {Matching Networks for One Shot Learning},
-	url = {http://arxiv.org/abs/1606.04080},
-	abstract = {Learning from a few examples remains a key challenge in machine learning. Despite recent advances in important domains such as vision and language, the standard supervised deep learning paradigm does not offer a satisfactory solution for learning new concepts rapidly from little data. In this work, we employ ideas from metric learning based on deep neural features and from recent advances that augment neural networks with external memories. Our framework learns a network that maps a small labelled support set and an unlabelled example to its label, obviating the need for fine-tuning to adapt to new class types. We then define one-shot learning problems on vision (using Omniglot, ImageNet) and language tasks. Our algorithm improves one-shot accuracy on ImageNet from 87.6\% to 93.2\% and from 88.0\% to 93.8\% on Omniglot compared to competing approaches. We also demonstrate the usefulness of the same model on language modeling by introducing a one-shot task on the Penn Treebank.},
-	urldate = {2021-06-12},
-	author = {Vinyals, Oriol and Blundell, Charles and Lillicrap, Timothy and Kavukcuoglu, Koray and Wierstra, Daan},
-	month = dec,
-	year = {2017},
-	note = {arXiv: 1606.04080},
-	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning}
-}
-
-
-@article{santoro_meta-learning_2016,
-	title = {Meta-Learning with Memory-Augmented Neural Networks},
-	abstract = {Despite recent breakthroughs in the applications of deep neural networks, one setting that presents a persistent challenge is that of “one-shot learning.” Traditional gradient-based networks require a lot of data to learn, often through extensive iterative training. When new data is encountered, the models must inefﬁciently relearn their parameters to adequately incorporate the new information without catastrophic interference. Architectures with augmented memory capacities, such as Neural Turing Machines (NTMs), offer the ability to quickly encode and retrieve new information, and hence can potentially obviate the downsides of conventional models. Here, we demonstrate the ability of a memory-augmented neural network to rapidly assimilate new data, and leverage this data to make accurate predictions after only a few samples. We also introduce a new method for accessing an external memory that focuses on memory content, unlike previous methods that additionally use memory locationbased focusing mechanisms.},
-	language = {en},
-	author = {Santoro, Adam and Bartunov, Sergey and Botvinick, Matthew and Wierstra, Daan and Lillicrap, Timothy},
-	year = {2016},
-	url = {https://web.stanford.edu/class/psych209/Readings/Santoro16MetaLearningWithMemAugNNs.pdf},
-}
-
-
-
-@article{andrychowicz_learning_2016,
-	title = {Learning to learn by gradient descent by gradient descent},
-	url = {http://arxiv.org/abs/1606.04474},
-	abstract = {The move from hand-designed features to learned features in machine learning has been wildly successful. In spite of this, optimization algorithms are still designed by hand. In this paper we show how the design of an optimization algorithm can be cast as a learning problem, allowing the algorithm to learn to exploit structure in the problems of interest in an automatic way. Our learned algorithms, implemented by LSTMs, outperform generic, hand-designed competitors on the tasks for which they are trained, and also generalize well to new tasks with similar structure. We demonstrate this on a number of tasks, including simple convex problems, training neural networks, and styling images with neural art.},
-	urldate = {2021-06-12},
-	author = {Andrychowicz, Marcin and Denil, Misha and Gomez, Sergio and Hoffman, Matthew W. and Pfau, David and Schaul, Tom and Shillingford, Brendan and de Freitas, Nando},
-	month = nov,
-	year = {2016},
-	note = {arXiv: 1606.04474},
-	keywords = {Computer Science - Machine Learning, Computer Science - Neural and Evolutionary Computing},
-}
-
-
-
-@article{snell_prototypical_2017,
-	title = {Prototypical Networks for Few-shot Learning},
-	url = {http://arxiv.org/abs/1703.05175},
-	abstract = {We propose prototypical networks for the problem of few-shot classiﬁcation, where a classiﬁer must generalize to new classes not seen in the training set, given only a small number of examples of each new class. Prototypical networks learn a metric space in which classiﬁcation can be performed by computing distances to prototype representations of each class. Compared to recent approaches for few-shot learning, they reﬂect a simpler inductive bias that is beneﬁcial in this limited-data regime, and achieve excellent results. We provide an analysis showing that some simple design decisions can yield substantial improvements over recent approaches involving complicated architectural choices and meta-learning. We further extend prototypical networks to zero-shot learning and achieve state-of-theart results on the CU-Birds dataset.},
-	language = {en},
-	urldate = {2021-06-11},
-	author = {Snell, Jake and Swersky, Kevin and Zemel, Richard S.},
-	month = jun,
-	year = {2017},
-	note = {arXiv: 1703.05175},
-	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning},
-}
-
-
-
-@article{munkhdalai_meta_2017,
-	title = {Meta Networks},
-	url = {http://arxiv.org/abs/1703.00837},
-	abstract = {Neural networks have been successfully applied in applications with a large amount of labeled data. However, the task of rapid generalization on new concepts with small training data while preserving performances on previously learned ones still presents a significant challenge to neural network models. In this work, we introduce a novel meta learning method, Meta Networks (MetaNet), that learns a meta-level knowledge across tasks and shifts its inductive biases via fast parameterization for rapid generalization. When evaluated on Omniglot and Mini-ImageNet benchmarks, our MetaNet models achieve a near human-level performance and outperform the baseline approaches by up to 6\% accuracy. We demonstrate several appealing properties of MetaNet relating to generalization and continual learning.},
-	urldate = {2021-06-12},
-	author = {Munkhdalai, Tsendsuren and Yu, Hong},
-	month = jun,
-	year = {2017},
-	note = {arXiv: 1703.00837},
-	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning},
-	annote = {Comment: Accepted at ICML 2017 - rewrote: the main section; added: MetaNet algorithmic procedure; performed: Mini-ImageNet evaluation},
-}
-
-
-
-
-@article{andrychowicz_learning_2016,
-	title = {Learning to learn by gradient descent by gradient descent},
-	url = {http://arxiv.org/abs/1606.04474},
-	abstract = {The move from hand-designed features to learned features in machine learning has been wildly successful. In spite of this, optimization algorithms are still designed by hand. In this paper we show how the design of an optimization algorithm can be cast as a learning problem, allowing the algorithm to learn to exploit structure in the problems of interest in an automatic way. Our learned algorithms, implemented by LSTMs, outperform generic, hand-designed competitors on the tasks for which they are trained, and also generalize well to new tasks with similar structure. We demonstrate this on a number of tasks, including simple convex problems, training neural networks, and styling images with neural art.},
-	urldate = {2021-06-12},
-	journal = {arXiv:1606.04474 [cs]},
-	author = {Andrychowicz, Marcin and Denil, Misha and Gomez, Sergio and Hoffman, Matthew W. and Pfau, David and Schaul, Tom and Shillingford, Brendan and de Freitas, Nando},
-	month = nov,
-	year = {2016},
-	note = {arXiv: 1606.04474},
-	keywords = {Computer Science - Machine Learning, Computer Science - Neural and Evolutionary Computing}
-}
-
-
-@article{rajeswaran_meta-learning_2019,
-	title = {Meta-Learning with Implicit Gradients},
-	url = {http://arxiv.org/abs/1909.04630},
-	abstract = {A core capability of intelligent systems is the ability to quickly learn new tasks by drawing on prior experience. Gradient (or optimization) based meta-learning has recently emerged as an effective approach for few-shot learning. In this formulation, meta-parameters are learned in the outer loop, while task-specific models are learned in the inner-loop, by using only a small amount of data from the current task. A key challenge in scaling these approaches is the need to differentiate through the inner loop learning process, which can impose considerable computational and memory burdens. By drawing upon implicit differentiation, we develop the implicit MAML algorithm, which depends only on the solution to the inner level optimization and not the path taken by the inner loop optimizer. This effectively decouples the meta-gradient computation from the choice of inner loop optimizer. As a result, our approach is agnostic to the choice of inner loop optimizer and can gracefully handle many gradient steps without vanishing gradients or memory constraints. Theoretically, we prove that implicit MAML can compute accurate meta-gradients with a memory footprint that is, up to small constant factors, no more than that which is required to compute a single inner loop gradient and at no overall increase in the total computational cost. Experimentally, we show that these benefits of implicit MAML translate into empirical gains on few-shot image recognition benchmarks.},
-	urldate = {2021-04-30},
-	journal = {arXiv:1909.04630 [cs, math, stat]},
-	author = {Rajeswaran, Aravind and Finn, Chelsea and Kakade, Sham and Levine, Sergey},
-	month = sep,
-	year = {2019},
-	note = {arXiv: 1909.04630},
-	keywords = {Computer Science - Artificial Intelligence, Computer Science - Machine Learning, Statistics - Machine Learning, Mathematics - Optimization and Control},
-}
-
-@article{grant_recasting_2018,
-	title = {Recasting Gradient-Based Meta-Learning as Hierarchical Bayes},
-	url = {http://arxiv.org/abs/1801.08930},
-	abstract = {Meta-learning allows an intelligent agent to leverage prior learning episodes as a basis for quickly improving performance on a novel task. Bayesian hierarchical modeling provides a theoretical framework for formalizing meta-learning as inference for a set of parameters that are shared across tasks. Here, we reformulate the model-agnostic meta-learning algorithm (MAML) of Finn et al. (2017) as a method for probabilistic inference in a hierarchical Bayesian model. In contrast to prior methods for meta-learning via hierarchical Bayes, MAML is naturally applicable to complex function approximators through its use of a scalable gradient descent procedure for posterior inference. Furthermore, the identification of MAML as hierarchical Bayes provides a way to understand the algorithm's operation as a meta-learning procedure, as well as an opportunity to make use of computational strategies for efficient inference. We use this opportunity to propose an improvement to the MAML algorithm that makes use of techniques from approximate inference and curvature estimation.},
-	urldate = {2021-06-30},
-	journal = {arXiv:1801.08930 [cs]},
-	author = {Grant, Erin and Finn, Chelsea and Levine, Sergey and Darrell, Trevor and Griffiths, Thomas},
-	month = jan,
-	year = {2018},
-	note = {arXiv: 1801.08930},
-	keywords = {Computer Science - Machine Learning},
-}
-
-
-@article{blondel_efficient_2021,
-	title = {Efficient and Modular Implicit Differentiation},
-	url = {http://arxiv.org/abs/2105.15183},
-	abstract = {Automatic differentiation (autodiff) has revolutionized machine learning. It allows expressing complex computations by composing elementary ones in creative ways and removes the burden of computing their derivatives by hand. More recently, differentiation of optimization problem solutions has attracted widespread attention with applications such as optimization as a layer, and in bi-level problems such as hyper-parameter optimization and meta-learning. However, the formulas for these derivatives often involve case-by-case tedious mathematical derivations. In this paper, we propose a uniﬁed, efﬁcient and modular approach for implicit differentiation of optimization problems. In our approach, the user deﬁnes (in Python in the case of our implementation) a function F capturing the optimality conditions of the problem to be differentiated. Once this is done, we leverage autodiff of F and implicit differentiation to automatically differentiate the optimization problem. Our approach thus combines the beneﬁts of implicit differentiation and autodiff. It is efﬁcient as it can be added on top of any state-of-the-art solver and modular as the optimality condition speciﬁcation is decoupled from the implicit differentiation mechanism. We show that seemingly simple principles allow to recover many recently proposed implicit differentiation methods and create new ones easily. We demonstrate the ease of formulating and solving bi-level optimization problems using our framework. We also showcase an application to the sensitivity analysis of molecular dynamics.},
-	language = {en},
-	urldate = {2021-07-03},
-	journal = {arXiv:2105.15183 [cs, math, stat]},
-	author = {Blondel, Mathieu and Berthet, Quentin and Cuturi, Marco and Frostig, Roy and Hoyer, Stephan and Llinares-López, Felipe and Pedregosa, Fabian and Vert, Jean-Philippe},
-	month = may,
-	year = {2021},
-	note = {arXiv: 2105.15183},
-	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning, Mathematics - Numerical Analysis},
-}
-
-@article{finn_probabilistic_2019,
-	title = {Probabilistic Model-Agnostic Meta-Learning},
-	url = {http://arxiv.org/abs/1806.02817},
-	abstract = {Meta-learning for few-shot learning entails acquiring a prior over previous tasks and experiences, such that new tasks be learned from small amounts of data. However, a critical challenge in few-shot learning is task ambiguity: even when a powerful prior can be meta-learned from a large number of prior tasks, a small dataset for a new task can simply be too ambiguous to acquire a single model (e.g., a classifier) for that task that is accurate. In this paper, we propose a probabilistic meta-learning algorithm that can sample models for a new task from a model distribution. Our approach extends model-agnostic meta-learning, which adapts to new tasks via gradient descent, to incorporate a parameter distribution that is trained via a variational lower bound. At meta-test time, our algorithm adapts via a simple procedure that injects noise into gradient descent, and at meta-training time, the model is trained such that this stochastic adaptation procedure produces samples from the approximate model posterior. Our experimental results show that our method can sample plausible classifiers and regressors in ambiguous few-shot learning problems. We also show how reasoning about ambiguity can also be used for downstream active learning problems.},
-	urldate = {2021-04-30},
-	journal = {arXiv:1806.02817 [cs, stat]},
-	author = {Finn, Chelsea and Xu, Kelvin and Levine, Sergey},
-	month = oct,
-	year = {2019},
-	note = {arXiv: 1806.02817
-version: 2},
-	keywords = {Computer Science - Artificial Intelligence, Computer Science - Machine Learning, Statistics - Machine Learning},
-	annote = {Comment: NeurIPS 2018. First two authors contributed equally. Supplementary results available at https://sites.google.com/view/probabilistic-maml/},
-}
-
-
-
-@misc{lake_omniglot_2015,
-	title = {Omniglot data set for one-shot learning},
-	url = {https://github.com/brendenlake/omniglot},
-	abstract = {The Omniglot data set is designed for developing more human-like learning algorithms. It contains 1623 different handwritten characters from 50 different alphabets. Each of the 1623 characters was drawn online via Amazon's Mechanical Turk by 20 different people. Each image is paired with stroke data, a sequences of [x,y,t] coordinates with time (t) in milliseconds.},
-	urldate = {2021-07-07},
-	journal = {Omniglot data set for one-shot learning},
-	author = {Lake, Brenden M and Salakhutdinov, Ruslan and Tenenbaum, Joshua B},
-	month = oct,
-	year = {2015},
-}
-
-@misc{liu_tools_2019,
-	title = {Tools for mini-ImageNet Dataset},
-	journal = {Tools for mini-ImageNet Dataset},
-	author = {Liu, Yaoyao},
-	month = jan,
-	year = {2019},
-	url = {https://github.com/yaoyao-liu/mini-imagenet-tools}
-}
-
-
-@article{glorot_deep_nodate,
-	title = {Deep {Sparse} {Rectiﬁer} {Neural} {Networks}},
-	abstract = {While logistic sigmoid neurons are more biologically plausible than hyperbolic tangent neurons, the latter work better for training multi-layer neural networks. This paper shows that rectifying neurons are an even better model of biological neurons and yield equal or better performance than hyperbolic tangent networks in spite of the hard non-linearity and non-diﬀerentiability at zero, creating sparse representations with true zeros, which seem remarkably suitable for naturally sparse data. Even though they can take advantage of semi-supervised setups with extra-unlabeled data, deep rectiﬁer networks can reach their best performance without requiring any unsupervised pre-training on purely supervised tasks with large labeled datasets. Hence, these results can be seen as a new milestone in the attempts at understanding the diﬃculty in training deep but purely supervised neural networks, and closing the performance gap between neural networks learnt with and without unsupervised pre-training.},
-	language = {en},
-	author = {Glorot, Xavier and Bordes, Antoine and Bengio, Yoshua},
-	pages = {9},
-	file = {Glorot et al. - Deep Sparse Rectiﬁer Neural Networks.pdf:/home/luis/Zotero/storage/IF9UR5S4/Glorot et al. - Deep Sparse Rectiﬁer Neural Networks.pdf:application/pdf},
-}
-
-@article{sagun_eigenvalues_2017,
-	title = {Eigenvalues of the {Hessian} in {Deep} {Learning}: {Singularity} and {Beyond}},
-	shorttitle = {Eigenvalues of the {Hessian} in {Deep} {Learning}},
-	url = {http://arxiv.org/abs/1611.07476},
-	abstract = {We look at the eigenvalues of the Hessian of a loss function before and after training. The eigenvalue distribution is seen to be composed of two parts, the bulk which is concentrated around zero, and the edges which are scattered away from zero. We present empirical evidence for the bulk indicating how overparametrized the system is, and for the edges that depend on the input data.},
-	language = {en},
-	urldate = {2021-07-12},
-	journal = {arXiv:1611.07476 [cs]},
-	author = {Sagun, Levent and Bottou, Leon and LeCun, Yann},
-	month = oct,
-	year = {2017},
-	note = {arXiv: 1611.07476},
-	keywords = {Computer Science - Machine Learning},
-	annote = {Comment: ICLR submission, 2016 - updated to match the openreview.net version},
-	file = {Sagun et al. - 2017 - Eigenvalues of the Hessian in Deep Learning Singu.pdf:/home/luis/Zotero/storage/MZ5AFFIZ/Sagun et al. - 2017 - Eigenvalues of the Hessian in Deep Learning Singu.pdf:application/pdf},
-}
-
-@article{park_meta-curvature_2020,
-	title = {Meta-{Curvature}},
-	url = {http://arxiv.org/abs/1902.03356},
-	abstract = {We propose meta-curvature (MC), a framework to learn curvature information for better generalization and fast model adaptation. MC expands on the modelagnostic meta-learner (MAML) by learning to transform the gradients in the inner optimization such that the transformed gradients achieve better generalization performance to a new task. For training large scale neural networks, we decompose the curvature matrix into smaller matrices in a novel scheme where we capture the dependencies of the model’s parameters with a series of tensor products. We demonstrate the effects of our proposed method on several few-shot learning tasks and datasets. Without any task speciﬁc techniques and architectures, the proposed method achieves substantial improvement upon previous MAML variants and outperforms the recent state-of-the-art methods. Furthermore, we observe faster convergence rates of the meta-training process. Finally, we present an analysis that explains better generalization performance with the meta-trained curvature.},
-	language = {en},
-	urldate = {2021-07-12},
-	journal = {arXiv:1902.03356 [cs, stat]},
-	author = {Park, Eunbyung and Oliva, Junier B.},
-	month = jan,
-	year = {2020},
-	note = {arXiv: 1902.03356},
-	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning},
-	annote = {Comment: To appear in NeurIPS 2019},
-	file = {Park and Oliva - 2020 - Meta-Curvature.pdf:/home/luis/Zotero/storage/ZGIXZNK4/Park and Oliva - 2020 - Meta-Curvature.pdf:application/pdf},
-}
-
-@article{nichol_first-order_2018,
-	title = {On {First}-{Order} {Meta}-{Learning} {Algorithms}},
-	url = {http://arxiv.org/abs/1803.02999},
-	abstract = {This paper considers meta-learning problems, where there is a distribution of tasks, and we would like to obtain an agent that performs well (i.e., learns quickly) when presented with a previously unseen task sampled from this distribution. We analyze a family of algorithms for learning a parameter initialization that can be ﬁne-tuned quickly on a new task, using only ﬁrstorder derivatives for the meta-learning updates. This family includes and generalizes ﬁrst-order MAML, an approximation to MAML obtained by ignoring second-order derivatives. It also includes Reptile, a new algorithm that we introduce here, which works by repeatedly sampling a task, training on it, and moving the initialization towards the trained weights on that task. We expand on the results from Finn et al. showing that ﬁrst-order meta-learning algorithms perform well on some well-established benchmarks for few-shot classiﬁcation, and we provide theoretical analysis aimed at understanding why these algorithms work.},
-	language = {en},
-	urldate = {2021-07-12},
-	journal = {arXiv:1803.02999 [cs]},
-	author = {Nichol, Alex and Achiam, Joshua and Schulman, John},
-	month = oct,
-	year = {2018},
-	note = {arXiv: 1803.02999},
-	keywords = {Computer Science - Machine Learning},
-	file = {Nichol et al. - 2018 - On First-Order Meta-Learning Algorithms.pdf:/home/luis/Zotero/storage/L8HLWK9P/Nichol et al. - 2018 - On First-Order Meta-Learning Algorithms.pdf:application/pdf},
-}
-
-</script>
 </body>
 
 </html>
