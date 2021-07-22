@@ -86,21 +86,45 @@
 			the panel under the figure.
 		</p>
 
-		<p>
-			<b>Before you jump in:</b> After letting your browser compute a bunch of meta-updates, you may want
-			to cool it off and take a look at our computationally lightweight but not-to-miss
-			<a href="further-reading.html">further reading section</a>. 
-		</p><p>
-			But for now, have fun with comparing the methods you
-			have been studying
-			so tirelessly:
-		</p>
-
 		<figure style="grid-column: 2/14;">
 			<d-figure id="metaGradient">
 				<div class="element is-loading" style="height: 400px"></div>
 			</d-figure>
 		</figure>
+
+		<h2>Conclusion</h2>
+		<p>
+			In this multi-part series on Model-Agnostic Meta-Learning (MAML) we have studied an optimization-based
+			approach to
+			solve few-shot learning
+			problems, where we expose a learner with only a few samples on a task and hope to somehow converge to a nice
+			solution.
+			MAML builds up a model of the world from studying other tasks and thereby finding an initialization for
+			which only
+			a few gradient descent steps are enough to learn a new task. As long as we can differentiate through the
+			optimizer we
+			use for the tasks (also called the inner optimizer), MAML can be applied to all architectures and learning
+			schemes, making it
+			a versatile tool for few-shot learning. However, we also studied the computational overhead that comes with
+			such a differentiation
+			and thus extensions to MAML are needed which bypass the terms of the meta-gradient which are costly to
+			obtain. While FOMAML simply drops these terms from the meta-gradient, Reptile abandons the computation of
+			a meta-gradient altogether and computes a moving average of optimal task parameters instead. In contrast
+			iMAML creates
+			a dependency between initial parameters and loss space and therefore allows us to compute the meta-gradient
+			without differentiating
+			through the inner optimizer.
+		</p>
+		<p>
+			<b>Before you leave:</b> After letting your browser compute a bunch of meta-updates, you may want
+			to cool it off and take a look at our computationally lightweight but not-to-miss
+			<a href="further-reading.html">further reading section</a>. As you will see, MAML has sparked a plethora of
+			research on optimization-based meta-learning with many interesting approaches.
+		</p>
+		<p>
+			Consider leaving feedback or suggestions or simply get in contact with us, either via <a href="">github</a> or via e-mail at
+			<a href="mailto:maml@maxploner.com">maml@maxploner.com</a>.
+		</p>
 
 	</d-article>
 
