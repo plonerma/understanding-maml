@@ -195,19 +195,9 @@
 			we are interested in parameters \(a, b\)
 			and the task requires the prediction of
 
-			\[g(x) = \textbf{elu}(ax + b),\]
+			\[g(x) = \xi(ax + b),\]
 
-			where \(\textbf{elu}\) is the <i>Exponential Linear Unit</i>, which is usually employed as an activation
-			function in neural nets, but serves
-			us here to make the resulting loss spaces a bit more funky. For reference, this is how the \(\textbf{elu}\)
-			is
-			defined:
-
-			\[ \textbf{elu} = \begin{cases}
-			x & \, x >= 0 \\
-			\alpha (\exp(x) - 1) & \, \text{otherwise}.
-			\end{cases}
-			\]
+			where \(\xi\) is a non-linearity we applied to make the resulting loss spaces a bit more interesting. 
 		</p>
 		<figure>
 			<d-figure id="twoLossSpaces"></d-figure>

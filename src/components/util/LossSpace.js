@@ -66,7 +66,7 @@ export class Random2DLinearRegressionLossSpace {
 
         var x = tf.randomUniform([N], -3, 3)
         var z = tf.stack([x, tf.ones([N])])
-        var y = tf.dot(this.trueParameters, z).elu()
+        var y = tf.dot(this.trueParameters, z).softplus()
 
         x.print()
 
