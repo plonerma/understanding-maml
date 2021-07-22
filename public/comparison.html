@@ -68,19 +68,19 @@
 
 		<h2>Comparing the MAML, First-Order Methods and iMAML</h2>
 		<p>
-			In order to compare the above methods visually, we return to the \(\textbf{elu}\)-fitting problem from
-			before, see <a href="#metaGradient">this figure</a>. This time, however,
-			in addition to the task gradient descent directions \(\phi_0\) and \(\phi_1\), we will also plot a single
-			update direction of MAML, FOMAML and Reptile.
-			Furthermore, you can now also see the <i>combined loss space</i> of the two tasks, such that you can verify
-			whether the methods actually would converge
-			to the local optimum. The combined loss space is defined via the meta loss of the two tasks, i.e.
+			In order to compare the above methods visually, we return to the non-linearized-line-fitting problem from
+			before, see <a href="#metaGradient">this figure</a>. This time, however, we will plot a single
+			update direction of MAML, FOMAML, Reptile and iMAML on the <i>combined loss space</i> of the two tasks, such that you can verify
+			whether the methods point into reasonable directions (i.e. towards
+			to the local optimum). 
+			
+			The combined loss space is defined via the meta loss of the two tasks, i.e.
 
 			\[\mathcal{L}(\theta) := \sum_{i \in \{0, 1\}}
 			\mathcal{L}_{\tau_i, \text{test}}(\phi_i).\]
 
 			A word of warning: The update directions are computed on actual data and with the actual algorithms, running
-			in you browser on <a href="https://www.tensorflow.org/js">tensorflow.js</a>.
+			in your browser on <a href="https://www.tensorflow.org/js">tensorflow.js</a>.
 			If you are experiencing delays on the vector update when moving \(\theta\) you can disable some of the
 			computations via
 			the panel under the figure.
