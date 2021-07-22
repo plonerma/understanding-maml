@@ -52,9 +52,9 @@
 
 	<d-article>
 		<d-contents>
-		  <nav class="toc figcaption" id="menu">
-		  </nav>
-		  <div class="toc-line"></div>
+			<nav class="toc figcaption" id="menu">
+			</nav>
+			<div class="toc-line"></div>
 		</d-contents>
 
 		<p>
@@ -71,7 +71,8 @@
 
 
 		<h2 id="few_shot_maml">Few-shot learning with MAML</h2>
-		<p>Model-Agnostic Meta Learning (MAML) is a meta-learning approach to solve few-shot learning <d-cite bibtex-key="finn2017modelagnostic"></d-cite>.
+		<p>Model-Agnostic Meta Learning (MAML) is a meta-learning approach to solve few-shot learning <d-cite
+				bibtex-key="finn2017modelagnostic"></d-cite>.
 			To learn more about it, let us build an example from the ground up and then try to apply MAML.
 			We will do this by alternating mathematical walk-throughs and interactive, as well as, coding examples.
 		</p>
@@ -97,7 +98,8 @@
 			controlling the size of the steps we want to take.
 		</p>
 		<p>Unfortunately, when framing this in a few-shot setting (i.e., with a very small dataset), the above method is
-			known to perform poorly on e.g. neural networks, since there is simply too little data for too many parameters. A key insight to MAML is now to
+			known to perform poorly on e.g. neural networks, since there is simply too little data for too many
+			parameters. A key insight to MAML is now to
 			bypass this problem by learning not only from the data regarding exactly our task, but to learn also from
 			data of similar tasks.
 			To incorporate this we make an additional assumption, namely that \(\tau\) comes from some distribution of
@@ -324,11 +326,16 @@
 			despite being exposed to at most 5 samples.
 		</p>
 		<p>
-			The rest of this article is dedicated to introducing interesting extensions of MAML, making the method
-			either more robust or more efficient.
-			If you are interested in the former, <a href="#section_imaml">jump to iMAML</a>. If you are more interested
-			in the latter, the following section sheds
-			a light on the computational (in-)efficiency of MAML and what possible solutions to that problem are.
+			The rest of this article is dedicated to introducing interesting extensions of MAML. The <a
+				href="first-order.html">next page</a>
+			starts with a general discussion about the difficulty of obtaining the MAML-meta-gradient, which leads
+			directly to <a href="first-order.html#section_fomaml">FOMAML</a>, a simple
+			first-order version of MAML. A slightly different first-order approach, but still in the spirit of MAML, is
+			<a href="reptile.html">Reptile</a>,
+			which obtains meta-knowledge without an explicit meta-gradient.
+
+			Lastly, <a href="imaml.html">iMAML</a> approximates the meta-update by creating a dependency between task-loss and meta-parameter \(\theta\) and 
+			thereby bypasses some of the computationally more expensive parts of the original MAML.
 		</p>
 
 	</d-article>

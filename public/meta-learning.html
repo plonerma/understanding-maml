@@ -73,10 +73,10 @@
 			In the following figure you can find a selection of meta-learning methods
 			that tackle
 			few-shot
-			learning, their performance on <i>omniglot</i> as well as your own accuracy score from exercise above.
+			learning, their performance on <i>omniglot</i> as well as your own accuracy score from the starting page.
 			Model-Agnostic Meta-Learning (short: "MAML", marked in <span style="color: #d62728">red</span>)
 			is the only one among the above methods that falls under the category of
-			<i>optimization-based meta-learning</i>, which will be our main interest in the rest of the article.
+			<i>optimization-based meta-learning</i> and it will be our main interest in the rest of the article.
 		</p>
 
 		<figure>
@@ -147,14 +147,12 @@
 
 
 		<p>
-			Before we get started with the explanation of how MAML works,
-			we want to take a moment to look at what is Model-Agnostic about MAML.
-			In order to understand, why this method is called "model-agnostic", we need
-			to look at how the few-shot problem was tackled by other approaches.
-			While there are methods, which try to mitigate the issues introduced by the
-			the few-shot constraint, many do resort to adopting the meta-learning
-			assumption. These methods can broadly be divided into two classes:
-			metric-based and model-based approaches.
+			In this section we will find out why MAML is "model-agnostic" and thereby gain a bit more of an overview over the 
+			meta-learning field.
+			We start by taking a look at how few-shot problems are tackeled by other meta-learning approaches.
+			As opposed to the optimization-based MAML, these methods force constraints on either the samples or the meta-learning architecture 
+			and can thus separated into
+			metric-based and model-based approaches respectively.
 		</p>
 
 
@@ -174,20 +172,22 @@
 
 
 
-
+		<h4>Metric-based approaches</h4>
 		<p>
 			The core idea of metric-based approaches is to compare two samples in a
 			latent (metric) space: In this space, samples of the same class are supposed
-			to be close to each other, while two samplese from different classes are
+			to be close to each other, while two samples from different classes are
 			supposed to have a large distance (the notion of a distance is what makes
 			the latent space a metric space).
 			<d-cite bibtex-key="snell_prototypical_2017"></d-cite>
 			<d-cite bibtex-key="koch_siamese_2015"></d-cite>
 			<d-cite bibtex-key="vinyals_matching_2017"></d-cite>
 		</p>
+
+		<h4>Model-based approaches</h4>
 		<p>
 			Model-based approaches are neural architectures which are deliberately designed
-			for fast adaption to new tasks without inclining to overfit.
+			for fast adaption to new tasks without an inclination to overfit.
 			Memory-Augmented Neural Networks and MetaNet are two examples. Both employ
 			an external memory while still maintaining the ability to be trained
 			end-to-end.
@@ -195,21 +195,22 @@
 			<d-cite bibtex-key="munkhdalai_meta_2017"></d-cite>
 		</p>
 
+		<h4>optimization-based approach (MAML)</h4>
 		<p>
 			MAML goes a different route: The neural network is designed the same way
 			your usual model might be (in the many-shot case). All the magic happens during the
-			optimization. Hence, it is called "optimization-based".
-			Unlike, metric-based and model-based approaches, MAML lets
-			you choose the model architecture as you like.
-			This has the great benefit of being applicable can not only for
-			classical supervised learning classification tasks but can also
-			for reinforcement learning.
-			<d-cite bibtex-key="finn2017modelagnostic"></d-cite>
+			optimization, which is what makes it "optimization-based".
+			As a consequence, unlike metric-based and model-based approaches, MAML lets
+			you choose the model architecture freely.
+			This has the great benefit of being applicable not only to
+			conventional supervised learning classification tasks but also
+			to reinforcement learning
+			<d-cite bibtex-key="finn2017modelagnostic"></d-cite>.
 		</p>
 		<p>
-			Go to <a href="maml.html">the next part</a>, to learn how this is achieved
-			or jump <a href="#menu">menu at the top</a> to navigate to the parts your
-			are most interested in.
+			In the <a href="maml.html">the next section</a> we will take a close look at MAML and study the math behind the method.
+			Furthermore, you will get the chance to explore a simple few-shot learning problem and find out first hand why a meta-learning 
+			approach is needed to solve it. All of that within your browser!
 		</p>
 
 	</d-article>
