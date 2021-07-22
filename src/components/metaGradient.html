@@ -1,62 +1,21 @@
-<!--<div>
-  {#each tasks as task, i}
-  <input type="radio" bind:group={selected_task} value={i} id={`loss_${i+1}`}>
-  <label for={`loss_${i+1}`}>
-    {i+1}
-  </label>
-  {/each}
-</div> -->
-
-<!--
-<Chart width=600 height=400>
-  <Axis>
-    {#each tasks as loss, i}
-    <ContourPlot lossFunc={loss} logScale={false} opacity={i==selected_task ? 1 : 0} />
-    {/each}
-
-    {#each tasks as loss, i}
-    <ContourPlot lossFunc={loss} logScale={false} opacity={i==selected_task ? 1 : 0} />
-    {/each}
-
-    {#each updates as phi, i}
-    <Arrow origin={theta} target={phi} trimStart=0 trimEnd=0.01 stroke-width="2" />
-    {/each}
-
-    <VariableHandleWithReference bind:position={theta} value="\theta" offset={[0, -15]} referencePoint={null} />
-
-    {#each updates as phi, i}
-    <VariableHandleWithReference bind:position={phi} value={`\\phi_{${i}}`} offset={[0, -15]} referencePoint={theta} />
-    {/each}
-
-    {#each algos as alg, i}
-    <Arrow origin={theta} target={alg} trimStart=0 trimEnd=0.01 stroke-width="2" />
-    {/each}
-
-    {#each algos as alg, i}
-    <VariableHandleWithReference bind:position={alg} value={`A_{${i}}`} offset={[0, -15]} referencePoint={theta}/>
-    {/each}
-
-  </Axis>
-</Chart>
--->
-
 <div class="columns">
   <div class="column">
     <div class="columns is-multiline">
       {#each algs as alg, i}
-      <div class="column is-half">
+      <div style="opacity: {activeMethod[i] ? 1.0 : 0.3};" class="column is-half">
         <div style="text-align: center;">{algNames[i]}</div>
         <Chart width=400 height=400>
           <Axis>
             <ContourPlot lossFunc={tasks[0]} logScale={false} />
 
-            <VariableHandleWithReference bind:position={theta} value="\theta" offset={[0, -15]} referencePoint={null} />
-
+            {#if activeMethod[i]}
             <Arrow origin={theta} target={alg} trimStart=0 trimEnd=0.01 stroke="#fff" fill="#fff" stroke-width="2" />
+
+            <VariableHandleWithReference bind:position={theta} value="\theta" offset={[0, -15]} referencePoint={null} />
 
             <VariableHandleWithReference bind:position={alg} value={`U(\\theta)`} offset={[0, -15]}
               referencePoint={theta} />
-
+            {/if}
           </Axis>
         </Chart>
 
@@ -66,26 +25,46 @@
   </div>
   <div class="column is-one-third">
     <CollapsibleCard title="MAML" bind:group={shownSettings}>
-      <Slider min="0" max="10" label="Outer Learning Rate" />
-      <Slider min="0" max="10" label="Inner Learning Rate" />
+      <Slider min="0" max="30" label="Outer Learning Rate" bind:value="{mamlOuter}" output={mamlOuter / outerSteps} />
+      <Slider min="0" max="20" label="Inner Learning Rate" bind:value="{mamlInner}" output={mamlInner / innerSteps} />
+      <Slider min="1" max="10" label="Inner Steps" bind:value="{mamlSteps}" output="{mamlSteps}" />
+      <input type="checkbox" name="mamlactive" bind:checked="{mamlActive}">
+      <label class="checkboxfield" for="mamlactive">Active</label>
     </CollapsibleCard>
     <CollapsibleCard title="FOMAML" bind:group={shownSettings}>
-      <Slider min="0" max="10" label="Outer Learning Rate" />
-      <Slider min="0" max="10" label="Inner Learning Rate" />
+      <Slider min="0" max="10" label="Outer Learning Rate" bind:value="{fomamlOuter}" output={fomamlOuter /
+        outerSteps} />
+      <Slider min="0" max="20" label="Inner Learning Rate" bind:value="{fomamlInner}" output={fomamlInner /
+        innerSteps} />
+      <Slider min="1" max="10" label="Inner Steps" bind:value="{fomamlSteps}" output="{fomamlSteps}" />
+      <input type="checkbox" name="fomamlactive" bind:checked="{fomamlActive}">
+      <label class="checkboxfield" for="fomamlactive">Active</label>
     </CollapsibleCard>
     <CollapsibleCard title="REPTILE" bind:group={shownSettings}>
-      <Slider min="0" max="10" label="Interpolation Rate" />
-      <Slider min="0" max="10" label="Inner Learning Rate" />
-      <Slider min="0" max="10" label="Inner Steps" />
+      <Slider min="0" max="10" label="Interpolation Rate" bind:value="{reptileOuter}" output={reptileOuter /
+        outerSteps} />
+      <Slider min="0" max="20" label="Inner Learning Rate" bind:value="{reptileInner}" output={reptileInner /
+        innerSteps} />
+      <Slider min="1" max="10" label="Inner Steps" bind:value="{reptileSteps}" output="{reptileSteps}" />
+      <input type="checkbox" name="reptileactive" bind:checked="{reptileActive}">
+      <label class="checkboxfield" for="reptileactive">Active</label>
     </CollapsibleCard>
     <CollapsibleCard title="iMAML" bind:group={shownSettings}>
-      <Slider min="0" max="10" label="Outer Learning Rate" />
-      <Slider min="0" max="10" label="Inner Learning Rate" />
-      <Slider min="0" max="10" label="Inner Steps" />
-      <Slider min="0" max="10" label="Regularization Coeffiecient" />
+      <Slider min="0" max="10" label="Outer Learning Rate" bind:value="{imamlOuter}" output={imamlOuter / outerSteps} />
+      <Slider min="0" max="20" label="Inner Learning Rate" bind:value="{imamlInner}" output={imamlInner / innerSteps} />
+      <Slider min="1" max="10" label="Inner Steps" bind:value="{imamlSteps}" output="{imamlSteps}" />
+      <Slider min="0" max="10" label="Regularization Coeffiecient"/>
+      <input type="checkbox" name="imamlactive" bind:checked="{imamlActive}">
+      <label class="checkboxfield" for="imamlactive">Active</label>
     </CollapsibleCard>
   </div>
 </div>
+
+<style>
+  .checkboxfield {
+    font-size: .7em;
+  }
+</style>
 
 
 <script>
@@ -115,18 +94,31 @@
 
   let shownSettings = null
 
-  let reptileOuter = eta,
-    reptileInner = lr,
+  let activeMethod = [true, false, false, false]
+
+  let outerSteps = 100,
+    innerSteps = 100
+
+  let reptileOuter = eta * outerSteps,
+    reptileInner = lr * innerSteps,
     reptileSteps = 5,
-    fomamlOuter = beta,
-    fomamlInner = lr,
+    fomamlOuter = beta * outerSteps,
+    fomamlInner = lr * innerSteps,
     fomamlSteps = 1,
-    mamlOuter = beta,
-    mamlInner = lr,
+    mamlOuter = beta * outerSteps,
+    mamlInner = lr * innerSteps,
     mamlSteps = 1,
-    imamlOuter = beta,
-    imamlInner = lr,
-    imamlSteps = 5
+    imamlOuter = beta * outerSteps,
+    imamlInner = lr * innerSteps,
+    imamlSteps = 5,
+
+    mamlActive = true,
+    fomamlActive,
+    reptileActive,
+    imamlActive
+
+  let maml, fomaml, reptile, imaml
+
 
 
 
@@ -144,28 +136,39 @@
   let tasks = [metaLoss, ...lossSpaces.map(space => space.loss)]
 
   function updateDirections(t, _reptileOuter, _reptileInner, _reptileSteps, _fomamlOuter, _fomamlInner, _fomamlSteps,
-    _mamlOuter, _mamlInner, _mamlSteps, _imamlOuter, _imamlInner, _imamlSteps) {
+    _mamlOuter, _mamlInner, _mamlSteps, _imamlOuter, _imamlInner, _imamlSteps, _mamlActive, _fomamlActive, _reptileActive, _imamlActive) {
 
-    let reptile = new Reptile(_reptileOuter, _reptileInner, _reptileSteps)
-    let fomaml = new FirstOrderMAML(_fomamlOuter, _fomamlInner, _fomamlSteps)
-    let maml = new MAML(_mamlOuter, _mamlInner, _mamlSteps)
-    let imaml = new IMAML(_imamlOuter, _imamlInner, _imamlSteps)
 
+    if (_reptileActive) {
+      reptile = new Reptile(_reptileOuter, _reptileInner, _reptileSteps)
+    }
+    if (_fomamlActive) {
+      fomaml = new FirstOrderMAML(_fomamlOuter, _fomamlInner, _fomamlSteps)
+    }
+    if (_mamlActive) {
+      maml = new MAML(_mamlOuter, _mamlInner, _mamlSteps)
+    }
+    if (_imamlActive) {
+      imaml = new IMAML(_imamlOuter, _imamlInner, _imamlSteps)
+    }
 
     setTimeout(() => {
-      ([maml, fomaml, reptile, imaml]).forEach((method, i) => {
-          method.promiseUpdate([t], lossGradients).then(values => {
-            algs[i] = values[0]
-          })
+      ([maml, fomaml, reptile, imaml]).filter((m, i) => activeMethod[i]).forEach((method, i) => {
+        method.promiseUpdate([t], lossGradients).then(values => {
+          algs[i] = values[0]
+        })
       })
     }, 0)
   }
 
-  const updateDirectionsThrottle = throttle(updateDirections, 500)
+  let updateDirectionsThrottle = throttle(updateDirections, 600) // maybe? 600 * activeMethod.map(c => c ? 1 : 0).reduce((a, b) => a + b) / activeMethod.length
 
   $: {
-    updateDirectionsThrottle(theta, reptileOuter, reptileInner, reptileSteps, fomamlOuter, fomamlInner, fomamlSteps,
-      mamlOuter, mamlInner, mamlSteps, imamlOuter, imamlInner, imamlSteps)
+
+    activeMethod = [mamlActive, fomamlActive, reptileActive, imamlActive]
+
+    updateDirectionsThrottle(theta, reptileOuter / outerSteps, reptileInner / outerSteps, reptileSteps, fomamlOuter / outerSteps, fomamlInner / innerSteps, fomamlSteps,
+      mamlOuter / outerSteps, mamlInner / innerSteps, mamlSteps, imamlOuter / outerSteps, imamlInner / innerSteps, imamlSteps, ...activeMethod)
   }
 
 </script>

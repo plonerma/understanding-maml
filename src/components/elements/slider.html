@@ -6,7 +6,7 @@
   {/if}
 
 
-  <input type="range" min={min} max={max} bind:value={value} class="slider" id={id} on:change on:input>
+  <input style="width : {width}%" type="range" min={min} max={max} bind:value={value} class="slider" id={id} on:change on:input>
 
 
   {#if output != null}
@@ -33,12 +33,14 @@
     }
   }
 
+  export let width = 20
+
 </script>
 
 
 <style>
   .slider-container {
-    width: 100%;
+    /*width: 100%;*/
     flex-direction: row;
     display: flex;
     margin: 10px 0;
