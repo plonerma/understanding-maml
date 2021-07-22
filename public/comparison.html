@@ -66,14 +66,14 @@
 			</i>
 		</p>
 
-		<h2>Comparing the MAML, First-Order Methods and iMAML</h2>
+		<h2>Comparing MAML, the First-Order Methods and iMAML</h2>
 		<p>
 			In order to compare the above methods visually, we return to the non-linearized-line-fitting problem from
 			before, see <a href="#metaGradient">this figure</a>. This time, however, we will plot a single
 			update direction of MAML, FOMAML, Reptile and iMAML on the <i>combined loss space</i> of the two tasks, such that you can verify
 			whether the methods point into reasonable directions (i.e. towards
-			to the local optimum). 
-			
+			to the local optimum).
+
 			The combined loss space is defined via the meta loss of the two tasks, i.e.
 
 			\[\mathcal{L}(\theta) := \sum_{i \in \{0, 1\}}
@@ -91,6 +91,68 @@
 				<div class="element is-loading" style="height: 400px"></div>
 			</d-figure>
 		</figure>
+
+		<h3>Empirical comparison</h3>
+
+		<p>
+			By now you have a theoretical understanding of the four methods we presented
+			and might have looked into how the methods produce different updates on the
+			meta-parameter \( \theta \). To complete the comparison, we want to give
+			you a short overview over empirical results of these methods on two
+			common few-shot benchmarks
+			<d-cite bibtex-key="lake_omniglot_2015"></d-cite>
+			and Mini-ImageNet
+			<d-cite bibtex-key="liu_tools_2019"></d-cite>.
+		</p>
+
+		<figure>
+			<table style="width:100%">
+				<thead>
+					 <tr>
+						 <th><br>Method</th>
+						 <th>Omniglot<br>5-way 1-shot</th>
+						 <th><br>20-way 1-shot</th>
+						 <th>Mini-ImageNet<br>5-way 1-shot</th>
+					 </tr>
+			 	</thead>
+				<tbody>
+				 <tr>
+					 <td><b>MAML</b></td>
+					 <td>98.7 ± 0.4%</td>
+					 <td>95.8 ± 0.3%</td>
+					 <td>48.70 ± 1.84 %</td>
+				 </tr>
+				 <tr>
+					 <td><b>FOMAML</b></td>
+					 <td>98.3 ± 0.5%</td>
+					 <td>89.4 ± 0.5%</td>
+					 <td>48.07 ± 1.75 %</td>
+				 </tr>
+				 <tr>
+					 <td><b>REPTILE</b></td>
+					 <td>97.68 ± 0.04%</td>
+					 <td>89.43 ± 0.14%</td>
+					 <td>49.97 ± 0.32 %</td>
+				 </tr>
+				 <tr>
+					 <td><b>iMAML</b></td>
+					 <td>99.16 ± 0.35%</td>
+					 <td>94.46 ± 0.42%</td>
+					 <td>48.96 ± 1.84 %</td>
+				 </tr>
+			 </tbody>
+			</table>
+
+			<figcaption>
+				All numbers were taken from Rajeswaran et al. (2019)<d-cite bibtex-key="rajeswaran_meta-learning_2019"></d-cite>, which
+				accumulated the results from the various papers. <d-cite bibtex-key="finn2017modelagnostic,nichol_first-order_2018"></d-cite>
+			</figcaption>
+		</figure>
+
+		<p>
+			There is no clear winner! Each of the methods has its place and only
+			time will show which of the methods will prevail.
+		</p>
 
 		<h2>Conclusion</h2>
 		<p>
