@@ -53,7 +53,7 @@
       <Slider min="0" max="10" label="Outer Learning Rate" bind:value="{imamlOuter}" output={imamlOuter / outerSteps} />
       <Slider min="0" max="20" label="Inner Learning Rate" bind:value="{imamlInner}" output={imamlInner / innerSteps} />
       <Slider min="1" max="10" label="Inner Steps" bind:value="{imamlSteps}" output="{imamlSteps}" />
-      <Slider min="0" max="10" label="Regularization Coeffiecient"/>
+      <Slider min="0" max="1000" label="Regularization Coeffiecient" bind:value={imamlRegularization} output={imamlRegularization / innerSteps}/>
       <input type="checkbox" name="imamlactive" bind:checked="{imamlActive}">
       <label class="checkboxfield" for="imamlactive">Active</label>
     </CollapsibleCard>
@@ -111,7 +111,7 @@
     imamlOuter = beta * outerSteps,
     imamlInner = lr * innerSteps,
     imamlSteps = 5,
-
+    imamlRegularization = 2,
     mamlActive = true,
     fomamlActive,
     reptileActive,
@@ -136,7 +136,7 @@
   let tasks = [metaLoss, ...lossSpaces.map(space => space.loss)]
 
   function updateDirections(t, _reptileOuter, _reptileInner, _reptileSteps, _fomamlOuter, _fomamlInner, _fomamlSteps,
-    _mamlOuter, _mamlInner, _mamlSteps, _imamlOuter, _imamlInner, _imamlSteps, _mamlActive, _fomamlActive, _reptileActive, _imamlActive) {
+    _mamlOuter, _mamlInner, _mamlSteps, _imamlOuter, _imamlInner, _imamlSteps, _imamlRegularization, _mamlActive, _fomamlActive, _reptileActive, _imamlActive) {
 
 
     if (_reptileActive) {
@@ -149,7 +149,7 @@
       maml = new MAML(_mamlOuter, _mamlInner, _mamlSteps)
     }
     if (_imamlActive) {
-      imaml = new IMAML(_imamlOuter, _imamlInner, _imamlSteps)
+      imaml = new IMAML(_imamlOuter, _imamlInner, _imamlSteps, _imamlRegularization)
     }
 
     setTimeout(() => {
@@ -168,7 +168,7 @@
     activeMethod = [mamlActive, fomamlActive, reptileActive, imamlActive]
 
     updateDirectionsThrottle(theta, reptileOuter / outerSteps, reptileInner / outerSteps, reptileSteps, fomamlOuter / outerSteps, fomamlInner / innerSteps, fomamlSteps,
-      mamlOuter / outerSteps, mamlInner / innerSteps, mamlSteps, imamlOuter / outerSteps, imamlInner / innerSteps, imamlSteps, ...activeMethod)
+      mamlOuter / outerSteps, mamlInner / innerSteps, mamlSteps, imamlOuter / outerSteps, imamlInner / innerSteps, imamlSteps, imamlRegularization / innerSteps, ...activeMethod)
   }
 
 </script>
