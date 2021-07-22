@@ -261,7 +261,7 @@
 			Finally, we arrive at the following equations (assuming the inverse exists):
 
 			$$\begin{align}
-			&&(I + \frac{1}{\lambda} \nabla^2_\phi \mathcal L \left( \phi, \mathcal D^{train} \right))\frac{\mathrm d
+			&&\left(I + \frac{1}{\lambda} \nabla^2_\phi \mathcal L \left( \phi, \mathcal D^{train} \right)\right)\frac{\mathrm d
 			\phi}{\mathrm d \theta} = I\\
 			\Rightarrow&& \frac{\mathrm d \phi}{\mathrm d \theta} = (I + \frac{1}{\lambda} \nabla^2_\phi \mathcal L
 			\left( \phi, \mathcal D^{train} \right))^{-1}
@@ -295,24 +295,86 @@
 
 		</p>
 
+		<h3>Welcome back to reality and its approximations</h3>
+
+		<p>
+			Up until now, we have been telling you the idealized version of iMAML.
+			The reality is a little bit more complicated. In the idealized version we
+			are making two assumptions that are entirely justified:
+		</p>
+		<ol>
+			<li>
+				We do not usually calcualte the optimum for each task on the regularized
+				loss. Instead, we usually compute a (hopefully) good approximation.
+			</li>
+			<li>
+				Numerical matrix inversion is not that easy.
+				In reality, this takes time and may be subject to numerical errors.
+			</li>
+		</ol>
+
+		<p>
+			But do not despair! Rajeswaran et al. got you covered.
+			The authors realized that these assumptions would be problematic and
+			offer an approach to mitigate this issue. In the following paragraphs,
+			we want to give a brief outline of how to deal with these issues.
+		</p>
+
+
+
+		<p>
+			Let \( g \) the meta-gradient that we want to find. Then we know from
+			the equations above, that the following equations hold true:
+
+			$$
+			\begin{align}
+				&&g &= \frac{\mathrm d \phi}{\mathrm d \theta}\, \nabla_\phi \mathcal L \left( \phi, \mathcal D ^{train} \right)\\
+				&\Rightarrow& \left(I + \frac{1}{\lambda} \nabla^2_\phi \mathcal L \left( \phi, \mathcal D^{train} \right)\right)\, g &= \nabla_\phi \mathcal L \left( \phi, \mathcal D ^{train} \right)
+			\end{align}
+			$$
+		</p>
+
+		<p>
+			The second equation follows the basic form \( Ax = b \).
+			Luckily, there are numerical ways to solve such equations &mdash; this is a
+			better way then trying to invert the matrix. One way to solve this is
+			to use an algorithm called "Conjugate Gradient" (short: CG).
+			An explanation of how the algorithm works is outside the scope of this article,
+			but you should know the followig: If a solution exists, CG guarantees
+			to find the solution in a small number of steps (depending on the
+			dimensionality of the matrix). Additionally, we never really need to
+			calculate the matrix. Instead, we only need to compute the product of
+			the matrix with some vector \( v \).
+			If you take a look at our <a href="https://github.com/pupuis/maml-tf2">implementation of iMAML</a>,
+			you will realise how this is benefical.
+		</p>
+
+		<p>
+			Once we solved this equation (for \(g \) ), we already have the meta-gradient.
+			In their paper, Rajeswaran et al. theoretically prove that using approximations
+			is enough: the errors do not grow with these calculations.
+			Additionally, they show that empirically, iMAML is competitive with the
+			other methods we discussed.
+		</p>
+
+
+
 		<h3>Discussion</h3>
 
 		<p>
 			As you can see in the gradient above, iMAML requires the computation of
 			a second-order derivative. The huge benefit is that this second-order
 			derivative only needs to be calculated for the last point the optimizer
-			calculated. We do not need to pass the gradient information through
+			arrived at. We do not need to pass the gradient information through
 			the steps of gradient-descent.
 		</p>
 
 		<p>
 			While calculating the gradient is comparitively easy, iMAML requires
-			an optimizer which finds a quasi-optimal solution. Even though we introduced
-			the math behind iMAML with the assumption that the optimizer finds an optimal
-			solution, the authors of "Meta-Learning with Implicit Gradients" show
+			an optimizer which finds a quasi-optimal solution. Rajeswaran et al. show
 			that the gradient is still approximately correct as long as the solution
 			provided by the inner-loop optimizer is approximately correct.
-			Still, we probably need to make many more gradient steps (if we use SGD),
+			Still, we need more gradient steps (if we use SGD),
 			then in regular MAML where even one step may suffice.
 			<d-cite bibtex-key="rajeswaran_meta-learning_2019"></d-cite>
 		</p>
@@ -322,11 +384,11 @@
 			not using more resources (while iMAML requires more inner loop steps),
 			MAML requires either more outer loops steps or expensive computation
 			of a long back-propagation chain. Compared to first-order MAML (FOMAML)
-			and REPTILE, the authors report better results on the
-			<d-cite bibtex-key="lake_omniglot_2015">Omniglot</d-cite>
-			(the little exercise at the top of the page is base on Omniglot)
-			and
-			<d-cite bibtex-key="liu_tools_2019">Mini-ImageNet</d-cite>,
+			and REPTILE, the authors report better results on Omniglot
+			<d-cite bibtex-key="lake_omniglot_2015"></d-cite>
+			(the little exercise on the introduction page is based on Omniglot)
+			and Mini-ImageNet
+			<d-cite bibtex-key="liu_tools_2019"></d-cite>,
 			two common few-shot classification datasets.
 			<d-cite bibtex-key="rajeswaran_meta-learning_2019"></d-cite>
 		</p>
@@ -341,7 +403,7 @@
 			found optimum.
 		</p>
 		<p>
-			If you are interested int this condideration, you may want to also take
+			If you are interested in this condideration, you may also want to take
 			a look at the paper titled "Probabilistic Model-Agnostic Meta-Learning".
 			<d-cite bibtex-key="finn_probabilistic_2019"></d-cite>
 		</p>
