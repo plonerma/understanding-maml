@@ -6,7 +6,10 @@
         <div style="text-align: center;">{algNames[i]}</div>
         <Chart width=400 height=400>
           <Axis>
-            <ContourPlot lossFunc={tasks[0]} logScale={false} />
+
+            {#each tasks as task, j}
+              <ContourPlot lossFunc={task} logScale={false} opacity={selectedTask == j ? 1 : 0}/>
+            {/each}
 
             {#if activeMethod[i]}
             <Arrow origin={theta} target={alg} trimStart=0 trimEnd=0.01 stroke="#fff" fill="#fff" stroke-width="2" />
@@ -24,6 +27,22 @@
     </div>
   </div>
   <div class="column is-one-third">
+    <div class="control has-icons-left" style="margin-bottom: 2em;">
+      <div class="select">
+        <select bind:value={selectedTask}>
+          <option value="0">Task 1</option>
+          <option value="1">Task 2</option>
+          <option value="2">Task 3</option>
+          <option value="3">Task 4</option>
+        </select>
+      </div>
+      <div class="icon is-small is-left is-small">
+        <i class="fas fa-layer-group"></i>
+      </div>
+    </div>
+
+
+
     <CollapsibleCard title="MAML" bind:group={shownSettings}>
       <Slider min="0" max="30" label="Outer Learning Rate" bind:value="{mamlOuter}" output={mamlOuter / outerSteps} />
       <Slider min="0" max="20" label="Inner Learning Rate" bind:value="{mamlInner}" output={mamlInner / innerSteps} />
@@ -83,7 +102,7 @@
   import throttle from 'lodash/throttle'
 
   let theta = [0.5, .9]
-  let means = [[0, 0], [1, 0]]
+  let means = [[0, 0], [1, 0], [0.2, 0], [0.5, 0.2]]
   let lossSpaces = means.map(mean => new Random2DLinearRegressionLossSpace(mean))
 
   let selected_task = 0
@@ -111,7 +130,7 @@
     imamlOuter = beta * outerSteps,
     imamlInner = lr * innerSteps,
     imamlSteps = 5,
-    imamlRegularization = 2,
+    imamlRegularization = 200,
     mamlActive = true,
     fomamlActive,
     reptileActive,
@@ -119,6 +138,7 @@
 
   let maml, fomaml, reptile, imaml
 
+  let selectedTask = 0
 
 
 

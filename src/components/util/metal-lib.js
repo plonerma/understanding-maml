@@ -201,7 +201,7 @@ export class IMAML extends Model {
 
         metaGradients = tf.stack(metaGradients)
         // Apply meta gradient update step
-        return params.sub(tf.sum(metaGradients, 0).mul(this.metaLearningRate))
+        return params.sub(tf.sum(metaGradients, 0).mul(this.metaLearningRate).div(lossGradients.length))
     }
 
     cg_Av(lossGradient, phi) {
