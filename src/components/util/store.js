@@ -16,5 +16,4 @@ export const teaserStats = writable(value)
 
 teaserStats.subscribe((value) => {
   localStorage.setItem('teaserStats', JSON.stringify(value))
-  console.log(value)
 })
