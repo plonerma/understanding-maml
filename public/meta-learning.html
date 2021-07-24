@@ -19,7 +19,7 @@
 		<script type="text/json">
 			{
 				"title": "An Interactive Introduction to Model-Agnostic Meta-Learning",
-				"description": "Exploring the world of model-agnostic meta-learning and its extensions.",
+				"description": "Exploring the world of model-agnostic meta-learning and its variants.",
 				"authors": [
 					{
 						"author":"Luis Müller",
@@ -35,7 +35,23 @@
 							{"name": "NI @ TU Berlin", "url": "https://www.ni.tu-berlin.de/menue/neural_information_processing_group/"},
 							{"name": "ML&nbsp;@&nbsp;HU&nbsp;Berlin", "url": "https://www.informatik.hu-berlin.de/en/forschung-en/gebiete/ml-en"}
 						]
+                    },
+					{
+						"author":"Thomas Goerttler",
+						"authorURL":"https://thomasgoerttler.de",
+						"affiliations": [
+							{"name": "NI @ TU Berlin", "url": "https://www.ni.tu-berlin.de/menue/neural_information_processing_group/"}
+						]
+                    },
+					{
+						"author":"Klaus Obermayer",
+						"authorURL":"https://www.ni.tu-berlin.de/menue/members/head_of_research_group/obermayer_klaus/parameter/en/",
+						"affiliations": [
+							{"name": "NI @ TU Berlin", "url": "https://www.ni.tu-berlin.de/menue/neural_information_processing_group/"},
+							{"name": "BCCN Berlin", "url": "https://www.bccn-berlin.de/"}
+						]
 					}
+
 				]
 			}
 
@@ -44,7 +60,7 @@
 
 	<d-title>
 		<h1>An Interactive Introduction to Model-Agnostic Meta-Learning</h1>
-		<h2>Exploring the world of model-agnostic meta-learning and its extensions.</h2>
+		<h2>Exploring the world of model-agnostic meta-learning and its variants.</h2>
 	</d-title>
 
 	<d-byline></d-byline>
@@ -70,13 +86,13 @@
 		<h2>Why MAML is Model-Agnostic</h2>
 
 		<p>
-			In the following figure you can find a selection of meta-learning methods
+			In the following figure, you can find a selection of meta-learning methods
 			that tackle
 			few-shot
-			learning, their performance on <i>omniglot</i> as well as your own accuracy score from the starting page.
-			Model-Agnostic Meta-Learning (short: "MAML", marked in <span style="color: #d62728">red</span>)
-			is the only one among the above methods that falls under the category of
-			<i>optimization-based meta-learning</i> and it will be our main interest in the rest of the article.
+			learning, their performance on Omniglot, as well as your own accuracy score from the starting page.
+            Next to recurrent recurrent <d-cite bibtex-key="DBLP:conf/icml/SantoroBBWL16"></d-cite> and attention-based models<d-cite bibtex-key="DBLP:conf/nips/VinyalsBLKW16"></d-cite>, there exist also optimized-base meta-learning.            
+			Model-agnostic meta-learning (short: MAML, marked in <span style="color: #d62728">red</span>)<d-cite bibtex-key="DBLP:conf/icml/FinnAL17"></d-cite>
+			is the most famous one is our main interest in this article.
 		</p>
 
 		<figure>
@@ -84,62 +100,60 @@
 				<div class="element is-loading" style="height: 400px"></div>
 			</d-figure>
 			<figcaption>
-				<p>Results of different methods on the omniglot dataset
-					(if not stated differently: 1-shot, 20-way;
-					some differences in the evaluation procedure exist).
+				<p>This figure shows the results of different methods on the Omniglot dataset. If not stated differently, you see the results of 20-way 1-shot, but some differences in the evaluation procedure exist.
 					As usual, accuracy numbers need to be taken with a grain of salt as
-					differences in the evaluation method, implementation, and the model
-					complexity may a have a non-negligible impact on the performance.
+					differences in the evaluation method, implementation, and model
+					complexity may have a non-negligible impact on the performance.
 				</p>
 				<p id="caption_generative_stroke_model" class="fewShotMethods-reference">
-					The generative stroke model was introduced in the paper which also
-					introduced omniglot. The model is based on a latent stroke representation
+					The generative stroke model was introduced in the paper, which also
+					introduced the Omniglot dataset. The model is based on a latent stroke representation
 					(including the number and directions of strokes). While it is an
 					interesting approach, it can hardly be generalized to other
 					few-shot problems.<d-cite bibtex-key="DBLP:conf/cogsci/LakeSGT11"></d-cite>
 				</p>
 				<p id="caption_hierachical_bayesian_program_learning" class="fewShotMethods-reference">
 					The same authors improved the model by learning latent
-					primitive motor elements and called this process "Hierarchial
+					primitive motor elements and called this process "Hierarchical
 					Bayesian Program Learning" (HBPL).
 					While the accuracy was greatly increased, it also
 					is focused on symbol learning.
-					<d-cite bibtex-key="lake_one-shot_2013"></d-cite>
+					<d-cite bibtex-key="DBLP:conf/nips/LakeST13"></d-cite>
 				</p>
 				<p id="caption_siamese_nets" class="fewShotMethods-reference">
-					Siames Nets consist of two identical networks which produce a latent representation.
+					Siamese Nets consist of two identical networks which produce a latent representation.
 					From the representations of two samples, a distance is calculated to
 					assess the similarity of the two samples.<d-cite bibtex-key="koch_siamese_2015"></d-cite>
-					The result (accuracy of 88.1%) results from a reimplementaion of the method which
-					makes it more comparable.
-					<d-cite bibtex-key="vinyals_matching_2017"></d-cite>
+					The result (accuracy of 88.1%) results from a reimplementation of the method
+					making it more comparable.
+					<d-cite bibtex-key="DBLP:conf/nips/VinyalsBLKW16"></d-cite>
 				</p>
 				<p id="caption_matching_nets" class="fewShotMethods-reference">
 					Matching Networks also work by comparing new samples to labeled
 					examples. They do so by utilizing an attention kernel.
 					Though the second version of the paper is cited here,
 					it was first published in 2016.
-					<d-cite bibtex-key="vinyals_matching_2017"></d-cite>
+					<d-cite bibtex-key="DBLP:conf/nips/VinyalsBLKW16"></d-cite>
 				</p>
 
 				<p id="caption_prototypical_networks" class="fewShotMethods-reference">
 					Prototypical Networks use prototype vectors to represent each class
-					in the metric space. The nearest neighbor (i.e. the closest prototype)
+					in the metric space. The nearest neighbor (i.e., the closest prototype)
 					of a sample then determines the prediction.
-					<d-cite bibtex-key="snell_prototypical_2017"></d-cite>
+					<d-cite bibtex-key="DBLP:conf/nips/SnellSZ17"></d-cite>
 				</p>
 
 				<p id="caption_memory_augmented_nets" class="fewShotMethods-reference">
-					Memory-Augmented Networks (MANNs) use an external memory to make accurate
+					Memory-Augmented Networks (MANNs) use external memory to make accurate
 					predictions using a small number of samples.
-					<d-cite bibtex-key="santoro_meta-learning_2016"></d-cite>
+					<d-cite bibtex-key="DBLP:conf/icml/SantoroBBWL16"></d-cite>
 				</p>
 
 				<p id="caption_meta_nets" class="fewShotMethods-reference">
 					Meta Networks utilize a base learner (task level) and a meta learner
-					as well as a set of slow and rapid weights in order to allow
-					meta learning as well as task-specific concepts.
-					<d-cite bibtex-key="munkhdalai_meta_2017"></d-cite>
+					as well as a set of slow and rapid weights to allow
+					meta-learning and task-specific concepts.
+					<d-cite bibtex-key="DBLP:conf/icml/MunkhdalaiY17"></d-cite>
 				</p>
 
 			</figcaption>
@@ -147,12 +161,12 @@
 
 
 		<p>
-			In this section we will find out why MAML is "model-agnostic" and thereby gain a bit more of an overview over the 
+			In this section we explain why MAML is "model-agnostic" and thereby gain a bit more of an overview of the 
 			meta-learning field.
-			We start by taking a look at how few-shot problems are tackeled by other meta-learning approaches.
+			We start by taking a look at how few-shot problems are tackled by other meta-learning approaches.
 			As opposed to the optimization-based MAML, these methods force constraints on either the samples or the meta-learning architecture 
-			and can thus separated into
-			metric-based and model-based approaches respectively.
+			and can thus be separated into
+			metric-based and model-based approaches, respectively.
 		</p>
 
 
@@ -165,7 +179,7 @@
 					Applications of Meta-Learning outside the domain of few-shot learning
 					include the optimization of the task-level optimizer using
 					a LSTM network.
-					<d-cite bibtex-key="andrychowicz_learning_2016"></d-cite>
+					<d-cite bibtex-key="DBLP:conf/nips/AndrychowiczDCH16"></d-cite>
 				</p>
 			</figcaption>
 		</figure>
@@ -179,23 +193,23 @@
 			to be close to each other, while two samples from different classes are
 			supposed to have a large distance (the notion of a distance is what makes
 			the latent space a metric space).
-			<d-cite bibtex-key="snell_prototypical_2017"></d-cite>
+			<d-cite bibtex-key="DBLP:conf/nips/SnellSZ17"></d-cite>
 			<d-cite bibtex-key="koch_siamese_2015"></d-cite>
-			<d-cite bibtex-key="vinyals_matching_2017"></d-cite>
+			<d-cite bibtex-key="DBLP:conf/nips/VinyalsBLKW16"></d-cite>
 		</p>
 
 		<h4>Model-based approaches</h4>
 		<p>
-			Model-based approaches are neural architectures which are deliberately designed
+			Model-based approaches are neural architectures that are deliberately designed
 			for fast adaption to new tasks without an inclination to overfit.
 			Memory-Augmented Neural Networks and MetaNet are two examples. Both employ
 			an external memory while still maintaining the ability to be trained
 			end-to-end.
-			<d-cite bibtex-key="santoro_meta-learning_2016"></d-cite>
-			<d-cite bibtex-key="munkhdalai_meta_2017"></d-cite>
+			<d-cite bibtex-key="DBLP:conf/icml/SantoroBBWL16"></d-cite>
+			<d-cite bibtex-key="DBLP:conf/icml/MunkhdalaiY17"></d-cite>
 		</p>
 
-		<h4>optimization-based approach (MAML)</h4>
+		<h4>Optimization-based approach MAML</h4>
 		<p>
 			MAML goes a different route: The neural network is designed the same way
 			your usual model might be (in the many-shot case). All the magic happens during the
@@ -208,9 +222,9 @@
 			<d-cite bibtex-key="DBLP:conf/icml/FinnAL17"></d-cite>.
 		</p>
 		<p>
-			In the <a href="maml.html">the next section</a> we will take a close look at MAML and study the math behind the method.
-			Furthermore, you will get the chance to explore a simple few-shot learning problem and find out first hand why a meta-learning 
-			approach is needed to solve it. All of that within your browser!
+			In the <a href="maml.html">next section</a> we will take a close look at MAML and study the math behind the method.
+			Furthermore, you will get the chance to explore a simple few-shot learning problem and find out firsthand why a meta-learning 
+			approach is needed to solve it.
 		</p>
 
 	</d-article>

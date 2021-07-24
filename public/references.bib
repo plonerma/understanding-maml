@@ -63,14 +63,95 @@
 }
 
 
-@article{lake_one-shot_2013,
-	title = {One-shot learning by inverting a compositional causal process},
-	abstract = {People can learn a new visual class from just one example, yet machine learning algorithms typically require hundreds or thousands of examples to tackle the same problems. Here we present a Hierarchical Bayesian model based on compositionality and causality that can learn a wide range of natural (although simple) visual concepts, generalizing in human-like ways from just one image. We evaluated performance on a challenging one-shot classiﬁcation task, where our model achieved a human-level error rate while substantially outperforming two deep learning models. We also tested the model on another conceptual task, generating new examples, by using a “visual Turing test” to show that our model produces human-like performance.},
-	language = {en},
-	author = {Lake, Brenden M and Salakhutdinov, Ruslan},
-	year = {2013},
-	url = {https://cims.nyu.edu/~brenden/LakeEtAlNips2013.pdf}
+
+@inproceedings{DBLP:conf/nips/VinyalsBLKW16,
+  author    = {Oriol Vinyals and
+               Charles Blundell and
+               Tim Lillicrap and
+               Koray Kavukcuoglu and
+               Daan Wierstra},
+  editor    = {Daniel D. Lee and
+               Masashi Sugiyama and
+               Ulrike von Luxburg and
+               Isabelle Guyon and
+               Roman Garnett},
+  title     = {Matching Networks for One Shot Learning},
+  booktitle = {Advances in Neural Information Processing Systems 29: Annual Conference
+               on Neural Information Processing Systems 2016, December 5-10, 2016,
+               Barcelona, Spain},
+  pages     = {3630--3638},
+  year      = {2016},
+  url       = {https://proceedings.neurips.cc/paper/2016/file/90e1357833654983612fb05e3ec9148c-Paper.pdf},
+  timestamp = {Thu, 21 Jan 2021 15:15:22 +0100},
+  biburl    = {https://dblp.org/rec/conf/nips/VinyalsBLKW16.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
+
+@inproceedings{DBLP:conf/icann/HochreiterYC01,
+  author    = {Sepp Hochreiter and
+               A. Steven Younger and
+               Peter R. Conwell},
+  editor    = {Georg Dorffner and
+               Horst Bischof and
+               Kurt Hornik},
+  title     = {Learning to Learn Using Gradient Descent},
+  booktitle = {Artificial Neural Networks - {ICANN} 2001, International Conference
+               Vienna, Austria, August 21-25, 2001 Proceedings},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {2130},
+  pages     = {87--94},
+  publisher = {Springer},
+  year      = {2001},
+  url       = {https://doi.org/10.1007/3-540-44668-0\_13},
+  doi       = {10.1007/3-540-44668-0\_13},
+  timestamp = {Fri, 27 Mar 2020 08:51:30 +0100},
+  biburl    = {https://dblp.org/rec/conf/icann/HochreiterYC01.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@inproceedings{DBLP:conf/icml/SantoroBBWL16,
+  author    = {Adam Santoro and
+               Sergey Bartunov and
+               Matthew Botvinick and
+               Daan Wierstra and
+               Timothy P. Lillicrap},
+  editor    = {Maria{-}Florina Balcan and
+               Kilian Q. Weinberger},
+  title     = {Meta-Learning with Memory-Augmented Neural Networks},
+  booktitle = {Proceedings of the 33nd International Conference on Machine Learning,
+               {ICML} 2016, New York City, NY, USA, June 19-24, 2016},
+  series    = {{JMLR} Workshop and Conference Proceedings},
+  volume    = {48},
+  pages     = {1842--1850},
+  publisher = {JMLR.org},
+  year      = {2016},
+  url       = {http://proceedings.mlr.press/v48/santoro16.pdf},
+  timestamp = {Wed, 29 May 2019 08:41:46 +0200},
+  biburl    = {https://dblp.org/rec/conf/icml/SantoroBBWL16.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+
+@inproceedings{DBLP:conf/nips/LakeST13,
+  author    = {Brenden M. Lake and
+               Ruslan Salakhutdinov and
+               Joshua B. Tenenbaum},
+  editor    = {Christopher J. C. Burges and
+               L{\'{e}}on Bottou and
+               Zoubin Ghahramani and
+               Kilian Q. Weinberger},
+  title     = {One-shot learning by inverting a compositional causal process},
+  booktitle = {Advances in Neural Information Processing Systems 26: 27th Annual
+               Conference on Neural Information Processing Systems 2013. Proceedings
+               of a meeting held December 5-8, 2013, Lake Tahoe, Nevada, United States},
+  pages     = {2526--2534},
+  year      = {2013},
+  url       = {https://proceedings.neurips.cc/paper/2013/file/52292e0c763fd027c6eba6b8f494d2eb-Paper.pdf},
+  timestamp = {Thu, 21 Jan 2021 15:15:23 +0100},
+  biburl    = {https://dblp.org/rec/conf/nips/LakeST13.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
 
 
 
@@ -78,93 +159,86 @@
 	title = {Siamese Neural Networks for One-shot Image Recognition},
 	abstract = {The process of learning good features for machine learning applications can be very computationally expensive and may prove difﬁcult in cases where little data is available. A prototypical example of this is the one-shot learning setting, in which we must correctly make predictions given only a single example of each new class. In this paper, we explore a method for learning siamese neural networks which employ a unique structure to naturally rank similarity between inputs. Once a network has been tuned, we can then capitalize on powerful discriminative features to generalize the predictive power of the network not just to new data, but to entirely new classes from unknown distributions. Using a convolutional architecture, we are able to achieve strong results which exceed those of other deep learning models with near state-of-the-art performance on one-shot classiﬁcation tasks.},
 	language = {en},
+    booktitle = "{ICML Workshop
+on Deep Learning}",
 	author = {Koch, Gregory and Zemel, Richard and Salakhutdinov, Ruslan},
 	year = {2015},
 	url = {https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf},
 }
 
 
-@article{vinyals_matching_2017,
-	title = {Matching Networks for One Shot Learning},
-	url = {http://arxiv.org/abs/1606.04080},
-	abstract = {Learning from a few examples remains a key challenge in machine learning. Despite recent advances in important domains such as vision and language, the standard supervised deep learning paradigm does not offer a satisfactory solution for learning new concepts rapidly from little data. In this work, we employ ideas from metric learning based on deep neural features and from recent advances that augment neural networks with external memories. Our framework learns a network that maps a small labelled support set and an unlabelled example to its label, obviating the need for fine-tuning to adapt to new class types. We then define one-shot learning problems on vision (using Omniglot, ImageNet) and language tasks. Our algorithm improves one-shot accuracy on ImageNet from 87.6\% to 93.2\% and from 88.0\% to 93.8\% on Omniglot compared to competing approaches. We also demonstrate the usefulness of the same model on language modeling by introducing a one-shot task on the Penn Treebank.},
-	urldate = {2021-06-12},
-	author = {Vinyals, Oriol and Blundell, Charles and Lillicrap, Timothy and Kavukcuoglu, Koray and Wierstra, Daan},
-	month = dec,
-	year = {2017},
-	note = {arXiv: 1606.04080},
-	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning}
+@inproceedings{DBLP:conf/nips/SnellSZ17,
+  author    = {Jake Snell and
+               Kevin Swersky and
+               Richard S. Zemel},
+  editor    = {Isabelle Guyon and
+               Ulrike von Luxburg and
+               Samy Bengio and
+               Hanna M. Wallach and
+               Rob Fergus and
+               S. V. N. Vishwanathan and
+               Roman Garnett},
+  title     = {Prototypical Networks for Few-shot Learning},
+  booktitle = {Advances in Neural Information Processing Systems 30: Annual Conference
+               on Neural Information Processing Systems 2017, December 4-9, 2017,
+               Long Beach, CA, {USA}},
+  pages     = {4077--4087},
+  year      = {2017},
+  url       = {https://proceedings.neurips.cc/paper/2017/file/cb8da6767461f2812ae4290eac7cbc42-Paper.pdf},
+  timestamp = {Thu, 21 Jan 2021 15:15:21 +0100},
+  biburl    = {https://dblp.org/rec/conf/nips/SnellSZ17.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
 
-@article{santoro_meta-learning_2016,
-	title = {Meta-Learning with Memory-Augmented Neural Networks},
-	abstract = {Despite recent breakthroughs in the applications of deep neural networks, one setting that presents a persistent challenge is that of “one-shot learning.” Traditional gradient-based networks require a lot of data to learn, often through extensive iterative training. When new data is encountered, the models must inefﬁciently relearn their parameters to adequately incorporate the new information without catastrophic interference. Architectures with augmented memory capacities, such as Neural Turing Machines (NTMs), offer the ability to quickly encode and retrieve new information, and hence can potentially obviate the downsides of conventional models. Here, we demonstrate the ability of a memory-augmented neural network to rapidly assimilate new data, and leverage this data to make accurate predictions after only a few samples. We also introduce a new method for accessing an external memory that focuses on memory content, unlike previous methods that additionally use memory locationbased focusing mechanisms.},
-	language = {en},
-	author = {Santoro, Adam and Bartunov, Sergey and Botvinick, Matthew and Wierstra, Daan and Lillicrap, Timothy},
-	year = {2016},
-	url = {https://web.stanford.edu/class/psych209/Readings/Santoro16MetaLearningWithMemAugNNs.pdf},
-}
-
-
-
-@article{andrychowicz_learning_2016,
-	title = {Learning to learn by gradient descent by gradient descent},
-	url = {http://arxiv.org/abs/1606.04474},
-	abstract = {The move from hand-designed features to learned features in machine learning has been wildly successful. In spite of this, optimization algorithms are still designed by hand. In this paper we show how the design of an optimization algorithm can be cast as a learning problem, allowing the algorithm to learn to exploit structure in the problems of interest in an automatic way. Our learned algorithms, implemented by LSTMs, outperform generic, hand-designed competitors on the tasks for which they are trained, and also generalize well to new tasks with similar structure. We demonstrate this on a number of tasks, including simple convex problems, training neural networks, and styling images with neural art.},
-	urldate = {2021-06-12},
-	author = {Andrychowicz, Marcin and Denil, Misha and Gomez, Sergio and Hoffman, Matthew W. and Pfau, David and Schaul, Tom and Shillingford, Brendan and de Freitas, Nando},
-	month = nov,
-	year = {2016},
-	note = {arXiv: 1606.04474},
-	keywords = {Computer Science - Machine Learning, Computer Science - Neural and Evolutionary Computing},
-}
-
-
-
-@article{snell_prototypical_2017,
-	title = {Prototypical Networks for Few-shot Learning},
-	url = {http://arxiv.org/abs/1703.05175},
-	abstract = {We propose prototypical networks for the problem of few-shot classiﬁcation, where a classiﬁer must generalize to new classes not seen in the training set, given only a small number of examples of each new class. Prototypical networks learn a metric space in which classiﬁcation can be performed by computing distances to prototype representations of each class. Compared to recent approaches for few-shot learning, they reﬂect a simpler inductive bias that is beneﬁcial in this limited-data regime, and achieve excellent results. We provide an analysis showing that some simple design decisions can yield substantial improvements over recent approaches involving complicated architectural choices and meta-learning. We further extend prototypical networks to zero-shot learning and achieve state-of-theart results on the CU-Birds dataset.},
-	language = {en},
-	urldate = {2021-06-11},
-	author = {Snell, Jake and Swersky, Kevin and Zemel, Richard S.},
-	month = jun,
-	year = {2017},
-	note = {arXiv: 1703.05175},
-	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning},
-}
-
-
-
-@article{munkhdalai_meta_2017,
-	title = {Meta Networks},
-	url = {http://arxiv.org/abs/1703.00837},
-	abstract = {Neural networks have been successfully applied in applications with a large amount of labeled data. However, the task of rapid generalization on new concepts with small training data while preserving performances on previously learned ones still presents a significant challenge to neural network models. In this work, we introduce a novel meta learning method, Meta Networks (MetaNet), that learns a meta-level knowledge across tasks and shifts its inductive biases via fast parameterization for rapid generalization. When evaluated on Omniglot and Mini-ImageNet benchmarks, our MetaNet models achieve a near human-level performance and outperform the baseline approaches by up to 6\% accuracy. We demonstrate several appealing properties of MetaNet relating to generalization and continual learning.},
-	urldate = {2021-06-12},
-	author = {Munkhdalai, Tsendsuren and Yu, Hong},
-	month = jun,
-	year = {2017},
-	note = {arXiv: 1703.00837},
-	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning},
-	annote = {Comment: Accepted at ICML 2017 - rewrote: the main section; added: MetaNet algorithmic procedure; performed: Mini-ImageNet evaluation},
+@inproceedings{DBLP:conf/nips/AndrychowiczDCH16,
+  author    = {Marcin Andrychowicz and
+               Misha Denil and
+               Sergio Gomez Colmenarejo and
+               Matthew W. Hoffman and
+               David Pfau and
+               Tom Schaul and
+               Nando de Freitas},
+  editor    = {Daniel D. Lee and
+               Masashi Sugiyama and
+               Ulrike von Luxburg and
+               Isabelle Guyon and
+               Roman Garnett},
+  title     = {Learning to learn by gradient descent by gradient descent},
+  booktitle = {Advances in Neural Information Processing Systems 29: Annual Conference
+               on Neural Information Processing Systems 2016, December 5-10, 2016,
+               Barcelona, Spain},
+  pages     = {3981--3989},
+  year      = {2016},
+  url       = {https://proceedings.neurips.cc/paper/2016/file/fb87582825f9d28a8d42c5e5e5e8b23d-Paper.pdf},
+  timestamp = {Thu, 21 Jan 2021 15:15:22 +0100},
+  biburl    = {https://dblp.org/rec/conf/nips/AndrychowiczDCH16.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
 
 
 
-@article{andrychowicz_learning_2016,
-	title = {Learning to learn by gradient descent by gradient descent},
-	url = {http://arxiv.org/abs/1606.04474},
-	abstract = {The move from hand-designed features to learned features in machine learning has been wildly successful. In spite of this, optimization algorithms are still designed by hand. In this paper we show how the design of an optimization algorithm can be cast as a learning problem, allowing the algorithm to learn to exploit structure in the problems of interest in an automatic way. Our learned algorithms, implemented by LSTMs, outperform generic, hand-designed competitors on the tasks for which they are trained, and also generalize well to new tasks with similar structure. We demonstrate this on a number of tasks, including simple convex problems, training neural networks, and styling images with neural art.},
-	urldate = {2021-06-12},
-	journal = {arXiv:1606.04474 [cs]},
-	author = {Andrychowicz, Marcin and Denil, Misha and Gomez, Sergio and Hoffman, Matthew W. and Pfau, David and Schaul, Tom and Shillingford, Brendan and de Freitas, Nando},
-	month = nov,
-	year = {2016},
-	note = {arXiv: 1606.04474},
-	keywords = {Computer Science - Machine Learning, Computer Science - Neural and Evolutionary Computing}
+@inproceedings{DBLP:conf/icml/MunkhdalaiY17,
+  author    = {Tsendsuren Munkhdalai and
+               Hong Yu},
+  editor    = {Doina Precup and
+               Yee Whye Teh},
+  title     = {Meta Networks},
+  booktitle = {Proceedings of the 34th International Conference on Machine Learning,
+               {ICML} 2017, Sydney, NSW, Australia, 6-11 August 2017},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {70},
+  pages     = {2554--2563},
+  publisher = {{PMLR}},
+  year      = {2017},
+  url       = {http://proceedings.mlr.press/v70/munkhdalai17a/munkhdalai17a.pdf},
+  timestamp = {Fri, 20 Mar 2020 08:08:25 +0100},
+  biburl    = {https://dblp.org/rec/conf/icml/MunkhdalaiY17.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
+
+
 
 
 @article{rajeswaran_meta-learning_2019,
