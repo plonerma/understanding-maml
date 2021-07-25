@@ -5,6 +5,8 @@
   export let group = null
   export let title
 
+  export let flag = true
+
   const button_click = () => {
     if (group == title) {
       group = null
@@ -17,6 +19,10 @@
 <div class="card collapsible-card" class:active={(group == title)}>
   <header class="card-header" on:click={button_click}>
     <div class="card-header-title">
+      <div class="flag-container" class:active={flag} on:click={(e) => {flag = !flag; e.preventDefault(); e.stopPropagation();}}>
+        <i class="fas fa-eye flag-true"></i>
+        <i class="fas fa-eye-slash flag-false"></i>
+      </div>
       {title}
     </div>
     <button class="card-header-icon" aria-label="more options">
@@ -44,6 +50,51 @@
     cursor: pointer;
 
     box-shadow: 0 0.25em 2em -0.125em rgba(10, 10, 10, 0.05), 0 0px 0 1px rgba(10, 10, 10, 0.01)
+  }
+
+  .flag-container {
+    position: relative;
+    width: 2em;
+    height: 100%
+  }
+
+  .flag-container .flag-false, .flag-container .flag-true {
+    position: absolute;
+    height: 100%;
+    left: 0;
+    width: 1em;
+  }
+
+  .flag-container .flag-false  {
+    opacity: 0.8;
+  }
+
+  .flag-container .flag-true  {
+    opacity: 0;
+  }
+
+  .flag-container.active .flag-false  {
+    opacity: 0;
+  }
+
+  .flag-container.active .flag-true  {
+    opacity: 0.8;
+  }
+
+  .flag-container.active:hover .flag-false  {
+    opacity: 0;
+  }
+
+  .flag-container.active:hover .flag-true  {
+    opacity: 1;
+  }
+
+  .flag-container:hover .flag-false  {
+    opacity: 1;
+  }
+
+  .flag-container:hover .flag-true  {
+    opacity: 0;
   }
 
 /*.collapsible-card {
