@@ -5,7 +5,7 @@ import * as tf from '@tensorflow/tfjs'
  * Av is expected to be a function Av(v) should return the product of A and v
  * (this way it is not required to store A at any time).
  */
-export default (_Av, b, tolerance=1e-05, max_iterations=20) => {
+export default (_Av, b, tolerance=1e-05, max_iterations=5) => {
   let shape = b.shape
   b = b.reshape([-1])
 
@@ -35,7 +35,7 @@ export default (_Av, b, tolerance=1e-05, max_iterations=20) => {
     // update x and residual
     x = x.add(p.mul(alpha))
 
-    r = r.add(Ap.mul(alpha))
+    r = r.sub(Ap.mul(alpha))
 
     r_dot_r_new = r.dot(r)
 
