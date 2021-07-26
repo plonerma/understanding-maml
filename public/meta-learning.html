@@ -90,8 +90,12 @@
 			that tackle
 			few-shot
 			learning, their performance on Omniglot, as well as your own accuracy score from the starting page.
-            Next to recurrent recurrent <d-cite bibtex-key="DBLP:conf/icml/SantoroBBWL16"></d-cite> and attention-based models<d-cite bibtex-key="DBLP:conf/nips/VinyalsBLKW16"></d-cite>, there exist also optimized-base meta-learning.            
-			Model-agnostic meta-learning (short: MAML, marked in <span style="color: #d62728">red</span>)<d-cite bibtex-key="DBLP:conf/icml/FinnAL17"></d-cite>
+      Next to recurrent <d-cite bibtex-key="DBLP:conf/icml/SantoroBBWL16"></d-cite>
+			and attention-based models <d-cite bibtex-key="DBLP:conf/nips/VinyalsBLKW16"></d-cite>,
+			there exist also optimized-base meta-learning.
+			Model-agnostic meta-learning (short: MAML, marked in
+			<span style="color: #d62728">red</span>)
+			<d-cite bibtex-key="DBLP:conf/icml/FinnAL17"></d-cite>
 			is the most famous one is our main interest in this article.
 		</p>
 
@@ -100,7 +104,10 @@
 				<div class="element is-loading" style="height: 400px"></div>
 			</d-figure>
 			<figcaption>
-				<p>This figure shows the results of different methods on the Omniglot dataset. If not stated differently, you see the results of 20-way 1-shot, but some differences in the evaluation procedure exist.
+				<p>
+					This figure shows the results of different methods on the Omniglot dataset.
+					If not stated differently, you see the results of 20-way 1-shot, but some
+					differences in the evaluation procedure exist.
 					As usual, accuracy numbers need to be taken with a grain of salt as
 					differences in the evaluation method, implementation, and model
 					complexity may have a non-negligible impact on the performance.
@@ -161,10 +168,10 @@
 
 
 		<p>
-			In this section we explain why MAML is "model-agnostic" and thereby gain a bit more of an overview of the 
+			In this section we explain why MAML is "model-agnostic" and thereby gain a bit more of an overview of the
 			meta-learning field.
 			We start by taking a look at how few-shot problems are tackled by other meta-learning approaches.
-			As opposed to the optimization-based MAML, these methods force constraints on either the samples or the meta-learning architecture 
+			As opposed to the optimization-based MAML, these methods force constraints on either the samples or the meta-learning architecture
 			and can thus be separated into
 			metric-based and model-based approaches, respectively.
 		</p>
@@ -222,8 +229,10 @@
 			<d-cite bibtex-key="DBLP:conf/icml/FinnAL17"></d-cite>.
 		</p>
 		<p>
-			In the <a href="maml.html">next section</a> we will take a close look at MAML and study the math behind the method.
-			Furthermore, you will get the chance to explore a simple few-shot learning problem and find out firsthand why a meta-learning 
+			In the <a href="maml.html">next section</a> we will take a close look at
+			MAML and study the math behind the method.
+			Furthermore, you will get the chance to explore a simple few-shot learning
+			problem and find out first-hand why a meta-learning
 			approach is needed to solve it.
 		</p>
 
