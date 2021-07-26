@@ -43,14 +43,14 @@
 
 
 
-    <CollapsibleCard title="MAML" bind:group={shownSettings}>
+    <CollapsibleCard title="MAML" bind:group={shownSettings} bind:flag={mamlActive}>
       <Slider min="0" max="30" label="Outer Learning Rate" bind:value="{mamlOuter}" output={mamlOuter / outerSteps} />
       <Slider min="0" max="20" label="Inner Learning Rate" bind:value="{mamlInner}" output={mamlInner / innerSteps} />
       <Slider min="1" max="10" label="Inner Steps" bind:value="{mamlSteps}" output="{mamlSteps}" />
       <input type="checkbox" name="mamlactive" bind:checked="{mamlActive}">
       <label class="checkboxfield" for="mamlactive">Active</label>
     </CollapsibleCard>
-    <CollapsibleCard title="FOMAML" bind:group={shownSettings}>
+    <CollapsibleCard title="FOMAML" bind:group={shownSettings} bind:flag={fomamlActive}>
       <Slider min="0" max="10" label="Outer Learning Rate" bind:value="{fomamlOuter}" output={fomamlOuter /
         outerSteps} />
       <Slider min="0" max="20" label="Inner Learning Rate" bind:value="{fomamlInner}" output={fomamlInner /
@@ -59,7 +59,7 @@
       <input type="checkbox" name="fomamlactive" bind:checked="{fomamlActive}">
       <label class="checkboxfield" for="fomamlactive">Active</label>
     </CollapsibleCard>
-    <CollapsibleCard title="REPTILE" bind:group={shownSettings}>
+    <CollapsibleCard title="REPTILE" bind:group={shownSettings} bind:flag={reptileActive}>
       <Slider min="0" max="10" label="Interpolation Rate" bind:value="{reptileOuter}" output={reptileOuter /
         outerSteps} />
       <Slider min="0" max="20" label="Inner Learning Rate" bind:value="{reptileInner}" output={reptileInner /
@@ -68,7 +68,7 @@
       <input type="checkbox" name="reptileactive" bind:checked="{reptileActive}">
       <label class="checkboxfield" for="reptileactive">Active</label>
     </CollapsibleCard>
-    <CollapsibleCard title="iMAML" bind:group={shownSettings}>
+    <CollapsibleCard title="iMAML" bind:group={shownSettings} bind:flag={imamlActive}>
       <Slider min="0" max="10" label="Outer Learning Rate" bind:value="{imamlOuter}" output={imamlOuter / outerSteps} />
       <Slider min="0" max="20" label="Inner Learning Rate" bind:value="{imamlInner}" output={imamlInner / innerSteps} />
       <Slider min="1" max="10" label="Inner Steps" bind:value="{imamlSteps}" output="{imamlSteps}" />
@@ -132,9 +132,9 @@
     imamlSteps = 5,
     imamlRegularization = 200,
     mamlActive = true,
-    fomamlActive,
-    reptileActive,
-    imamlActive
+    fomamlActive = true,
+    reptileActive = true,
+    imamlActive = true
 
   let maml, fomaml, reptile, imaml
 
