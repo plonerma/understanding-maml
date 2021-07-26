@@ -161,7 +161,8 @@
 		<p>
 			If the above has gotten all too theoretical for you, take a look at the following <i>gist</i>. It contains a
 			simplistic
-			implementation of an update step for this <i>pretrained</i> model. It is implemented to emphasize
+			implementation of an update step 
+            for this <i>pretrained</i> model. It is implemented to emphasize
 			that
 			even if we differentiate between tasks when sampling the batch, the actual optimizer treats each sample the
 			same.
@@ -223,30 +224,30 @@
 			<d-figure id="twoLossSpaces"></d-figure>
 		</figure>
 		<p>
-			At this point we can conclude that optimizating for parameter-vector \(\phi\) minimizing all task
+			At this point, we can conclude that optimizing for parameter-vector \(\phi\) by minimizing all task
 			distributions at the same time
-			is maybe not the best parameter to optimize for. The next approach rather optimizes another variable of the
+			is maybe not the best parameter to optimize for. The following approach rather optimizes another variable of the
 			problem. Maybe you already have a hunch?
 		</p>
 
-		<h3>Part 2: Just do Model-Agnostic Meta-Learning, silly!</h3>
+		<h3>Part 2: Just do model-agnostic meta-learning, silly!</h3>
 		<p>
 			MAML comes to our rescue. We have already seen how different tasks might give us contradicting function
 			values at the same query point and how that leads to an undesired ping-pong from one local optimum to
 			another, resulting in no meaningful convergence. The idea of MAML is to
 			learn an optimal initialization \(\theta\).
 
-			Initializating a task optimizer with these optimal parameters and taking gradient descent steps
+			Initializing a task optimizer with these optimal parameters and taking gradient descent steps
 			from there should minimize the loss for that task. We can express this formally as follows:
 
 			\[ \underset{\theta}{\text{min}} \, \mathbb{E}_\tau [ \mathcal{L}_\tau (U_\tau(\theta)) ] ,\]
 
-			where \(U_\tau\) is an optimizer that takes a number of gradient descent steps given the samples of task
+			where \(U_\tau\) is an optimizer that takes several gradient descent steps given the samples of task
 			\(\tau\).
 		</p>
 		<h4>Outline of the Algorithm</h4>
 		<p>
-			Now that we fixed the objective function, let us briefly take a look at the three main steps of the method,
+			After fixing the objective function, let us briefly take a look at the three main steps of the method,
 			given a (current)
 			meta-parameter \(\theta\) :
 		</p>
@@ -260,7 +261,7 @@
 				test samples.</li>
 		</ul>
 		<p>
-			Note that \(\mathcal{L}_{\tau_i, \text{train}}\) and \(\mathcal{L}_{\tau_i, \text{test}}\)
+			Note, that \(\mathcal{L}_{\tau_i, \text{train}}\) and \(\mathcal{L}_{\tau_i, \text{test}}\)
 			are two instances of the same loss function
 			on the same task \( \tau_i \) and corresponding training or test data from
 			this task (though  \( \tau_i \) changes while iterating over \(i \) ).
@@ -287,15 +288,16 @@
 		</p>
 		<h4>Implementing the Algorithm</h4>
 		<p>
-			However, a machine learning algorithm is not very usefull unless we can execute it on a computer. While
+			However, a machine learning algorithm is not very useful unless we can execute it on a computer. While
 			implementing the <i>pretrained</i>
 			model was more or less straightforward, implementing MAML requires some more thinking. Firstly, computing
-			\(\phi_i\) is still straightforward, simply call
+			\(\phi_i\) is still straightforward; simply call
 			the optimization algorithm of your choice (as long as it is gradient-based).
 			However, how do we then take the gradient through that optimization algorithm?
-			It's actually not that complicated. Almost every modern machine learning framework (e.g. tensorflow), can
+			It is actually not that complicated. Almost every modern machine learning framework (e.g., TensorFlow <d-cite
+				bibtex-key="DBLP:journals/corr/AbadiABBCCCDDDG16"></d-cite> ), can
 			differentiate through
-			nearly arbitrary python code. Hence, if we can express our optimizer in a python function, then tensorflow
+			nearly arbitrary python code. Hence, if we can express our optimizer in a python function, TensorFlow
 			can differentiate through it.
 		</p>
 		<p>
@@ -303,8 +305,8 @@
 			optimizer is encoded within the function
 			<i>fastWeights</i>, but the function also directly applies an input tensor to the optimized weights.
 			We did
-			this mainly for simplicity but if you
-			are interested in a more thorough reasoning about this design choice, you can read more about it <a
+			this mainly for simplicity, but if you
+			are interested in a thorough reasoning about this design choice, you can read more about it <a
 				href="https://gist.github.com/pupuis/f23f483c405b0a169bf279f7b02209bc">in the comments under the
 				gist</a>.
 		</p>
@@ -316,16 +318,16 @@
 			pretrained model? To answer this, recall the exercise of <a href="#twoLossSpaces">comparing loss spaces</a>
 			from before.
 			As stated above, MAML tries to learn an optimal initialization \(\theta\), from which we can easily descent
-			both \(\phi_i\) point to the minimum of their respective tasks. This is exactly what MAML does! And now you
-			know first hand, why it might actually work.
+			both \(\phi_i\) point to the minimum of their respective tasks. This is exactly what MAML does. Now you
+			know first hand why it might actually work.
 		</p>
 		<h4>Returning to Sinusoids</h4>
 		<p>
-			After having studied the math behind the MAML objective, as well as its intuition and implementation, it is
+			After studying the math behind the MAML objective, as well as its intuition and implementation, it is
 			time to evaluate it on the sinusoid example.
 			Hopefully, MAML will produce better results
 			than the pretrained model.
-			You will have the opportunity to repeat the above experiements on a model that has been trained with
+			You will have the opportunity to repeat the above experiments on a model that has been trained with
 			MAML in <a href="#fitSineMaml">this figure</a>.
 			Try to compare the optimization behavior of both the pretrained model and MAML and evaluate for yourself
 			whether
@@ -336,7 +338,7 @@
 		</figure>
 		<p>
 			So as you were hopefully able to verify, MAML produces results that are way closer to the actual sinusoid,
-			despite being exposed to at most 5 samples.
+			despite being exposed to at most five samples.
 		</p>
 		<p>
 			The rest of this article is dedicated to introducing interesting variants of MAML. The <a
