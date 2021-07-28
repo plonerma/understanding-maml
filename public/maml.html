@@ -85,12 +85,12 @@
 
 
 
-
+		<div class="start-ref" id="start"></div>
 		<h2 id="few_shot_maml">How MAML works</h2>
 		<p>Model-agnostic meta-learning (MAML) is a meta-learning approach to solve different tasks from simple regression to reinforcement learning but also few-shot learning. <d-cite
 				bibtex-key="DBLP:conf/icml/FinnAL17"></d-cite>.
 			To learn more about it, let us build an example from the ground up and then try to apply MAML.
-			We will do this by alternating mathematical walk-throughs and interactive, as well as coding examples. 
+			We will do this by alternating mathematical walk-throughs and interactive, as well as coding examples.
 		</p>
 		<p>
 			If you have applied machine learning
@@ -114,8 +114,8 @@
 		</p>
 		<p>Unfortunately, applying this to a regession or a few-shot setting (i.e., with a very small dataset), the above method is
 			known to perform poorly on, e.g., neural networks, since there is simply too little data for too many
-			parameters leading to overfitting. 
-            
+			parameters leading to overfitting.
+
             The key idea of MAML is to
 			mitigate this problem by learning not only from the data regarding exactly our task but also from
 			data of similar tasks.
@@ -124,7 +124,7 @@
 			can sample freely from this distribution. We can then generalize the above
 			objective to find an optimization strategy for a randomly sampled task
 			from \(p(\tau)\), which we can express as follows:
-			            
+
 			\[ \text{min} \, \mathbb{E}_\tau [ \mathcal{L}_\tau (\phi_\tau) ] ,\]
 
 			where \(\tau\) is now a random variable and \(\phi_\tau\) is a set of
@@ -151,17 +151,17 @@
 			\[ \phi \leftarrow \phi - \alpha \nabla_\phi \sum_i \mathcal{L}_{\tau_i} (\phi) .\]
 
 			Finn et al.<d-cite
-				bibtex-key="DBLP:conf/icml/FinnAL17"></d-cite>, the authors of MAML, call this type of model <i>pretrained</i>: 
+				bibtex-key="DBLP:conf/icml/FinnAL17"></d-cite>, the authors of MAML, call this type of model <i>pretrained</i>:
     			we can simply pretrain over all available data and
     			then try to converge on a small amount of samples later.
     			<d-cite bibtex-key="DBLP:conf/icml/FinnAL17"></d-cite>
-                
+
 		</p>
 		<h4>Implementing the Pretrained Model</h4>
 		<p>
 			If the above has gotten all too theoretical for you, take a look at the following <i>gist</i>. It contains a
 			simplistic
-			implementation of an update step 
+			implementation of an update step
             for this <i>pretrained</i> model. It is implemented to emphasize
 			that
 			even if we differentiate between tasks when sampling the batch, the actual optimizer treats each sample the
@@ -175,7 +175,7 @@
 		<h4>Pretrained Model on a Sinusoid Problem (Regression)</h4>
 		<p>
 			In the following figure, you can experiment with a <i>pretrained</i> model trained by a collection
-			of sinusoid regression tasks. 
+			of sinusoid regression tasks.
             The task distribution works as follows: Each task is represented by an amplitude
 			\(A\) and a
 			phase \(\varphi\) and requires the prediction of sinusoid \(f\):
@@ -218,7 +218,7 @@
 
 			\[g(x) = \xi(ax + b),\]
 
-			where \(\xi\) is a non-linearity we applied to make the resulting loss spaces a bit more interesting. 
+			where \(\xi\) is a non-linearity we applied to make the resulting loss spaces a bit more interesting.
 		</p>
 		<figure>
 			<d-figure id="twoLossSpaces"></d-figure>
