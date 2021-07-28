@@ -101,37 +101,36 @@
 			<li>3. Update \(\theta\) according to \(\theta = \theta + \beta(\phi_i - \theta)\).</li>
 		</ul>
 		<p>
-			Note the two most obvious differences to MAML: First of all, we sample one task at a time, which is more
-			similar
-			how we trained the <i>pretrained</i>
+			Note the two most obvious differences to MAML:
+			First of all, we only sample one task at a time. This is more
+			similar to the training of the <i>pretrained</i>
 			model than to MAML. Remember that in MAML we minimize the expected meta-loss over a number of sampled tasks.
 			Secondly, it seems like we
 			aren't computing a meta-gradient at all, more like a difference of parameters. And in fact, the formula we
 			use for
-			updating \(\theta\), i.e.
+			updating \(\theta\),
 
 			\[ \theta = \theta + \beta(\phi_i - \theta), \]
 
-			is the formula for linearly interpolating between \( \theta \) and \( \phi_i \), with interpolation rate
+			is the formula for a linear interpolation between \( \theta \) and \( \phi_i \), with interpolation rate
 			\(\beta
 			\in [0, 1]\).
 			If you are not sure what that means in the context of parameter optimization, take a look at <a
 				href="#reptileInterpolation">this figure</a>. There
 			you
 			can play around with the
-			position of \(\theta\), the optimizer \(U_{\tau_i}\) and the interpolation rate \(\beta\) and see what
-			update
-			step Reptile would take.
+			position of \(\theta\), the optimizer \(U_{\tau_i}\) and the interpolation rate \(\beta\) and see
+			how Reptile would calculate the update of \( \theta \).
 		</p>
 		<figure>
 			<d-figure id="reptileInterpolation"></d-figure>
 		</figure>
 		<p>
-			By the way, one detail of Reptile that isn't obvious just from looking at the three steps we posted above,
-			but still important to note,
-			is that Reptile does not (need to) differentiate between test- and training-sets when computing loss
+			One detail of Reptile is not obvious just from looking at the three steps,
+			but is still important to note:
+			Reptile does not (need to) differentiate between test- and training-sets when computing loss
 			\(\mathcal{L}_{\tau_i}\) since
-			Reptile does not update according to test-set-performance.
+			it does not update according to test-set-performance.
 		</p>
 		<p>
 			Furthermore, it makes sense to spend some time studying why the authors of Reptile expilictly state that
@@ -148,15 +147,15 @@
 			which corresponds to updating \(\theta \) according to standard gradient descent with learning rate \(\alpha
 			\cdot \beta\).
 			And this in turn is more or less the update scheme we used for the <i>pretrained</i> model, which we have
-			already seen to fail.
+			already seen failing.
 		</p>
 		<p>
-			You might have already figured this out yourself, if you set the inner steps of <a
+			You might have already figured this out yourself: If you set the inner steps of <a
 				href="#reptileInterpolation">the figure from above</a>
 			to \(1\) (which were set to \(2\) by default deliberately - and now you know why).
 
 			It should however also be noted, as the Nichol et al. state, that as soon as \(k > 1\), the update step
-			cannot be reduced to simple gradient descent anymore, i.e.
+			cannot be reduced to simple gradient descent anymore, since
 			it involves terms accounting for meta-performance.
 		</p>
 		<p>
@@ -183,11 +182,11 @@
 			being close to the true mean.
 		</p>
 		<p>
-			Hence, we can interpret Reptile as computing an estimate of the average optimal parameter of each task. Note
-			how this confirms what we
-			already discovered with FOMAML, namely that the information important for learning across tasks is contained
+			Hence, we can interpret Reptile as computing an estimate of the average optimal parameter of each task.
+			This confirms what we
+			already discovered with FOMAML: The information important for learning across tasks is contained
 			not within one task (i.e. pretrained approach),
-			and not for the most part in higher-order derivatives (MAML) but within optimizing on a task with respect to
+			and for the most part not in higher-order derivatives (MAML) but within optimizing on a task with respect to
 			the initial parameters.
 		</p>
 		<p>
