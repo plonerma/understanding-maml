@@ -199,9 +199,9 @@ export class IMAML extends Model {
         // Calculate Meta gradients based on the optimal task parameters
         let metaGradients = optimalTaskParameters.map((phi, i) => cg_solve(this.cg_Av(lossGradients[i], phi), lossGradients[i](phi)))
 
-        metaGradients.forEach((g, i) => {
+        /*metaGradients.forEach((g, i) => {
           console.log(i, g.bufferSync().values)
-        })
+        })*/
 
         metaGradients = tf.stack(metaGradients)
         // Apply meta gradient update step
