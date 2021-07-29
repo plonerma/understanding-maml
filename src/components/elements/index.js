@@ -8,6 +8,7 @@ import Latex from './latex.html'
 import Line from './line.html'
 import MultilineText from './multilineText.html'
 import Slider from './slider.html'
+import StaticContour from './staticContour.html'
 import Translate from './translate.html'
 import VariableHandle from './variableHandle.html'
 import VariableHandleWithReference from './variableHandleWithReference.html'
@@ -26,6 +27,7 @@ export {
     Line,
     MultilineText,
     Slider,
+    StaticContour,
     Translate,
     VariableHandle,
     VariableHandleWithReference

@@ -199,7 +199,7 @@
 			of the x-axis.
 		</p>
 		<figure>
-			<d-figure id="fitSinePretrained"></d-figure>
+			<d-figure id="fitSinePretrained"><div class="element is-loading" style="height: 400px"></div></d-figure>
 		</figure>
 		<p>Ouch! That does not seem to work that well. Maybe you have already guessed that this would have been too easy.
 			The problem that the pretrained approach faces is that the optimal parameters of
@@ -219,9 +219,20 @@
 
 			where \(\xi\) is a non-linearity we applied to make the resulting loss spaces a bit more interesting.
 		</p>
+
+
 		<figure>
-			<d-figure id="twoLossSpaces"></d-figure>
+			<d-figure id="metaLossSpace">
+				<div class="element is-loading" style="height: 400px"></div>
+			</d-figure>
 		</figure>
+
+		<figure>
+			<d-figure id="twoLossSpaces">
+				<div class="element is-loading" style="height: 400px"></div>
+			</d-figure>
+		</figure>
+
 		<p>
 			At this point, we can conclude that optimizing for parameter-vector \(\phi\) by minimizing all task
 			distributions at the same time
@@ -333,7 +344,7 @@
 			you think the MAML-trained model has found a good meta-initialization parameter \(\theta\).
 		</p>
 		<figure>
-			<d-figure id="fitSineMaml"></d-figure>
+			<d-figure id="fitSineMaml"><div class="element is-loading" style="height: 400px"></div></d-figure>
 		</figure>
 		<p>
 			So as you were hopefully able to verify, MAML produces results that are way closer to the actual sinusoid,
