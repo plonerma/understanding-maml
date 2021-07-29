@@ -9,7 +9,7 @@
                 stroke-width="1" />
 
             <VariableHandleWithReference bind:position={theta} value="\theta" offset={[0, -15]} referencePoint={null}
-                draggingDisabled={true} />
+                draggingDisabled={false} />
 
             <VariableHandleWithReference bind:position={gradvec} value="\nabla f(x)" referencePoint={theta}
                 draggingDisabled={true} />
@@ -86,7 +86,7 @@
 
     import throttle from 'lodash/throttle'
 
-    let theta = [.1, .1]
+    let theta = [.3, .1]
 
     let nablac = "\\nabla f_{C=0}(x)"
 
@@ -108,10 +108,10 @@
     let trueParameters = tf.tensor1d([.5, .5])
 
     let gradvec = [.5, .5]
-    let gradvec0 = [-.2, -.2]
+    let gradvec0 = [.1, -.1]
     let gradvec1 = gradvec0
 
-    function updateDirections(c, d, e) {
+    function updateDirections(c, d, e, te) {
         let l = {
             id: c + ' ' + d + ' ' + e,
             func: tf.tidy(() => parameters => {
@@ -121,19 +121,20 @@
                 return f.mul(0.5).add(tf.einsum('ijk,k->ij', parameters, gradvec0))
             })
         }
-        let t = tf.tensor([theta], [1, 2]).transpose()
+        let t = tf.tensor([te], [1, 2]).transpose()
 
-        gradvec = t.sub(tf.tensor2d([[c, d], [d, e]]).matMul(t.sub(trueParameters)).add(gradvec0)).arraySync().map(v => v[0])
-        gradvec1 = t.sub(tf.tensor2d([[0, 0], [0, 0]]).matMul(t.sub(trueParameters)).add(gradvec0)).arraySync().map(v => v[0])
+        gradvec = t.sub(tf.tensor2d([[c, d], [d, e]]).matMul(t.sub(trueParameters)).add(gradvec0)).arraySync()[0]
+        gradvec1 = t.sub(gradvec0).arraySync()[0]
+
         return l
     }
 
     let updateDirectionsSlow = throttle(updateDirections, 0)
 
-    let loss = updateDirectionsSlow(cond_slide / 100, cond2_slide / 100, cond3_slide / 100)
+    let loss = updateDirectionsSlow(cond_slide / 100, cond2_slide / 100, cond3_slide / 100, theta)
 
     $: {
-        loss = updateDirectionsSlow(cond_slide / 100, cond2_slide / 100, cond3_slide / 100)
+        loss = updateDirectionsSlow(cond_slide / 100, cond2_slide / 100, cond3_slide / 100, theta)
 
         show_b = Math.abs(cond_slide) >= 0.1 || Math.abs(cond2_slide) >= 0.1 || Math.abs(cond3_slide) >= 0.1
     }
