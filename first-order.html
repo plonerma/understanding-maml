@@ -68,12 +68,6 @@
 
 
 	<d-article>
-		<d-contents>
-		  <nav class="toc figcaption" id="menu">
-		  </nav>
-		  <div class="toc-line"></div>
-		</d-contents>
-
 		<p>
 			<i style="font-size: .8em;">
 				This page is part of a multi-part series on Model-Agnostic Meta-Learning.
@@ -83,12 +77,18 @@
 			</i>
 		</p>
 
+		<d-contents>
+		  <nav class="toc figcaption" id="menu">
+		  </nav>
+		  <div class="toc-line"></div>
+		</d-contents>
 
 
 
+		<div class="start-ref" id="start"></div>
 		<h2>First-Order Methods: Why differentiating through an optimizer is actually as complicated as it sounds</h2>
 		<p>
-			In this section we want to gain some understanding of what it actually means to differentiate through \(U\),
+			In this section, we want to gain some understanding of what it actually means to differentiate through \(U\),
 			the optimizer.
 			Recall the gradient that MAML requires us to compute:
 
@@ -130,9 +130,9 @@
 
 		<h3 id="section_fomaml">First-Order MAML (FOMAML)</h3>
 		<p>
-			FOMAML was suggested by Finn et al. (the authors of MAML, in the very same paper that introduces MAML) and
+			FOMAML was suggested by Finn et al. (the authors of MAML, in the very paper that introduces MAML) and
 			is a straightforward heuristic to get rid of
-			the second order terms:
+			the second-order terms:
 			Setting them to zero! As a result
 
 			\[\nabla_\theta U_{\tau_i}(\theta) = I\]
@@ -148,7 +148,7 @@
 			\[ \nabla^2_\theta \mathcal{L}_{\tau_i, \text{train}}(\theta). \]
 
 			This term is known as the <i>Hessian</i> of loss function \(\mathcal{L}_{\tau_i, \text{train}}\), which
-			describes the local curvature a function <d-cite bibtex-key="park_meta-curvature_2020"></d-cite>. Further, setting it to zero results in a linear
+			describes the local curvature as a function <d-cite bibtex-key="DBLP:conf/nips/ParkO19"></d-cite>. Further, setting it to zero results in a linear
 			approximation of the meta-gradient,
 			being more accurate the more locally linear the meta-gradient is at meta-parameter \(\theta\).
 			To see what the Hessian actually entails, let us resolve it under the assumption of
@@ -159,18 +159,18 @@
 
 			\[ = \nabla M(x; \theta)\nabla M(x; \theta)^T -(y - M(x; \theta))^T \nabla^2 M(x; \theta). \]
 
-			So the only second order term in the Hessian of the loss function is the Hessian of the neural net \(M\).
-			While there is empirical evidence to local curvature
-			of Hessians of neural nets being near zero <b>after training</b> (and near zero local curvature would easily
+			So the only second-order term in the Hessian of the loss function is the Hessian of the neural net \(M\).
+			While there is empirical evidence to the local curvature
+			of Hessians of neural nets being near zero <b>after training</b> (and near-zero local curvature would easily
 			justify dropping the Hessian in the MAML meta-update altogether), the same study also indicates that this is
 			not necessarily the case
-			on randomly initialized weights <d-cite bibtex-key="sagun_eigenvalues_2017"></d-cite>. On the other hand, the authors of MAML hypothesize that
+			on randomly initialized weights <d-cite bibtex-key="DBLP:journals/corr/SagunBL16"></d-cite>. On the other hand, the authors of MAML hypothesize that
 			the often by design nearly linear nature of neural nets (especially the ones with ReLU layers that they
-			use - see ReLUs <d-cite bibtex-key="glorot_deep_nodate"></d-cite>),
-			might explain the success of FOMAML, since nearly linear functions have nearly zero Hessians.
+			use - see ReLUs <d-cite bibtex-key="DBLP:journals/jmlr/GlorotBB11"></d-cite>),
+			might explain the success of FOMAML, since nearly linear functions have nearly zero Hessians. 
 		</p>
 		<p>
-			And successful it is! If you compare e.g. Table 1 in the MAML paper, you will find that FOMAML easily keeps
+			And successful it is! If you compare, e.g., Table 1 in the MAML paper, you will find that FOMAML easily keeps
 			up with its second-order counterpart
 			in terms of classification performance. So depending on your personal taste in theoretical rigor, this
 			explanation might be more or less
@@ -204,7 +204,7 @@
 			<d-figure id="curvatureDemo"></d-figure>
 		</figure>
 		<p>
-			Hopefully you have gained some understanding of how FOMAML works and what effect second-order terms
+			Hopefully, you have gained some understanding of how FOMAML works and what effect second-order terms
 			(encoding local curvature) can have on the loss space,
 			as well as arguments for and against linear approximations of the meta-gradient.
 
@@ -212,9 +212,9 @@
 		<p>
 			FOMAML and the fact that it can compete so easily with MAML teaches us that the information necessary to
 			learn across tasks is
-			contained for the most part not in any Hessian, but within the linear parts of the meta-gradient. Following
-			up on this narrative we
-			will next study <a href="reptile.html">Reptile</a>, another prominent fist-order method, with a slightly different approach.
+			contained, for the most part, not in any Hessian, but within the linear parts of the meta-gradient. Following
+			up on this narrative, we
+			will next study <a href="reptile.html">Reptile</a>, another prominent first-order method, with a slightly different approach.
 		</p>
 
 	</d-article>
