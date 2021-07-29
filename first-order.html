@@ -176,26 +176,19 @@
 				href="#curvatureDemo">following figure</a>. Here we prepared a very simple function space, namely the
 			space of
 
-			\[ f(x) := \frac{1}{2} (x - \frac{1}{2})^T C (x - \frac{1}{2}), \]
+			\[ f(x) := \frac{1}{2} (x - \frac{1}{2})^T C (x - \frac{1}{2}) + g^T x, \]
 
-			with Hessian \(C \in \mathbb{R}^{2 \times 2}\) and gradient \(C(x - \frac{1}{2})\), where we assume that
+			with Hessian \(C \in \mathbb{R}^{2 \times 2}\), constant \(g \in \mathbb{R}^2\) and gradient \(C(x - \frac{1}{2}) + g\), where we assume that
 			\(C\) is a symmetric matrix, i.e. that it has the form
 
 			\[ C = \begin{bmatrix}
-			a & b \\ c & d
+			a & b \\ b & c
 			\end{bmatrix}. \]
 
 			Changing \(a, b, c \) lets you observe the effect of curvature on the form of the function space.
-			While we are at it, let us
-			quickly go over the mathematical effect of \(C\). Setting \(C = \underline{0}\) makes the gradient constant
-			(in this case = 0), but this
-			we already discussed: The function becomes linear. Further, for all other values than \(b = 0\) and \(a =
-			c\), in which case we simply
-			scale the gradient, we are effectively transforming magnitude <b>and</b> direction of the gradient. Note
-			what
-			implications neglecting the information of the Hessian could then potentially have on anything related to
-			<i>gradient</i> descent. We might
-			end up with a completely wrong descent direction.
+			As you should be able to verify, non-zero values for the Hessian curve the space and the more curvature we introduce, the 
+			poorer the first-order approximation \(\nabla f_{C=0}(x) \) to the 
+			gradient becomes. 
 		</p>
 		<figure>
 			<d-figure id="curvatureDemo"></d-figure>
