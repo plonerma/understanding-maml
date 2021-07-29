@@ -36,7 +36,7 @@ d-article figcaption p {
 }
 
 .columns {
-  .column {
+  .column:not(.is-offset-1):not(.is-offset-one-quarter) {
     margin-left: 0;
     margin-right: 0;
   }

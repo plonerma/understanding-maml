@@ -1,0 +1,58 @@
+<div class="columns">
+    <div class="column is-half is-offset-one-quarter">
+        <div style="text-align: center;">Accumulated Meta-Loss</div>
+        <Chart width=450 height=450>
+            <StaticContour href={href} />
+        </Chart>
+    </div>
+</div>
+<Slider min="0" max="20" bind:value={steps} label="Update steps" output={steps} />
+<div class="columns">
+    {#each tasks as loss, i}
+    <div class="column is-4 is-offset-1">
+        <div style="text-align: center;">Task {i+1} (<small>{taskNames[i]}</small>)</div>
+        <Chart width=450 height=450>
+            <StaticContour href={`img/static_contours/contours/model_${i}.svg`} />
+        </Chart>
+    </div>
+    {/each}
+</div>
+
+<style>
+    .column {
+        text-align: center;
+    }
+
+    .caption {
+        color: gray;
+        font-size: 15px
+    }
+</style>
+
+<script>
+    import ContourPlot from './contourPlot.html'
+    import { StaticContour, Slider, Chart, Axis, Arrow, VariableHandleWithReference } from './elements'
+    import { Random2DLinearRegressionLossSpace } from './util/LossSpace'
+
+    let theta = [0.35, 0.55]
+    let means = [[0.3, 0.05], [0.83, 0.75]]
+    let lossSpaces = means.map(mean => new Random2DLinearRegressionLossSpace(mean))
+
+    let tasks = lossSpaces.map(space => space.loss)
+    let taskNames = means.map(mean => `a = ${mean[0]}, b = ${mean[1]}`)
+
+    let steps = 0
+
+    let href
+
+    $: {
+      href = `img/static_contours/contours/accumulated_${zeropad(steps, 2)}.svg`
+    }
+
+    const zeropad = function(val, size) {
+      var s = val.toString()
+      while (s.length < (size || 2)) {s = "0" + s;}
+      return s;
+    }
+
+</script>
