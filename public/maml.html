@@ -48,7 +48,7 @@
 						"authorURL":"https://www.ni.tu-berlin.de/menue/members/head_of_research_group/obermayer_klaus/parameter/en/",
 						"affiliations": [
 							{"name": "NI @ TU Berlin", "url": "https://www.ni.tu-berlin.de/menue/neural_information_processing_group/"},
-							{"name": "BCCN Berlin", "url": "https://www.bccn-berlin.de/"}
+							{"name": "BCCN&nbsp;Berlin", "url": "https://www.bccn-berlin.de/"}
 						]
 					}
 
@@ -67,11 +67,7 @@
 	<d-byline></d-byline>
 
 	<d-article>
-		<d-contents>
-			<nav class="toc figcaption" id="menu">
-			</nav>
-			<div class="toc-line"></div>
-		</d-contents>
+
 
 		<p>
 			<i style="font-size: .8em;">
@@ -83,23 +79,28 @@
 		</p>
 
 
+		<d-contents>
+			<nav class="toc figcaption" id="menu">
+			</nav>
+			<div class="toc-line"></div>
+		</d-contents>
 
 
 
-		<h2 id="few_shot_maml">Few-shot learning with MAML</h2>
-		<p>Model-Agnostic Meta Learning (MAML) is a meta-learning approach to solve few-shot learning <d-cite
+		<div class="start-ref" id="start"></div>
+		<h2 id="few_shot_maml">How MAML works</h2>
+		<p>Model-agnostic meta-learning (MAML) is a meta-learning approach to solve different tasks from simple regression to reinforcement learning but also few-shot learning. <d-cite
 				bibtex-key="DBLP:conf/icml/FinnAL17"></d-cite>.
 			To learn more about it, let us build an example from the ground up and then try to apply MAML.
-			We will do this by alternating mathematical walk-throughs and interactive, as well as, coding examples.
+			We will do this by alternating mathematical walk-throughs and interactive, as well as coding examples.
 		</p>
-		<!--TODO: Maybe card to github repo for all code: https://github.com/lepture/github-cards-->
 		<p>
 			If you have applied machine learning
 			before, you have probably already solved or attempted to solve a problem like the following:
-			Learning a model to solve one specific task, for example to classify cats from dogs or to
+			Learning a model to solve one specific task, for example, to classify cats from dogs or to
 			teach an agent
-			to find its way through a specific maze. In those settings, if we are able to define a loss
-			\(\mathcal{L}_\tau\) for our task \(\tau\) which depends on the parameters
+			to find its way through a specific maze. In these settings, if we are able to define a loss
+			\(\mathcal{L}_\tau\) for our task \(\tau\), which depends on the parameters
 			\(\phi\) of a model, we can express our learning objective as
 
 			\[ \underset{\phi}{\text{min}} \, \mathcal{L}_\tau (\phi) .\]
@@ -109,36 +110,41 @@
 
 			\[ \phi \leftarrow \phi - \alpha \nabla_\phi \mathcal{L}_\tau (\phi) ,\]
 
-			also known as gradient descent, where \(\mathcal{L}_\tau\) usually also depends on some data and \(\alpha\)
+			also known as gradient descent. \(\mathcal{L}_\tau\) usually also depends on some data and \(\alpha\)
 			is a fixed learning rate,
 			controlling the size of the steps we want to take.
 		</p>
-		<p>Unfortunately, when framing this in a few-shot setting (i.e., with a very small dataset), the above method is
-			known to perform poorly on e.g. neural networks, since there is simply too little data for too many
-			parameters. A key insight to MAML is now to
-			bypass this problem by learning not only from the data regarding exactly our task, but to learn also from
+		<p>Unfortunately, applying this to a regession or a few-shot setting (i.e., with a very small dataset), the above method is
+			known to perform poorly on, e.g., neural networks, since there is simply too little data for too many
+			parameters leading to overfitting.
+
+            The key idea of MAML is to
+			mitigate this problem by learning not only from the data regarding exactly our task but also from
 			data of similar tasks.
-			To incorporate this we make an additional assumption, namely that \(\tau\) comes from some distribution of
+			To incorporate this, we make an additional assumption, namely that \(\tau\) comes from some distribution of
 			tasks \(p(\tau)\) and that we
-			can sample freely from this distribution. We can then generalize the above objective to learn how to find an
-			optimization strategy for a randomly sampled task from \(p(\tau)\), which we can express as follows:
+			can sample freely from this distribution. We can then generalize the above
+			objective to find an optimization strategy for a randomly sampled task
+			from \(p(\tau)\), which we can express as follows:
 
 			\[ \text{min} \, \mathbb{E}_\tau [ \mathcal{L}_\tau (\phi_\tau) ] ,\]
 
-			where \(\tau\) is now a random variable and \(\phi_\tau\) are a set of parameters for task \(\tau\).
-			We may use different parameters for each task, use the same parameters for every task or something in
-			between. So we have to decide on a parameterization and decide how we actually minimize this new objective.
-			In the following we will explore two possible
-			answers to these issues.
+			where \(\tau\) is now a random variable and \(\phi_\tau\) is a set of
+			parameters for task \(\tau\). We may use different parameters for each
+			task, use the same parameters for every task, or do something in between.
+
+			Next, we have figure out how to actually minimize this new objective including the decision of parameterization.
+			In the following, we will explore two possible
+			answers.
 		</p>
 		<h3>Part 1: Just do gradient descent, silly!</h3>
-		<p>Of course! The answer to most problems. We can simply learn a single set of parameters \(\phi\) which
+		<p>Of course, the answer to most problems. We can simply learn a single set of parameters \(\phi\), which
 			minimizes the expected loss
-			over all tasks. Or formally speaking our objective becomes
+			over all tasks. Formally speaking, our objective becomes
 
 			\[ \underset{\phi}{\text{min}} \, \mathbb{E}_\tau [ \mathcal{L}_\tau (\phi) ] .\]
 
-			As you can see we chose the most simple parameterization: We learn one parameter vector \(\phi\) that
+			As you can see, we chose the most simple parameterization: We learn one parameter vector \(\phi\) that
 			minimizes the objective
 			across all tasks.
 			Further, to actually implement this strategy we can do what is known as <i>Expected Risk Minimization
@@ -146,30 +152,33 @@
 
 			\[ \phi \leftarrow \phi - \alpha \nabla_\phi \sum_i \mathcal{L}_{\tau_i} (\phi) .\]
 
-			Finn et al. (the authors of MAML) call this type of model <i>pretrained</i>, referring to it simply
-			pretraining over all available data and
-			then trying to converge on a small amount of samples later.
+			Finn et al.<d-cite
+				bibtex-key="DBLP:conf/icml/FinnAL17"></d-cite>, the authors of MAML, call this type of model <i>pretrained</i>:
+    			we can simply pretrain over all available data and
+    			then try to converge on a small amount of samples later.
+    			<d-cite bibtex-key="DBLP:conf/icml/FinnAL17"></d-cite>
+
 		</p>
 		<h4>Implementing the Pretrained Model</h4>
 		<p>
-			If the above has gotten all too theoretic for you, take a look at the following <i>gist</i>. It contains a
+			If the above has gotten all too theoretical for you, take a look at the following <i>gist</i>. It contains a
 			simplistic
-			implementation of an update step for this <i>pretrained</i> model. It is implemented such as to emphesize
+			implementation of an update step
+            for this <i>pretrained</i> model. It is implemented to emphasize
 			that
 			even if we differentiate between tasks when sampling the batch, the actual optimizer treats each sample the
 			same.
 		</p>
 		<script src="https://gist.github.com/pupuis/cf31417164bc5513302788b906d2a3c2.js"></script>
 		<p>
-			The implementation is agnostic to the choice of optimizer that you use. To train their <i>pretrained</i>
-			model, the MAML creators use
-			the <i>Adam</i> optimizer.
+			The implementation is agnostic to the choice of optimizer. We use the <i>Adam</i> optimizer to be congruent with the original paper<d-cite
+				bibtex-key="DBLP:conf/icml/FinnAL17"></d-cite>.
 		</p>
-		<h4>Pretrained Model on a Sinusoid Problem</h4>
+		<h4>Pretrained Model on a Sinusoid Problem (Regression)</h4>
 		<p>
-			In the following figure you can experiment with a <i>pretrained</i> model, which was trained by a collection
-			of
-			sinusoid regression tasks. The task distribution works as follows: Each task is represented by an amplitude
+			In the following figure, you can experiment with a <i>pretrained</i> model trained by a collection
+			of sinusoid regression tasks.
+            The task distribution works as follows: Each task is represented by an amplitude
 			\(A\) and a
 			phase \(\varphi\) and requires the prediction of sinusoid \(f\):
 
@@ -177,9 +186,9 @@
 
 			where \(A, \varphi\) are sampled uniformly from some predefined range.
 
-			The jist is that different parameters yield different functions \(f_1\) and \(f_2\) with possibly completely
+			Different parameters yield different functions, \(f_1\) and \(f_2\), with possibly completely
 			different function values and gradients.
-			Take for example the following two tasks:
+			Take, for example, the following two tasks:
 			Tasks \(\tau_1, \tau_2\) are both regression tasks on sinusoids \(f_1(x) := \sin (x - \frac{\pi}{2})\) and
 			\(f_2(x) := \sin (x + \frac{\pi}{2})\) respectively. These two tasks' function values give completely
 			contradicting information, as
@@ -187,17 +196,16 @@
 			\[ f_1(x) = - f_2(x). \]
 		</p>
 		<p>
-			Before you fit the model, think what
-			you would expect to happen based on the position and the
-			amount of samples you provided. Feel free to also experiment with the different settings: Distributing the
+			Before fitting the model, what do you expect to happen based on the position and the
+			number of samples provided? Feel free to also experiment with the different settings: distributing the
 			samples equispaced or squeezing all of them to a small range
 			of the x-axis.
 		</p>
 		<figure>
 			<d-figure id="fitSinePretrained"></d-figure>
 		</figure>
-		<p>Ouch! That doesn't seem to work that well. Maybe you have already guessed that this would have been to easy.
-			The problem that the above approach faces is that the optimal parameters of
+		<p>Ouch! That does not seem to work that well. Maybe you have already guessed that this would have been too easy.
+			The problem that the pretrained approach faces is that the optimal parameters of
 			different tasks might live in completely different loss spaces. Given a loss function \(\mathcal{L}\) w.r.t
 			some parameters \(\rho\), as well as
 			constant parameter-set \(C\) (e.g. a dataset on which the loss is defined), the parameter space defined the
@@ -205,46 +213,45 @@
 
 			\[ \mathcal{L}(\rho; C) .\]
 
-			You can investigate the problem of different loss spaces for different tasks a little deeper in
-			<a href="#twoLossSpaces">this figure</a>. The loss spaces displayed stem from a curve fitting (toy) problem,
+			You can investigate the problem of different loss spaces for different tasks a little deeper in the figure below. The loss spaces displayed stem from a curve fitting (toy) problem,
 			where
 			we are interested in parameters \(a, b\)
 			and the task requires the prediction of
 
 			\[g(x) = \xi(ax + b),\]
 
-			where \(\xi\) is a non-linearity we applied to make the resulting loss spaces a bit more interesting. 
+			where \(\xi\) is a non-linearity we applied to make the resulting loss spaces a bit more interesting.
 		</p>
 		<figure>
 			<d-figure id="twoLossSpaces"></d-figure>
 		</figure>
 		<p>
-			At this point we can conclude that optimizating for parameter-vector \(\phi\) minimizing all task
+			At this point, we can conclude that optimizing for parameter-vector \(\phi\) by minimizing all task
 			distributions at the same time
-			is maybe not the best parameter to optimize for. The next approach rather optimizes another variable of the
+			is maybe not the best parameter to optimize for. The following approach rather optimizes another variable of the
 			problem. Maybe you already have a hunch?
 		</p>
 
-		<h3>Part 2: Just do Model-Agnostic Meta-Learning, silly!</h3>
+		<h3>Part 2: Just do model-agnostic meta-learning, silly!</h3>
 		<p>
 			MAML comes to our rescue. We have already seen how different tasks might give us contradicting function
 			values at the same query point and how that leads to an undesired ping-pong from one local optimum to
-			another, resulting in no meaningful convergence. The idea of MAML is now to
-			learn an optimal initialization \(\theta\) in the sense that initializating a task optimizer with these
-			parameters and taking gradient descent steps
-			from there minimizes the loss for that task. We can express this formally as follows:
+			another, resulting in no meaningful convergence. The idea of MAML is to
+			learn an optimal initialization \(\theta\).
 
-			\[ \underset{\theta}{\text{min}} \, \mathbb{E}_\tau [ \mathcal{L}_\tau (U_\tau(\theta)) ] .\]
+			Initializing a task optimizer with these optimal parameters and taking gradient descent steps
+			from there should minimize the loss for that task. We can express this formally as follows:
 
-			where \(U_\tau\) is an optimizer that takes a number of gradient descent steps given the samples of task
-			\(\tau\). This is also why MAML is called mode-agnostic, it does
-			not make any further assumptions about \(U_\tau\), thus allowing any gradient-based inner optimizer.
+			\[ \underset{\theta}{\text{min}} \, \mathbb{E}_\tau [ \mathcal{L}_\tau (U_\tau(\theta)) ] ,\]
+
+			where \(U_\tau\) is an optimizer that takes several gradient descent steps given the samples of task
+			\(\tau\).
 		</p>
 		<h4>Outline of the Algorithm</h4>
 		<p>
-			Now that we fixed the objective function, let us briefly take a look at the three main steps of the method,
+			After fixing the objective function, let us briefly take a look at the three main steps of the method,
 			given a (current)
-			meta-parameter \(\theta\):
+			meta-parameter \(\theta\) :
 		</p>
 		<ul>
 			<li>1. Sample a number of tasks \(\tau_i\) from \(p(\tau)\).</li>
@@ -256,10 +263,12 @@
 				test samples.</li>
 		</ul>
 		<p>
-			Note that \(\mathcal{L}_{\tau_i, \text{train}}\) and \(\mathcal{L}_{\tau_i, \text{test}}\) are two instances
-			of the same loss function
-			for different tasks and corresponding training or test data from these tasks.
-			Obtaining the \(\phi_i\) is easy, we just do gradient descent:
+			Note, that \(\mathcal{L}_{\tau_i, \text{train}}\) and \(\mathcal{L}_{\tau_i, \text{test}}\)
+			are two instances of the same loss function
+			on the same task \( \tau_i \) and corresponding training or test data from
+			this task (though  \( \tau_i \) changes while iterating over \(i \) ).
+			The easiest way to obtain \(\phi_i\), is to do a single step of gradient
+			descent (\( \phi_i \) will not be optimal but most likely better then \( \theta \) ):
 
 			\[ \phi_i = \theta - \alpha \nabla_\theta \mathcal{L}_{\tau_i, \text{train}}(\theta).\]
 
@@ -281,23 +290,25 @@
 		</p>
 		<h4>Implementing the Algorithm</h4>
 		<p>
-			However, a machine learning algorithm is not very usefull unless we can execute it on a computer. While
+			However, a machine learning algorithm is not very useful unless we can execute it on a computer. While
 			implementing the <i>pretrained</i>
 			model was more or less straightforward, implementing MAML requires some more thinking. Firstly, computing
-			\(\phi_i\) is still straightforward, simply call
+			\(\phi_i\) is still straightforward; simply call
 			the optimization algorithm of your choice (as long as it is gradient-based).
 			However, how do we then take the gradient through that optimization algorithm?
-			It's actually not that complicated. Almost every modern machine learning framework (e.g. tensorflow), can
+			It is actually not that complicated. Almost every modern machine learning framework (e.g., TensorFlow <d-cite
+				bibtex-key="DBLP:journals/corr/AbadiABBCCCDDDG16"></d-cite> ), can
 			differentiate through
-			nearly arbitrary python code. Hence, if we can express our optimizer in a python function, then tensorflow
+			nearly arbitrary python code. Hence, if we can express our optimizer in a python function, TensorFlow
 			can differentiate through it.
 		</p>
 		<p>
-			Below you find a <i>gist</i> that implements a simplistic version of the MAML update step. We coded our
-			optimizer ourselves within the function
-			<i>fastWeights</i>, but the function also directly applies an input tensor to the optimized weights. We did
-			this mainly for simplicity but if you
-			are interested in a more thorough reasoning about this design choice, you can read more about it <a
+			Below you find a <i>gist</i> that implements a simplistic version of the MAML update step. The
+			optimizer is encoded within the function
+			<i>fastWeights</i>, but the function also directly applies an input tensor to the optimized weights.
+			We did
+			this mainly for simplicity, but if you
+			are interested in a thorough reasoning about this design choice, you can read more about it <a
 				href="https://gist.github.com/pupuis/f23f483c405b0a169bf279f7b02209bc">in the comments under the
 				gist</a>.
 		</p>
@@ -309,16 +320,16 @@
 			pretrained model? To answer this, recall the exercise of <a href="#twoLossSpaces">comparing loss spaces</a>
 			from before.
 			As stated above, MAML tries to learn an optimal initialization \(\theta\), from which we can easily descent
-			both \(\phi_i\) point to the minimum of their respective tasks. This is exactly what MAML does! And now you
-			know first hand, why it might actually work.
+			both \(\phi_i\) point to the minimum of their respective tasks. This is exactly what MAML does. Now you
+			know first hand why it might actually work.
 		</p>
 		<h4>Returning to Sinusoids</h4>
 		<p>
-			After having studied the math behind the MAML objective, as well as its intuition and implementation, it is
+			After studying the math behind the MAML objective, as well as its intuition and implementation, it is
 			time to evaluate it on the sinusoid example.
 			Hopefully, MAML will produce better results
-			than the pretrained model (although by now you should be convinced that it will).
-			You will have the opportunity to repeat the above experiements on a model that has been trained with
+			than the pretrained model.
+			You will have the opportunity to repeat the above experiments on a model that has been trained with
 			MAML in <a href="#fitSineMaml">this figure</a>.
 			Try to compare the optimization behavior of both the pretrained model and MAML and evaluate for yourself
 			whether
@@ -329,10 +340,10 @@
 		</figure>
 		<p>
 			So as you were hopefully able to verify, MAML produces results that are way closer to the actual sinusoid,
-			despite being exposed to at most 5 samples.
+			despite being exposed to at most five samples.
 		</p>
 		<p>
-			The rest of this article is dedicated to introducing interesting extensions of MAML. The <a
+			The rest of this article is dedicated to introducing interesting variants of MAML. The <a
 				href="first-order.html">next page</a>
 			starts with a general discussion about the difficulty of obtaining the MAML-meta-gradient, which leads
 			directly to <a href="first-order.html#section_fomaml">FOMAML</a>, a simple
@@ -340,7 +351,7 @@
 			<a href="reptile.html">Reptile</a>,
 			which obtains meta-knowledge without an explicit meta-gradient.
 
-			Lastly, <a href="imaml.html">iMAML</a> approximates the meta-update by creating a dependency between task-loss and meta-parameter \(\theta\) and 
+			Lastly, <a href="imaml.html">iMAML</a> approximates the meta-update by creating a dependency between task-loss and meta-parameter \(\theta\) and
 			thereby bypasses some of the computationally more expensive parts of the original MAML.
 		</p>
 

@@ -48,7 +48,7 @@
 						"authorURL":"https://www.ni.tu-berlin.de/menue/members/head_of_research_group/obermayer_klaus/parameter/en/",
 						"affiliations": [
 							{"name": "NI @ TU Berlin", "url": "https://www.ni.tu-berlin.de/menue/neural_information_processing_group/"},
-							{"name": "BCCN Berlin", "url": "https://www.bccn-berlin.de/"}
+							{"name": "BCCN&nbsp;Berlin", "url": "https://www.bccn-berlin.de/"}
 						]
 					}
 
@@ -69,12 +69,6 @@
 
 	<d-article>
 
-		<d-contents>
-		  <nav class="toc figcaption" id="menu">
-		  </nav>
-		  <div class="toc-line"></div>
-		</d-contents>
-
 		<p>
 			<i style="font-size: .8em;">
 				This page is part of a multi-part series on Model-Agnostic Meta-Learning.
@@ -84,7 +78,13 @@
 			</i>
 		</p>
 
+		<d-contents>
+		  <nav class="toc figcaption" id="menu">
+		  </nav>
+		  <div class="toc-line"></div>
+		</d-contents>
 
+		<div class="start-ref" id="start"></div>
 		<h2>Where to go from here</h2>
 
 		<p>
@@ -93,15 +93,15 @@
 		</p>
 
 		<p>
-			If you thirst for knowledge is not yet satisfied and you want to dig even
+			If your thirst for knowledge is not yet satisfied and you want to dig even
 			deeper into the field of model-agnostic meta-learning, you may use
 			the list below as a starting point for further explorations (this is by
-			not means intended to be an exhaustive list or represent the field of model-agnostic
+			no means intended to be an exhaustive list or represent the field of model-agnostic
 			meta-learning adequately).
 		</p>
 
 		<p>
-			If you are more off an hands-on person, we suggest you take a look at and
+			If you are more of a hands-on person, we suggest you take a look at and
 			play around with the four methods we presented.
 			We created a git repository to get you started:<br>
 		</p>
@@ -138,8 +138,8 @@
 
 		<p>
 			While our introduction focuses primarily on classification and regression,
-			this paper utilizes the big strength of MAML: the model-agnosticity,
-			and apply the method to reinforcement learning.
+			this paper utilizes the big strength of MAML, its the model-agnosticity,
+			and applies the method to reinforcement learning.
 		</p>
 
 
@@ -154,9 +154,9 @@
 		</p>
 
 		<p>
-			Anish Madan and Ranjitha Prasad propose a Bayesian neural network based MAML algorithm (B-SMALL)
+			Anish Madan and Ranjitha Prasad propose a Bayesian neural network-based MAML algorithm (B-SMALL)
 			which improves the parameter footprint of the model and is supposed to decrease
-			overfitting of the training tasks.
+			the overfitting of the training tasks.
 		</p>
 
 
@@ -170,7 +170,7 @@
 
 		<p>
 			The authors of this paper adapt model-agnostic meta-learning for a
-			continoual learning setting. One key-aspect of this method is to
+			continual learning setting. One key aspect of this method is to
 			keep an exemplar memory with samples from old tasks
 			to prevent catastrophic forgetting.
 
@@ -186,9 +186,9 @@
 
 		<p>
 			Meta-Learning typically relies on the assumption that instances from task
-			distribution is sufficiently similar. In this approach (called TreeMAML),
-			tasks are clustered in a tree structure based on tasks similarity
-			and the gradients are aggregated hierachically.
+			distribution are sufficiently similar. In this approach (called TreeMAML),
+			tasks are clustered in a tree structure based on tasks similarity,
+			and the gradients are aggregated hierarchically.
 		</p>
 
 
@@ -202,8 +202,8 @@
 		</p>
 
 		<p>
-			Elsken et al. propose method of how one might not only train weights, but also
-			do differentiable network architecture search (based on a method called DARTS <d-cite bibtex-key="liu_darts_2019"></d-cite>),
+			Elsken et al. propose a method of how one might not only train weights but also
+			do differentiable network architecture search (based on a method called DARTS <d-cite bibtex-key="DBLP:conf/iclr/LiuSY19"></d-cite>),
 			in a meta&#8209;learning setting.
 		</p>
 

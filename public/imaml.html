@@ -48,7 +48,7 @@
 						"authorURL":"https://www.ni.tu-berlin.de/menue/members/head_of_research_group/obermayer_klaus/parameter/en/",
 						"affiliations": [
 							{"name": "NI @ TU Berlin", "url": "https://www.ni.tu-berlin.de/menue/neural_information_processing_group/"},
-							{"name": "BCCN Berlin", "url": "https://www.bccn-berlin.de/"}
+							{"name": "BCCN&nbsp;Berlin", "url": "https://www.bccn-berlin.de/"}
 						]
 					}
 
@@ -69,11 +69,6 @@
 
 	<d-article>
 
-		<d-contents>
-		  <nav class="toc figcaption" id="menu">
-		  </nav>
-		  <div class="toc-line"></div>
-		</d-contents>
 
 		<p>
 			<i style="font-size: .8em;">
@@ -84,32 +79,39 @@
 			</i>
 		</p>
 
+		<d-contents>
+		  <nav class="toc figcaption" id="menu">
+		  </nav>
+		  <div class="toc-line"></div>
+		</d-contents>
 
 
 
 
 
+
+		<div class="start-ref" id="start"></div>
 		<h2 id="section_imaml">iMAML: Implicit Gradients</h2>
 
 
 		<p>
 			To explain how Implicit Model-Agnostic Meta-Learning (iMAML) works,
 			we will start with an observation:
-			If we do many gradient steps in regular MAML (apart from a large
-			computational burden), we face the issue that the model-parameters
-			\( \phi \) depend less and less on the meta-paramer \( \theta \).
+			If we do many gradient steps in regular MAML, apart from an enormous 
+			computational burden, we face the issue that the model-parameters
+			\( \phi \) depend less and less on the meta-parameter \( \theta \).
 			If the parameters (\( \phi \) and \( \theta \)) are largely independent,
 			placing \( \theta \) becomes more difficult, since its effect on \( \phi \)
 			diminishes.
 		</p>
 
 		<p>
-			Regular MAML mitigates this by using only few gradient steps. This early
+			Regular MAML mitigates this by using only a few gradient steps. This early
 			stopping is equivalent to a Bayesian prior.
-			<d-cite bibtex-key="grant_recasting_2018"></d-cite>
+			<d-cite bibtex-key="DBLP:conf/iclr/GrantFLDG18"></d-cite>
 
 			iMAML utilizes a more explicit regularization.
-			<d-cite bibtex-key="rajeswaran_meta-learning_2019"></d-cite>
+			<d-cite bibtex-key="DBLP:conf/nips/RajeswaranFKL19"></d-cite>
 		</p>
 
 		<p>
@@ -138,9 +140,9 @@
 		</p>
 
 		<p>
-			Now, instead of using only few update steps, we will use an abitrary
-			optimizer which optimizes the task-parameter until it reaches a minimum,
-			but instead of only minimizing the task-loss we add a \( L_2 \) normalization term.
+			Instead of using only a few update steps, we will use an arbitrary
+			optimizer that optimizes the task parameter until it reaches a minimum,
+			but instead of only minimizing the task loss we add a \( L_2 \) normalization term.
 			term:
 
 			$$
@@ -151,7 +153,7 @@
 
 			Here, the objective is the almost the same, with the addition, that
 			the moving to far away from the meta-parameter \( \theta \)
-			results in higher loss.
+			results in a higher loss.
 		</p>
 
 		<figure class="l-body-outset">
@@ -191,14 +193,14 @@
 			\phi_\tau , \mathcal D ^ {test}_\tau\right) \) can be done using back-propagation.
 			This is the gradient of \(\phi_\tau\) at the parameter which was found by
 			the optimizer. \( \frac{\mathrm d \phi_\tau}{\mathrm d \theta} \) is the part
-			that MAML has its problems with: depending on how complex the optimization
+			that MAML has its problems with. Depending on how complex the optimization
 			algorithm is, this may be difficult to compute using back-propagation.
 		</p>
 
 		<p>
-			But, here comes the awesome part: Since we assume that out inner optimizer
+			But, here comes the awesome part: Since we assume that our inner optimizer
 			found a local minimum, we know that the gradient of the inner objective
-			in regard to the task-parameter is 0. This gives us the following equation:
+			in regard to the task parameter is 0. This gives us the following equation:
 
 			$$
 			\begin{align}
@@ -287,27 +289,27 @@
 			found an optimal solution for our inner objective, we can derive a closed-form
 			solution for the total derivative \( \frac{\mathrm d \phi}{\mathrm d \theta} \).
 			To calculate the meta-gradient, we just need to know the solution
-			of the inner optimizaton problem, without knowing the steps to get there!
+			of the inner optimization problem without knowing the steps to get there!
 		</p>
 
 		<p>
-			The steps leading up to the optimal solution do not need to be stored and
-			we could even use an optimizer which does not use Gradient Descent and
+			The steps leading up to the optimal solution do not need to be stored, and
+			we could even use an optimizer that does not use Gradient Descent and
 			where we might not be able to back-propagate the gradient. Instead,
-			the optimizer can be treated as a black-box and we only require
+			the optimizer can be treated as a black box, and we only require
 			the final solution.
 		</p>
 
 		<p>
-			If this implicit differatiation is interesting to you, take a look at the
-			paper "Efficient and Modular Implicit Differentiation". In this paper
-			the authors offer a more general framework of how to compute gradients
+			If this implicit differentiation is interesting to you, take a look at the
+			paper "Efficient and Modular Implicit Differentiation". In this paper,
+			the authors offer a more general framework for computing gradients
 			without needing to backpropagate through the unrolled forward propagation.
-			Instead they use an optimiality condition (in the iMAML case its given by
-			the gradient of the inner loop objective) in order to calculate the
+			Instead, they use an optimality condition- (in the iMAML case its given by
+			the gradient of the inner loop objective - in order to calculate the
 			gradient implicitly.
 
-			<d-cite bibtex-key="blondel_efficient_2021"></d-cite>
+			<d-cite bibtex-key="DBLP:journals/corr/abs-2105-15183"></d-cite>
 
 		</p>
 
@@ -315,12 +317,12 @@
 
 		<p>
 			Up until now, we have been telling you the idealized version of iMAML.
-			The reality is a little bit more complicated. In the idealized version we
+			The reality is a little bit more complicated. In the idealized version, we
 			are making two assumptions that are entirely justified:
 		</p>
 		<ol>
 			<li>
-				We do not usually calcualte the optimum for each task on the regularized
+				We do not usually calculate the optimum for each task on the regularized
 				loss. Instead, we usually compute a (hopefully) good approximation.
 			</li>
 			<li>
@@ -333,14 +335,14 @@
 			But do not despair! Rajeswaran et al. got you covered.
 			The authors realized that these assumptions would be problematic and
 			offer an approach to mitigate this issue. In the following paragraphs,
-			we want to give a brief outline of how to deal with these issues.
+			we want to briefly outline how to deal with these issues.
 		</p>
 
 
 
 		<p>
 			Let \( g \) the meta-gradient that we want to find. Then we know from
-			the equations above, that the following equations hold true:
+			the equations above that the following equations hold true:
 
 			$$
 			\begin{align}
@@ -353,16 +355,16 @@
 		<p>
 			The second equation follows the basic form \( Ax = b \).
 			Luckily, there are numerical ways to solve such equations &mdash; this is a
-			better way then trying to invert the matrix. One way to solve this is
+			better way than trying to invert the matrix. One way to solve this is
 			to use an algorithm called "Conjugate Gradient" (short: CG).
 			An explanation of how the algorithm works is outside the scope of this article,
-			but you should know the followig: If a solution exists, CG guarantees
+			but you should know the following: If a solution exists, CG guarantees
 			to find the solution in a small number of steps (depending on the
 			dimensionality of the matrix). Additionally, we never really need to
 			calculate the matrix. Instead, we only need to compute the product of
 			the matrix with some vector \( v \).
 			If you take a look at our <a href="https://github.com/pupuis/maml-tf2">implementation of iMAML</a>,
-			you will realise how this is benefical.
+			you will realize how this is beneficial.
 		</p>
 
 		<p>
@@ -386,18 +388,18 @@
 		</p>
 
 		<p>
-			While calculating the gradient is comparitively easy, iMAML requires
-			an optimizer which finds a quasi-optimal solution. Rajeswaran et al. show
+			While calculating the gradient is comparatively easy, iMAML requires
+			an optimizer that finds a quasi-optimal solution. Rajeswaran et al. show
 			that the gradient is still approximately correct as long as the solution
 			provided by the inner-loop optimizer is approximately correct.
-			Still, we need more gradient steps (if we use SGD),
-			then in regular MAML where even one step may suffice.
-			<d-cite bibtex-key="rajeswaran_meta-learning_2019"></d-cite>
+			Still, we need more gradient steps if we use SGD
+			than in regular MAML, where even one step may suffice.
+			<d-cite bibtex-key="DBLP:conf/nips/RajeswaranFKL19"></d-cite>
 		</p>
 
 		<p>
-			According to the same paper, iMAML produces better results then MAML, while
-			not using more resources (while iMAML requires more inner loop steps),
+			According to the same paper, iMAML produces better results than MAML, although
+			not using more resources. Whereas iMAML requires more inner loop steps,
 			MAML requires either more outer loops steps or expensive computation
 			of a long back-propagation chain. Compared to first-order MAML (FOMAML)
 			and REPTILE, the authors report better results on Omniglot
@@ -406,7 +408,7 @@
 			and Mini-ImageNet
 			<d-cite bibtex-key="liu_tools_2019"></d-cite>,
 			two common few-shot classification datasets.
-			<d-cite bibtex-key="rajeswaran_meta-learning_2019"></d-cite>
+			<d-cite bibtex-key="DBLP:conf/nips/RajeswaranFKL19"></d-cite>
 		</p>
 
 		<p>
@@ -414,19 +416,19 @@
 			<a href="https://www.inference.vc/notes-on-imaml-meta-learning-without-differentiating-through/#what-is-missing-stochasticity"
 				alt="Huszár's blog post on iMAML">blog post on iMAML</a>,
 			iMAML does not consider the stochasticity of Stochastic Gradient-Descent:
-			SGD may have non-zero proabilities of finding more then one task-level
+			SGD may have non-zero probabilities of finding more than one task-level
 			optimum, but iMAML will only derive the gradient in respect to actually
 			found optimum.
 		</p>
 		<p>
-			If you are interested in this condideration, you may also want to take
+			If you are interested in this consideration, you may also want to take
 			a look at the paper titled "Probabilistic Model-Agnostic Meta-Learning".
-			<d-cite bibtex-key="finn_probabilistic_2019"></d-cite>
+			<d-cite bibtex-key="DBLP:conf/nips/FinnXL18"></d-cite>
 		</p>
 
 		<p>
-			In the <a href="comparison.html">next part</a> we will spend some time on comparing the MAML and its extensions interactively.
-			Better close some background-tasks on your device, 'cuz it'll get computationally heavy 👩‍💻.
+			In the <a href="comparison.html">next part</a>, we will spend some time comparing the MAML and its variants interactively.
+			Better close some background tasks on your device, 'cuz it'll get computationally heavy 👩‍💻.
 		</p>
 
 	</d-article>

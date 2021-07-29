@@ -48,7 +48,7 @@
 						"authorURL":"https://www.ni.tu-berlin.de/menue/members/head_of_research_group/obermayer_klaus/parameter/en/",
 						"affiliations": [
 							{"name": "NI @ TU Berlin", "url": "https://www.ni.tu-berlin.de/menue/neural_information_processing_group/"},
-							{"name": "BCCN Berlin", "url": "https://www.bccn-berlin.de/"}
+							{"name": "BCCN&nbsp;Berlin", "url": "https://www.bccn-berlin.de/"}
 						]
 					}
 
@@ -82,7 +82,7 @@
 		  <div class="toc-line"></div>
 		</d-contents>
 
-
+		<div class="start-ref" id="start"></div>
 		<h2>Why MAML is Model-Agnostic</h2>
 
 		<p>
@@ -153,8 +153,13 @@
 			that tackle
 			few-shot
 			learning, their performance on Omniglot, as well as your own accuracy score from the starting page.
-            Next to recurrent recurrent <d-cite bibtex-key="DBLP:conf/icml/SantoroBBWL16"></d-cite> and attention-based models<d-cite bibtex-key="DBLP:conf/nips/VinyalsBLKW16"></d-cite>, there exist also optimized-base meta-learning.
-			Model-agnostic meta-learning (short: MAML, marked in <span style="color: #d62728">red</span>)<d-cite bibtex-key="DBLP:conf/icml/FinnAL17"></d-cite>
+
+      Next to recurrent <d-cite bibtex-key="DBLP:conf/icml/SantoroBBWL16"></d-cite>
+			and attention-based models <d-cite bibtex-key="DBLP:conf/nips/VinyalsBLKW16"></d-cite>,
+			there is also optimized-basef meta-learning.
+			Model-agnostic meta-learning (short: MAML, marked in
+			<span style="color: #d62728">red</span>)
+			<d-cite bibtex-key="DBLP:conf/icml/FinnAL17"></d-cite>
 			is the most famous one is our main interest in this article.
 		</p>
 
@@ -163,7 +168,10 @@
 				<div class="element is-loading" style="height: 400px"></div>
 			</d-figure>
 			<figcaption>
-				<p>This figure shows the results of different methods on the Omniglot dataset. If not stated differently, you see the results of 20-way 1-shot, but some differences in the evaluation procedure exist.
+				<p>
+					This figure shows the results of different methods on the Omniglot dataset.
+					If not stated differently, you see the results of 20-way 1-shot, but some
+					differences in the evaluation procedure exist.
 					As usual, accuracy numbers need to be taken with a grain of salt as
 					differences in the evaluation method, implementation, and model
 					complexity may have a non-negligible impact on the performance.
@@ -222,12 +230,58 @@
 			</figcaption>
 		</figure>
 
+		<p>
+			In this section we explain why MAML is "model-agnostic" and thereby gain a bit more of an overview of the
+			meta-learning field.
+			We start by taking a look at how few-shot problems are tackled by other meta-learning approaches.
+			As opposed to the optimization-based MAML, these methods force constraints on either the samples or the meta-learning architecture
+			and can thus be separated into
+			metric-based and model-based approaches, respectively.
+		</p>
 
+
+		<figure>
+			<d-figure id="fewShotVenn">
+				<div class="element is-loading" style="height: 300px"></div>
+			</d-figure>
+			<figcaption>
+				<p id="caption_lstm_based" class="fewShotMethods-reference">
+					Applications of Meta-Learning outside the domain of few-shot learning
+					include the optimization of the task-level optimizer using
+					a LSTM network.
+					<d-cite bibtex-key="DBLP:conf/nips/AndrychowiczDCH16"></d-cite>
+				</p>
+			</figcaption>
+		</figure>
+
+
+
+		<h4>Metric-based approaches</h4>
+		<p>
+			The core idea of metric-based approaches is to compare two samples in a
+			latent (metric) space: In this space, samples of the same class are supposed
+			to be close to each other, while two samples from different classes are
+			supposed to have a large distance (the notion of a distance is what makes
+			the latent space a metric space).
+			<d-cite bibtex-key="DBLP:conf/nips/SnellSZ17"></d-cite>
+			<d-cite bibtex-key="koch_siamese_2015"></d-cite>
+			<d-cite bibtex-key="DBLP:conf/nips/VinyalsBLKW16"></d-cite>
+		</p>
+
+		<h4>Model-based approaches</h4>
+		<p>
+			Model-based approaches are neural architectures that are deliberately designed
+			for fast adaption to new tasks without an inclination to overfit.
+			Memory-Augmented Neural Networks and MetaNet are two examples. Both employ
+			an external memory while still maintaining the ability to be trained
+			end-to-end.
+			<d-cite bibtex-key="DBLP:conf/icml/SantoroBBWL16"></d-cite>
+			<d-cite bibtex-key="DBLP:conf/icml/MunkhdalaiY17"></d-cite>
+		</p>
 
 		<p>
 			In the <a href="maml.html">next section</a> we will take a close look at MAML and study the math behind the method.
 			Furthermore, you will get the chance to explore a simple few-shot learning problem and find out firsthand why a meta-learning
-			approach is needed to solve it.
 		</p>
 
 	</d-article>

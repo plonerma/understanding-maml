@@ -1,3 +1,56 @@
+@article{DBLP:journals/corr/AbadiABBCCCDDDG16,
+  author    = {Mart{\'{\i}}n Abadi and
+               Ashish Agarwal and
+               Paul Barham and
+               Eugene Brevdo and
+               Zhifeng Chen and
+               Craig Citro and
+               Gregory S. Corrado and
+               Andy Davis and
+               Jeffrey Dean and
+               Matthieu Devin and
+               Sanjay Ghemawat and
+               Ian J. Goodfellow and
+               Andrew Harp and
+               Geoffrey Irving and
+               Michael Isard and
+               Yangqing Jia and
+               Rafal J{\'{o}}zefowicz and
+               Lukasz Kaiser and
+               Manjunath Kudlur and
+               Josh Levenberg and
+               Dan Man{\'{e}} and
+               Rajat Monga and
+               Sherry Moore and
+               Derek Gordon Murray and
+               Chris Olah and
+               Mike Schuster and
+               Jonathon Shlens and
+               Benoit Steiner and
+               Ilya Sutskever and
+               Kunal Talwar and
+               Paul A. Tucker and
+               Vincent Vanhoucke and
+               Vijay Vasudevan and
+               Fernanda B. Vi{\'{e}}gas and
+               Oriol Vinyals and
+               Pete Warden and
+               Martin Wattenberg and
+               Martin Wicke and
+               Yuan Yu and
+               Xiaoqiang Zheng},
+  title     = {TensorFlow: Large-Scale Machine Learning on Heterogeneous Distributed
+               Systems},
+  journal   = {CoRR},
+  volume    = {abs/1603.04467},
+  year      = {2016},
+  url       = {http://arxiv.org/abs/1603.04467},
+  archivePrefix = {arXiv},
+  eprint    = {1603.04467},
+  timestamp = {Mon, 13 Aug 2018 16:47:09 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/AbadiABBCCCDDDG16.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
 
 @inproceedings{DBLP:journals/jmlr/SalakhutdinovTT12,
   author    = {Ruslan Salakhutdinov and
@@ -86,6 +139,28 @@
   biburl    = {https://dblp.org/rec/conf/nips/VinyalsBLKW16.bib},
   bibsource = {dblp computer science bibliography, https://dblp.org}
 }
+
+@inproceedings{DBLP:conf/nips/ParkO19,
+  author    = {Eunbyung Park and
+               Junier B. Oliva},
+  editor    = {Hanna M. Wallach and
+               Hugo Larochelle and
+               Alina Beygelzimer and
+               Florence d'Alch{\'{e}}{-}Buc and
+               Emily B. Fox and
+               Roman Garnett},
+  title     = {Meta-Curvature},
+  booktitle = {Advances in Neural Information Processing Systems 32: Annual Conference
+               on Neural Information Processing Systems 2019, NeurIPS 2019, December
+               8-14, 2019, Vancouver, BC, Canada},
+  pages     = {3309--3319},
+  year      = {2019},
+  url       = {https://proceedings.neurips.cc/paper/2019/file/57c0531e13f40b91b3b0f1a30b529a1d-Paper.pdf},
+  timestamp = {Thu, 21 Jan 2021 15:15:19 +0100},
+  biburl    = {https://dblp.org/rec/conf/nips/ParkO19.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
 
 @inproceedings{DBLP:conf/icann/HochreiterYC01,
   author    = {Sepp Hochreiter and
@@ -241,62 +316,32 @@ on Deep Learning}",
 
 
 
-@article{rajeswaran_meta-learning_2019,
-	title = {Meta-Learning with Implicit Gradients},
-	url = {http://arxiv.org/abs/1909.04630},
-	abstract = {A core capability of intelligent systems is the ability to quickly learn new tasks by drawing on prior experience. Gradient (or optimization) based meta-learning has recently emerged as an effective approach for few-shot learning. In this formulation, meta-parameters are learned in the outer loop, while task-specific models are learned in the inner-loop, by using only a small amount of data from the current task. A key challenge in scaling these approaches is the need to differentiate through the inner loop learning process, which can impose considerable computational and memory burdens. By drawing upon implicit differentiation, we develop the implicit MAML algorithm, which depends only on the solution to the inner level optimization and not the path taken by the inner loop optimizer. This effectively decouples the meta-gradient computation from the choice of inner loop optimizer. As a result, our approach is agnostic to the choice of inner loop optimizer and can gracefully handle many gradient steps without vanishing gradients or memory constraints. Theoretically, we prove that implicit MAML can compute accurate meta-gradients with a memory footprint that is, up to small constant factors, no more than that which is required to compute a single inner loop gradient and at no overall increase in the total computational cost. Experimentally, we show that these benefits of implicit MAML translate into empirical gains on few-shot image recognition benchmarks.},
-	urldate = {2021-04-30},
-	journal = {arXiv:1909.04630 [cs, math, stat]},
-	author = {Rajeswaran, Aravind and Finn, Chelsea and Kakade, Sham and Levine, Sergey},
-	month = sep,
-	year = {2019},
-	note = {arXiv: 1909.04630},
-	keywords = {Computer Science - Artificial Intelligence, Computer Science - Machine Learning, Statistics - Machine Learning, Mathematics - Optimization and Control},
+
+
+
+
+@inproceedings{DBLP:conf/nips/RajeswaranFKL19,
+  author    = {Aravind Rajeswaran and
+               Chelsea Finn and
+               Sham M. Kakade and
+               Sergey Levine},
+  editor    = {Hanna M. Wallach and
+               Hugo Larochelle and
+               Alina Beygelzimer and
+               Florence d'Alch{\'{e}}{-}Buc and
+               Emily B. Fox and
+               Roman Garnett},
+  title     = {Meta-Learning with Implicit Gradients},
+  booktitle = {Advances in Neural Information Processing Systems 32: Annual Conference
+               on Neural Information Processing Systems 2019, NeurIPS 2019, December
+               8-14, 2019, Vancouver, BC, Canada},
+  pages     = {113--124},
+  year      = {2019},
+  url       = {https://proceedings.neurips.cc/paper/2019/file/072b030ba126b2f4b2374f342be9ed44-Paper.pdf},
+  timestamp = {Thu, 21 Jan 2021 15:15:19 +0100},
+  biburl    = {https://dblp.org/rec/conf/nips/RajeswaranFKL19.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
-
-@article{grant_recasting_2018,
-	title = {Recasting Gradient-Based Meta-Learning as Hierarchical Bayes},
-	url = {http://arxiv.org/abs/1801.08930},
-	abstract = {Meta-learning allows an intelligent agent to leverage prior learning episodes as a basis for quickly improving performance on a novel task. Bayesian hierarchical modeling provides a theoretical framework for formalizing meta-learning as inference for a set of parameters that are shared across tasks. Here, we reformulate the model-agnostic meta-learning algorithm (MAML) of Finn et al. (2017) as a method for probabilistic inference in a hierarchical Bayesian model. In contrast to prior methods for meta-learning via hierarchical Bayes, MAML is naturally applicable to complex function approximators through its use of a scalable gradient descent procedure for posterior inference. Furthermore, the identification of MAML as hierarchical Bayes provides a way to understand the algorithm's operation as a meta-learning procedure, as well as an opportunity to make use of computational strategies for efficient inference. We use this opportunity to propose an improvement to the MAML algorithm that makes use of techniques from approximate inference and curvature estimation.},
-	urldate = {2021-06-30},
-	journal = {arXiv:1801.08930 [cs]},
-	author = {Grant, Erin and Finn, Chelsea and Levine, Sergey and Darrell, Trevor and Griffiths, Thomas},
-	month = jan,
-	year = {2018},
-	note = {arXiv: 1801.08930},
-	keywords = {Computer Science - Machine Learning},
-}
-
-
-@article{blondel_efficient_2021,
-	title = {Efficient and Modular Implicit Differentiation},
-	url = {http://arxiv.org/abs/2105.15183},
-	abstract = {Automatic differentiation (autodiff) has revolutionized machine learning. It allows expressing complex computations by composing elementary ones in creative ways and removes the burden of computing their derivatives by hand. More recently, differentiation of optimization problem solutions has attracted widespread attention with applications such as optimization as a layer, and in bi-level problems such as hyper-parameter optimization and meta-learning. However, the formulas for these derivatives often involve case-by-case tedious mathematical derivations. In this paper, we propose a uniﬁed, efﬁcient and modular approach for implicit differentiation of optimization problems. In our approach, the user deﬁnes (in Python in the case of our implementation) a function F capturing the optimality conditions of the problem to be differentiated. Once this is done, we leverage autodiff of F and implicit differentiation to automatically differentiate the optimization problem. Our approach thus combines the beneﬁts of implicit differentiation and autodiff. It is efﬁcient as it can be added on top of any state-of-the-art solver and modular as the optimality condition speciﬁcation is decoupled from the implicit differentiation mechanism. We show that seemingly simple principles allow to recover many recently proposed implicit differentiation methods and create new ones easily. We demonstrate the ease of formulating and solving bi-level optimization problems using our framework. We also showcase an application to the sensitivity analysis of molecular dynamics.},
-	language = {en},
-	urldate = {2021-07-03},
-	journal = {arXiv:2105.15183 [cs, math, stat]},
-	author = {Blondel, Mathieu and Berthet, Quentin and Cuturi, Marco and Frostig, Roy and Hoyer, Stephan and Llinares-López, Felipe and Pedregosa, Fabian and Vert, Jean-Philippe},
-	month = may,
-	year = {2021},
-	note = {arXiv: 2105.15183},
-	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning, Mathematics - Numerical Analysis},
-}
-
-@article{finn_probabilistic_2019,
-	title = {Probabilistic Model-Agnostic Meta-Learning},
-	url = {http://arxiv.org/abs/1806.02817},
-	abstract = {Meta-learning for few-shot learning entails acquiring a prior over previous tasks and experiences, such that new tasks be learned from small amounts of data. However, a critical challenge in few-shot learning is task ambiguity: even when a powerful prior can be meta-learned from a large number of prior tasks, a small dataset for a new task can simply be too ambiguous to acquire a single model (e.g., a classifier) for that task that is accurate. In this paper, we propose a probabilistic meta-learning algorithm that can sample models for a new task from a model distribution. Our approach extends model-agnostic meta-learning, which adapts to new tasks via gradient descent, to incorporate a parameter distribution that is trained via a variational lower bound. At meta-test time, our algorithm adapts via a simple procedure that injects noise into gradient descent, and at meta-training time, the model is trained such that this stochastic adaptation procedure produces samples from the approximate model posterior. Our experimental results show that our method can sample plausible classifiers and regressors in ambiguous few-shot learning problems. We also show how reasoning about ambiguity can also be used for downstream active learning problems.},
-	urldate = {2021-04-30},
-	journal = {arXiv:1806.02817 [cs, stat]},
-	author = {Finn, Chelsea and Xu, Kelvin and Levine, Sergey},
-	month = oct,
-	year = {2019},
-	note = {arXiv: 1806.02817
-version: 2},
-	keywords = {Computer Science - Artificial Intelligence, Computer Science - Machine Learning, Statistics - Machine Learning},
-	annote = {Comment: NeurIPS 2018. First two authors contributed equally. Supplementary results available at https://sites.google.com/view/probabilistic-maml/},
-}
-
 
 
 @misc{lake_omniglot_2015,
@@ -310,6 +355,28 @@ version: 2},
 	year = {2015},
 }
 
+@article{DBLP:journals/corr/abs-2105-15183,
+  author    = {Mathieu Blondel and
+               Quentin Berthet and
+               Marco Cuturi and
+               Roy Frostig and
+               Stephan Hoyer and
+               Felipe Llinares-López and
+               Fabian Pedregosa and
+               Jean{-}Philippe Vert},
+  title     = {Efficient and Modular Implicit Differentiation},
+  journal   = {CoRR},
+  volume    = {abs/2105.15183},
+  year      = {2021},
+  url       = {https://arxiv.org/abs/2105.15183},
+  archivePrefix = {arXiv},
+  eprint    = {2105.15183},
+  timestamp = {Wed, 02 Jun 2021 11:46:42 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-2105-15183.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+
 @misc{liu_tools_2019,
 	title = {Tools for mini-ImageNet Dataset},
 	journal = {Tools for mini-ImageNet Dataset},
@@ -320,89 +387,85 @@ version: 2},
 }
 
 
-@article{glorot_deep_nodate,
-	title = {Deep Sparse Rectiﬁer Neural Networks},
-	abstract = {While logistic sigmoid neurons are more biologically plausible than hyperbolic tangent neurons, the latter work better for training multi-layer neural networks. This paper shows that rectifying neurons are an even better model of biological neurons and yield equal or better performance than hyperbolic tangent networks in spite of the hard non-linearity and non-diﬀerentiability at zero, creating sparse representations with true zeros, which seem remarkably suitable for naturally sparse data. Even though they can take advantage of semi-supervised setups with extra-unlabeled data, deep rectiﬁer networks can reach their best performance without requiring any unsupervised pre-training on purely supervised tasks with large labeled datasets. Hence, these results can be seen as a new milestone in the attempts at understanding the diﬃculty in training deep but purely supervised neural networks, and closing the performance gap between neural networks learnt with and without unsupervised pre-training.},
-	language = {en},
-	author = {Glorot, Xavier and Bordes, Antoine and Bengio, Yoshua},
-	pages = {9},
+@inproceedings{DBLP:conf/nips/FinnXL18,
+  author    = {Chelsea Finn and
+               Kelvin Xu and
+               Sergey Levine},
+  editor    = {Samy Bengio and
+               Hanna M. Wallach and
+               Hugo Larochelle and
+               Kristen Grauman and
+               Nicol{\`{o}} Cesa{-}Bianchi and
+               Roman Garnett},
+  title     = {Probabilistic Model-Agnostic Meta-Learning},
+  booktitle = {Advances in Neural Information Processing Systems 31: Annual Conference
+               on Neural Information Processing Systems 2018, NeurIPS 2018, December
+               3-8, 2018, Montr{\'{e}}al, Canada},
+  pages     = {9537--9548},
+  year      = {2018},
+  url       = {https://proceedings.neurips.cc/paper/2018/file/8e2c381d4dd04f1c55093f22c59c3a08-Paper.pdf},
+  timestamp = {Thu, 21 Jan 2021 15:15:21 +0100},
+  biburl    = {https://dblp.org/rec/conf/nips/FinnXL18.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
-@article{sagun_eigenvalues_2017,
-	title = {Eigenvalues of the Hessian in Deep Learning: Singularity and Beyond},
-	shorttitle = {Eigenvalues of the {Hessian} in {Deep} {Learning}},
-	url = {http://arxiv.org/abs/1611.07476},
-	abstract = {We look at the eigenvalues of the Hessian of a loss function before and after training. The eigenvalue distribution is seen to be composed of two parts, the bulk which is concentrated around zero, and the edges which are scattered away from zero. We present empirical evidence for the bulk indicating how overparametrized the system is, and for the edges that depend on the input data.},
-	language = {en},
-	urldate = {2021-07-12},
-	journal = {arXiv:1611.07476 [cs]},
-	aear = {2017},
-	note = {arXiv: 1611.07476},
-	keywords = {Computer Science - Machine Learning},
-	annote = {Comment: ICLR submission, 2016 - updated to match the openreview.net version},
+@article{DBLP:journals/corr/abs-1803-02999,
+  author    = {Alex Nichol and
+               Joshua Achiam and
+               John Schulman},
+  title     = {On First-Order Meta-Learning Algorithms},
+  journal   = {CoRR},
+  volume    = {abs/1803.02999},
+  year      = {2018},
+  url       = {http://arxiv.org/abs/1803.02999},
+  archivePrefix = {arXiv},
+  eprint    = {1803.02999},
+  timestamp = {Mon, 13 Aug 2018 16:48:00 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-1803-02999.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
-@article{park_meta-curvature_2020,
-	title = {Meta-Curvature},
-	url = {http://arxiv.org/abs/1902.03356},
-	abstract = {We propose meta-curvature (MC), a framework to learn curvature information for better generalization and fast model adaptation. MC expands on the modelagnostic meta-learner (MAML) by learning to transform the gradients in the inner optimization such that the transformed gradients achieve better generalization performance to a new task. For training large scale neural networks, we decompose the curvature matrix into smaller matrices in a novel scheme where we capture the dependencies of the model’s parameters with a series of tensor products. We demonstrate the effects of our proposed method on several few-shot learning tasks and datasets. Without any task speciﬁc techniques and architectures, the proposed method achieves substantial improvement upon previous MAML variants and outperforms the recent state-of-the-art methods. Furthermore, we observe faster convergence rates of the meta-training process. Finally, we present an analysis that explains better generalization performance with the meta-trained curvature.},
-	language = {en},
-	urldate = {2021-07-12},
-	journal = {arXiv:1902.03356 [cs, stat]},
-	author = {Park, Eunbyung and Oliva, Junier B.},
-	month = jan,
-	year = {2020},
-	near = {2017},
-	note = {arXiv: 1611.07476},
-	keywords = {Computer Science - Machine Learning},
-	annote = {Comment: ICLR submission, 2016 - updated to match the openreview.net version},
+@inproceedings{DBLP:conf/iclr/GrantFLDG18,
+  author    = {Erin Grant and
+               Chelsea Finn and
+               Sergey Levine and
+               Trevor Darrell and
+               Thomas L. Griffiths},
+  title     = {Recasting Gradient-Based Meta-Learning as Hierarchical Bayes},
+  booktitle = {6th International Conference on Learning Representations, {ICLR} 2018,
+               Vancouver, BC, Canada, April 30 - May 3, 2018, Conference Track Proceedings},
+  publisher = {OpenReview.net},
+  year      = {2018},
+  url       = {https://arxiv.org/pdf/1801.08930.pdf},
+  timestamp = {Thu, 25 Jul 2019 14:26:03 +0200},
+  biburl    = {https://dblp.org/rec/conf/iclr/GrantFLDG18.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
-@article{park_meta-curvature_2020,
-	title = {Meta-Curvature},
-	url = {http://arxiv.org/abs/1902.03356},
-	abstract = {We propose meta-curvature (MC), a framework to learn curvature information for better generalization and fast model adaptation. MC expands on the modelagnostic meta-learner (MAML) by learning to transform the gradients in the inner optimization such that the transformed gradients achieve better generalization performance to a new task. For training large scale neural networks, we decompose the curvature matrix into smaller matrices in a novel scheme where we capture the dependencies of the model’s parameters with a series of tensor products. We demonstrate the effects of our proposed method on several few-shot learning tasks and datasets. Without any task speciﬁc techniques and architectures, the proposed method achieves substantial improvement upon previous MAML variants and outperforms the recent state-of-the-art methods. Furthermore, we observe faster convergence rates of the meta-training process. Finally, we present an analysis that explains better generalization performance with the meta-trained curvature.},
-	language = {en},
-	urldate = {2021-07-12},
-	journal = {arXiv:1902.03356 [cs, stat]},
-	author = {Park, Eunbyung and Oliva, Junier B.},
-	month = jan,
-	year = {2020},
-	note = {arXiv: 1902.03356},
-	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning},
-	annote = {Comment: To appear in NeurIPS 2019},
-}
-
-@article{nichol_first-order_2018,
-	title = {On First-Order Meta-Learning Algorithms},
-	url = {http://arxiv.org/abs/1803.02999},
-	abstract = {This paper considers meta-learning problems, where there is a distribution of tasks, and we would like to obtain an agent that performs well (i.e., learns quickly) when presented with a previously unseen task sampled from this distribution. We analyze a family of algorithms for learning a parameter initialization that can be ﬁne-tuned quickly on a new task, using only ﬁrstorder derivatives for the meta-learning updates. This family includes and generalizes ﬁrst-order MAML, an approximation to MAML obtained by ignoring second-order derivatives. It also includes Reptile, a new algorithm that we introduce here, which works by repeatedly sampling a task, training on it, and moving the initialization towards the trained weights on that task. We expand on the results from Finn et al. showing that ﬁrst-order meta-learning algorithms perform well on some well-established benchmarks for few-shot classiﬁcation, and we provide theoretical analysis aimed at understanding why these algorithms work.},
-	language = {en},
-	urldate = {2021-07-12},
-	journal = {arXiv:1803.02999 [cs]},
-	author = {Nichol, Alex and Achiam, Joshua and Schulman, John},
-	month = oct,
-	year = {2018},
-	note = {arXiv: 1803.02999},
-	keywords = {Computer Science - Machine Learning},
+@inproceedings{DBLP:journals/jmlr/GlorotBB11,
+  author    = {Xavier Glorot and
+               Antoine Bordes and
+               Yoshua Bengio},
+  editor    = {Geoffrey J. Gordon and
+               David B. Dunson and
+               Miroslav Dud{\'{\i}}k},
+  title     = {Deep Sparse Rectifier Neural Networks},
+  booktitle = {Proceedings of the Fourteenth International Conference on Artificial
+               Intelligence and Statistics, {AISTATS} 2011, Fort Lauderdale, USA,
+               April 11-13, 2011},
+  series    = {{JMLR} Proceedings},
+  volume    = {15},
+  pages     = {315--323},
+  publisher = {JMLR.org},
+  year      = {2011},
+  url       = {http://proceedings.mlr.press/v15/glorot11a/glorot11a.pdf},
+  timestamp = {Wed, 29 May 2019 08:41:47 +0200},
+  biburl    = {https://dblp.org/rec/journals/jmlr/GlorotBB11.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
 
 
-
-@article{nichol_first-order_2018,
-	title = {On First-Order Meta-Learning Algorithms},
-	url = {http://arxiv.org/abs/1803.02999},
-	abstract = {This paper considers meta-learning problems, where there is a distribution of tasks, and we would like to obtain an agent that performs well (i.e., learns quickly) when presented with a previously unseen task sampled from this distribution. We analyze a family of algorithms for learning a parameter initialization that can be ﬁne-tuned quickly on a new task, using only ﬁrstorder derivatives for the meta-learning updates. This family includes and generalizes ﬁrst-order MAML, an approximation to MAML obtained by ignoring second-order derivatives. It also includes Reptile, a new algorithm that we introduce here, which works by repeatedly sampling a task, training on it, and moving the initialization towards the trained weights on that task. We expand on the results from Finn et al. showing that ﬁrst-order meta-learning algorithms perform well on some well-established benchmarks for few-shot classiﬁcation, and we provide theoretical analysis aimed at understanding why these algorithms work.},
-	language = {en},
-	urldate = {2021-07-12},
-	journal = {arXiv:1803.02999 [cs]},
-	author = {Nichol, Alex and Achiam, Joshua and Schulman, John},
-	month = oct,
-	year = {2018},
-	note = {arXiv: 1803.02999},
-	keywords = {Computer Science - Machine Learning},
-}
 uthor = {Sagun, Levent and Bottou, Leon and LeCun, Yann},
 	month = oct,
 	year = {2017},
@@ -411,47 +474,34 @@ uthor = {Sagun, Levent and Bottou, Leon and LeCun, Yann},
 	annote = {Comment: ICLR submission, 2016 - updated to match the openreview.net version},
 }
 
-@article{park_meta-curvature_2020,
-	title = {Meta-Curvature},
-	url = {http://arxiv.org/abs/1902.03356},
-	abstract = {We propose meta-curvature (MC), a framework to learn curvature information for better generalization and fast model adaptation. MC expands on the modelagnostic meta-learner (MAML) by learning to transform the gradients in the inner optimization such that the transformed gradients achieve better generalization performance to a new task. For training large scale neural networks, we decompose the curvature matrix into smaller matrices in a novel scheme where we capture the dependencies of the model’s parameters with a series of tensor products. We demonstrate the effects of our proposed method on several few-shot learning tasks and datasets. Without any task speciﬁc techniques and architectures, the proposed method achieves substantial improvement upon previous MAML variants and outperforms the recent state-of-the-art methods. Furthermore, we observe faster convergence rates of the meta-training process. Finally, we present an analysis that explains better generalization performance with the meta-trained curvature.},
-	language = {en},
-	urldate = {2021-07-12},
-	journal = {arXiv:1902.03356 [cs, stat]},
-	author = {Park, Eunbyung and Oliva, Junier B.},
-	month = jan,
-	year = {2020},
-	note = {arXiv: 1902.03356},
-	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning},
-	annote = {Comment: To appear in NeurIPS 2019},
+@article{DBLP:journals/corr/SagunBL16,
+  author    = {Levent Sagun and
+               L{\'{e}}on Bottou and
+               Yann LeCun},
+  title     = {Eigenvalues of the Hessian in Deep Learning: Singularity and Beyond},
+  journal   = {CoRR},
+  volume    = {abs/1611.07476},
+  year      = {2016},
+  url       = {http://arxiv.org/abs/1611.07476},
+  archivePrefix = {arXiv},
+  eprint    = {1611.07476},
+  timestamp = {Mon, 13 Aug 2018 16:46:41 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/SagunBL16.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
-@article{nichol_first-order_2018,
-	title = {On First-Order Meta-Learning Algorithms},
-	url = {http://arxiv.org/abs/1803.02999},
-	abstract = {This paper considers meta-learning problems, where there is a distribution of tasks, and we would like to obtain an agent that performs well (i.e., learns quickly) when presented with a previously unseen task sampled from this distribution. We analyze a family of algorithms for learning a parameter initialization that can be ﬁne-tuned quickly on a new task, using only ﬁrstorder derivatives for the meta-learning updates. This family includes and generalizes ﬁrst-order MAML, an approximation to MAML obtained by ignoring second-order derivatives. It also includes Reptile, a new algorithm that we introduce here, which works by repeatedly sampling a task, training on it, and moving the initialization towards the trained weights on that task. We expand on the results from Finn et al. showing that ﬁrst-order meta-learning algorithms perform well on some well-established benchmarks for few-shot classiﬁcation, and we provide theoretical analysis aimed at understanding why these algorithms work.},
-	language = {en},
-	urldate = {2021-07-12},
-	journal = {arXiv:1803.02999 [cs]},
-	author = {Nichol, Alex and Achiam, Joshua and Schulman, John},
-	month = oct,
-	year = {2018},
-	note = {arXiv: 1803.02999},
-	keywords = {Computer Science - Machine Learning},
+@inproceedings{DBLP:conf/iclr/LiuSY19,
+  author    = {Hanxiao Liu and
+               Karen Simonyan and
+               Yiming Yang},
+  title     = {{DARTS:} Differentiable Architecture Search},
+  booktitle = {7th International Conference on Learning Representations, {ICLR} 2019,
+               New Orleans, LA, USA, May 6-9, 2019},
+  publisher = {OpenReview.net},
+  year      = {2019},
+  url       = {https://openreview.net/pdf?id=S1eYHoC5FX},
+  timestamp = {Thu, 25 Jul 2019 14:25:55 +0200},
+  biburl    = {https://dblp.org/rec/conf/iclr/LiuSY19.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
-
-@article{liu_darts_2019,
-	title = {DARTS: Differentiable Architecture Search},
-	shorttitle = {DARTS},
-	url = {http://arxiv.org/abs/1806.09055},
-	abstract = {This paper addresses the scalability challenge of architecture search by formulating the task in a differentiable manner. Unlike conventional approaches of applying evolution or reinforcement learning over a discrete and non-differentiable search space, our method is based on the continuous relaxation of the architecture representation, allowing efficient search of the architecture using gradient descent. Extensive experiments on CIFAR-10, ImageNet, Penn Treebank and WikiText-2 show that our algorithm excels in discovering high-performance convolutional architectures for image classification and recurrent architectures for language modeling, while being orders of magnitude faster than state-of-the-art non-differentiable techniques. Our implementation has been made publicly available to facilitate further research on efficient architecture search algorithms.},
-	urldate = {2021-07-22},
-	journal = {arXiv:1806.09055 [cs, stat]},
-	author = {Liu, Hanxiao and Simonyan, Karen and Yang, Yiming},
-	month = apr,
-	year = {2019},
-	note = {arXiv: 1806.09055},
-	keywords = {Computer Science - Computation and Language, Computer Science - Computer Vision and Pattern Recognition, Computer Science - Machine Learning, Statistics - Machine Learning},
-	annote = {Comment: Published at ICLR 2019; Code and pretrained models available at https://github.com/quark0/darts},
-}
