@@ -19,7 +19,7 @@
 		<script type="text/json">
 			{
 				"title": "An Interactive Introduction to Model-Agnostic Meta-Learning",
-				"description": "Exploring the world of model-agnostic meta-learning and its extensions.",
+				"description": "Exploring the world of model-agnostic meta-learning and its variants.",
 				"authors": [
 					{
 						"author":"Luis Müller",
@@ -35,7 +35,23 @@
 							{"name": "NI @ TU Berlin", "url": "https://www.ni.tu-berlin.de/menue/neural_information_processing_group/"},
 							{"name": "ML&nbsp;@&nbsp;HU&nbsp;Berlin", "url": "https://www.informatik.hu-berlin.de/en/forschung-en/gebiete/ml-en"}
 						]
+                    },
+					{
+						"author":"Thomas Goerttler",
+						"authorURL":"https://thomasgoerttler.de",
+						"affiliations": [
+							{"name": "NI @ TU Berlin", "url": "https://www.ni.tu-berlin.de/menue/neural_information_processing_group/"}
+						]
+                    },
+					{
+						"author":"Klaus Obermayer",
+						"authorURL":"https://www.ni.tu-berlin.de/menue/members/head_of_research_group/obermayer_klaus/parameter/en/",
+						"affiliations": [
+							{"name": "NI @ TU Berlin", "url": "https://www.ni.tu-berlin.de/menue/neural_information_processing_group/"},
+							{"name": "BCCN&nbsp;Berlin", "url": "https://www.bccn-berlin.de/"}
+						]
 					}
+
 				]
 			}
 
@@ -44,18 +60,12 @@
 
 	<d-title>
 		<h1>An Interactive Introduction to Model-Agnostic Meta-Learning</h1>
-		<h2>Exploring the world of model-agnostic meta-learning and its extensions.</h2>
+		<h2>Exploring the world of model-agnostic meta-learning and its variants.</h2>
 	</d-title>
 
 	<d-byline></d-byline>
 
 	<d-article>
-
-		<d-contents>
-			<nav class="toc figcaption" id="menu">
-			</nav>
-			<div class="toc-line"></div>
-		</d-contents>
 
 		<p>
 			<i style="font-size: .8em;">
@@ -66,12 +76,20 @@
 			</i>
 		</p>
 
+		<d-contents>
+			<nav class="toc figcaption" id="menu">
+			</nav>
+			<div class="toc-line"></div>
+		</d-contents>
 
+
+
+		<div class="start-ref" id="start"></div>
 		<h2>Conclusion</h2>
 		<p>
-			In this multi-part series on Model-Agnostic Meta-Learning (MAML) we have studied an optimization-based
-			approach to
-			solve few-shot learning
+			In this multi-part series on Model-Agnostic Meta-Learning (MAML), we have studied an optimization-based
+			meta-learning approach to
+			solve, e.g. ,few-shot learning
 			problems, where we expose a learner with only a few samples on a task and hope to somehow converge to a nice
 			solution.
 			MAML builds up a model of the world from studying other tasks and thereby finding an initialization for
@@ -81,10 +99,10 @@
 			use for the tasks (also called the inner optimizer), MAML can be applied to all architectures and learning
 			schemes, making it
 			a versatile tool for few-shot learning. However, we also studied the computational overhead that comes with
-			such a differentiation
-			and thus extensions to MAML are needed which bypass the terms of the meta-gradient which are costly to
+			such a differentiation.
+			Thus variants to MAML are needed which bypass the terms of the meta-gradient, which are costly to
 			obtain. While FOMAML simply drops these terms from the meta-gradient, Reptile abandons the computation of
-			a meta-gradient altogether and computes a moving average of optimal task parameters instead. In contrast
+			a meta-gradient altogether and computes a moving average of optimal task parameters instead. In contrast,
 			iMAML creates
 			a dependency between initial parameters and loss space and therefore allows us to compute the meta-gradient
 			without differentiating
@@ -97,7 +115,7 @@
 			research on optimization-based meta-learning with many interesting approaches.
 		</p>
 		<p>
-			Consider leaving feedback or suggestions or simply get in contact with us, either via <a href="">github</a> or via e-mail at
+			Consider leaving feedback or suggestions or simply get in contact with us, either via <a href="">GitHub</a> or via e-mail at
 			<a href="mailto:maml@maxploner.com">maml@maxploner.com</a>.
 		</p>
 

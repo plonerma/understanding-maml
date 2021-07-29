@@ -67,12 +67,6 @@
 	<d-byline></d-byline>
 
 	<d-article>
-		<d-contents>
-			<nav class="toc figcaption" id="menu">
-			</nav>
-			<div class="toc-line"></div>
-		</d-contents>
-
 		<p>
 			<i style="font-size: .8em;">
 				This page is part of a multi-part series on Model-Agnostic Meta-Learning.
@@ -83,13 +77,17 @@
 		</p>
 
 
+		<d-contents>
+			<nav class="toc figcaption" id="menu">
+			</nav>
+			<div class="toc-line"></div>
+		</d-contents>
 
 
-
-
+		<div class="start-ref" id="start"></div>
 		<h2>Reptile</h2>
 		<p>
-			Reptile, proposed by Nichol et al. <d-cite bibtex-key="nichol_first-order_2018"></d-cite>, is another
+			Reptile, proposed by Nichol et al. <d-cite bibtex-key="DBLP:journals/corr/abs-1803-02999"></d-cite>, is another
 			first-order version of MAML that uses a simple update
 			procedure to find the
 			optimal initialization \(\theta\). Let's have a look:
@@ -103,40 +101,39 @@
 			<li>3. Update \(\theta\) according to \(\theta = \theta + \beta(\phi_i - \theta)\).</li>
 		</ul>
 		<p>
-			Note the two most obvious differences to MAML: First of all, we sample one task at a time, which is more
-			similar
-			how we trained the <i>pretrained</i>
-			model than to MAML. Remember that in MAML we minimize the expected meta-loss over a number of sampled tasks.
+			Note the two most noticeable differences to MAML:
+			First of all, we only sample one task at a time. This is more
+			similar to the training of the <i>pretrained</i>
+			model than to MAML. Remember that in MAML, we minimize the expected meta-loss over several sampled tasks.
 			Secondly, it seems like we
-			aren't computing a meta-gradient at all, more like a difference of parameters. And in fact, the formula we
+			are not computing a meta-gradient at all, more like a difference of parameters. And in fact, the formula we
 			use for
-			updating \(\theta\), i.e.
+			updating \(\theta\),
 
 			\[ \theta = \theta + \beta(\phi_i - \theta), \]
 
-			is the formula for linearly interpolating between \( \theta \) and \( \phi_i \), with interpolation rate
+			is the formula for linear interpolation between \( \theta \) and \( \phi_i \), with interpolation rate
 			\(\beta
 			\in [0, 1]\).
 			If you are not sure what that means in the context of parameter optimization, take a look at <a
 				href="#reptileInterpolation">this figure</a>. There
 			you
 			can play around with the
-			position of \(\theta\), the optimizer \(U_{\tau_i}\) and the interpolation rate \(\beta\) and see what
-			update
-			step Reptile would take.
+			position of \(\theta\), the optimizer \(U_{\tau_i}\) and the interpolation rate \(\beta\) and see
+			how Reptile would calculate the update of \( \theta \).
 		</p>
 		<figure>
 			<d-figure id="reptileInterpolation"></d-figure>
 		</figure>
 		<p>
-			By the way, one detail of Reptile that isn't obvious just from looking at the three steps we posted above,
-			but still important to note,
-			is that Reptile does not (need to) differentiate between test- and training-sets when computing loss
+			One detail of Reptile is not apparent just from looking at the three steps,
+			but is still important to note:
+			Reptile does not (need to) differentiate between test- and training-sets when computing loss
 			\(\mathcal{L}_{\tau_i}\) since
-			Reptile does not update according to test-set-performance.
+			it does not update according to test-set-performance.
 		</p>
 		<p>
-			Furthermore, it makes sense to spend some time studying why the authors of Reptile expilictly state that
+			Furthermore, it makes sense to spend some time studying why the authors of Reptile explicitly state that
 			optimizer \(U_{\tau_i}\) must perform
 			more than one gradient descent step (\(k > 1\)). This is because otherwise
 
@@ -149,24 +146,24 @@
 
 			which corresponds to updating \(\theta \) according to standard gradient descent with learning rate \(\alpha
 			\cdot \beta\).
-			And this in turn is more or less the update scheme we used for the <i>pretrained</i> model, which we have
-			already seen to fail.
+			And this, in turn, is more or less the update scheme we used for the <i>pretrained</i> model, which we have
+			already seen failing.
 		</p>
 		<p>
-			You might have already figured this out yourself, if you set the inner steps of <a
+			You might have already figured this out yourself. If you set the inner steps of <a
 				href="#reptileInterpolation">the figure from above</a>
 			to \(1\) (which were set to \(2\) by default deliberately - and now you know why).
 
-			It should however also be noted, as the Nichol et al. state, that as soon as \(k > 1\), the update step
-			cannot be reduced to simple gradient descent anymore, i.e.
+			However, it should also be noted, as statet in <d-cite bibtex-key="DBLP:journals/corr/abs-1803-02999"></d-cite>, that as soon as \(k > 1\), the update step
+			cannot be reduced to simple gradient descent anymore since
 			it involves terms accounting for meta-performance.
 		</p>
 		<p>
-			Now, at this point you might have already understood <i>how</i> the Reptile update works, but no idea
+			Now, at this point, you might have already understood <i>how</i> the Reptile update works, but no idea
 			<i>if</i> and <i>why</i> it would
 			find the same optimal initialization that MAML does! As for the <i>if</i>, Reptile does not (always) find
 			the same optimal initialization
-			that MAML would find, since Reptile it is not minimizing the same objective. However, Reptile performs
+			that MAML would find since Reptile doese not minimize the same objective. However, Reptile performs
 			competitively well compared to MAML in several few-shot learning
 			problems.
 		</p>
@@ -185,16 +182,16 @@
 			being close to the true mean.
 		</p>
 		<p>
-			Hence, we can interpret Reptile as computing an estimate of the average optimal parameter of each task. Note
-			how this confirms what we
-			already discovered with FOMAML, namely that the information important for learning across tasks is contained
-			not within one task (i.e. pretrained approach),
-			and not for the most part in higher-order derivatives (MAML) but within optimizing on a task with respect to
+			Hence, we can interpret Reptile as computing an estimate of the average optimal parameter of each task.
+			This confirms what we
+			already discovered with FOMAML: The information important for learning across tasks is contained
+			not within one task (i.e., pretrained approach),
+			and for the most part, not in higher-order derivatives (MAML) but within optimizing on a task with respect to
 			the initial parameters.
 		</p>
 		<p>
-			Next up is <a href="imaml.html">iMAML</a>, which changes the narrative and introduces us to yet another approach 
-			to bypass second-order gradients. 
+			Next up is <a href="imaml.html">iMAML</a>, which changes the narrative and introduces us to yet another approach
+			to bypass second-order gradients.
 		</p>
 
 	</d-article>
