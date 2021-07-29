@@ -74,9 +74,9 @@
 		</p>
 
 		<d-contents>
-		  <nav class="toc figcaption" id="menu">
-		  </nav>
-		  <div class="toc-line"></div>
+			<nav class="toc figcaption" id="menu">
+			</nav>
+			<div class="toc-line"></div>
 		</d-contents>
 
 		<div class="start-ref" id="start"></div>
@@ -89,7 +89,11 @@
 			force constraints on either the sampling (e.g. episodic training)
 			or the architecture of the model. MAML on the other hand requires only one
 			very general assumption: the model needs to be optimizable by an gradient-based
-			optimizer. Hence, it is called "model-agnostic".
+			optimizer. Hence, it has been introduced as "model-agnostic". But notice that the desired model is still not
+			completely free of assumptions. It is important to view the method in the context of the field to understand
+			what
+			really sets it apart in terms of design, assumption and approach, which is what we will consider on the rest
+			of this page.
 		</p>
 
 		<figure>
@@ -148,7 +152,7 @@
 			few-shot
 			learning, their performance on Omniglot, as well as your own accuracy score from the starting page.
 
-      Next to recurrent <d-cite bibtex-key="DBLP:conf/icml/SantoroBBWL16"></d-cite>
+			Next to recurrent <d-cite bibtex-key="DBLP:conf/icml/SantoroBBWL16"></d-cite>
 			and attention-based models <d-cite bibtex-key="DBLP:conf/nips/VinyalsBLKW16"></d-cite>,
 			there is also optimized-based meta-learning, of which
 			model-agnostic meta-learning (short: MAML, marked in
@@ -226,8 +230,10 @@
 
 
 		<p>
-			In the <a href="maml.html">next section</a> we will take a close look at MAML and study the math behind the method.
-			Furthermore, you will get the chance to explore a simple few-shot learning problem and find out firsthand why a meta-learning
+			In the <a href="maml.html">next section</a> we will take a close look at MAML and study the math behind the
+			method.
+			Furthermore, you will get the chance to explore a simple few-shot learning problem and find out firsthand
+			why a meta-learning
 		</p>
 
 	</d-article>
