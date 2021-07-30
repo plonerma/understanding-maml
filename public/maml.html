@@ -111,7 +111,7 @@
 			is a fixed learning rate,
 			controlling the size of the steps we want to take.
 		</p>
-		<p>Unfortunately, applying this to a regession or a few-shot setting (i.e., with a very small dataset), the above method is
+		<p>Unfortunately, applying this to a regression or a few-shot setting (i.e., with a very small dataset), the above method is
 			known to perform poorly on, e.g., neural networks, since there is simply too little data for too many
 			parameters leading to overfitting.
 
@@ -220,15 +220,8 @@
 			where \(\xi\) is a non-linearity we applied to make the resulting loss spaces a bit more interesting.
 		</p>
 
-
 		<figure>
 			<d-figure id="metaLossSpace">
-				<div class="element is-loading" style="height: 400px"></div>
-			</d-figure>
-		</figure>
-
-		<figure>
-			<d-figure id="twoLossSpaces">
 				<div class="element is-loading" style="height: 400px"></div>
 			</d-figure>
 		</figure>
@@ -322,6 +315,12 @@
 		</p>
 		<script src="https://gist.github.com/pupuis/f23f483c405b0a169bf279f7b02209bc.js"></script>
 		<h4>Will it really work?</h4>
+		<figure>
+			<d-figure id="twoLossSpaces">
+				<div class="element is-loading" style="height: 400px"></div>
+			</d-figure>
+		</figure>
+
 		<p>
 			Before we study the MAML model on the sinusoid task distribution, let us spend some
 			time on trying to understand MAML intuitively. Why would we expect it to produce better results than the
