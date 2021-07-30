@@ -1,14 +1,13 @@
 <div class="columns">
     {#each tasks as loss, i}
     <div class="column is-half">
-        <div style="text-align: center;">{taskNames[i]}</div>
+        <div style="text-align: center;"></div>
         <Chart width=400 height=400>
             <Axis>
                 <ContourPlot lossFunc={loss} logScale={false} />
 
                 {#each updates as phi, i}
-                <Arrow origin={theta} target={phi} trimStart=0 trimEnd=0.01 color="#fff"
-                    stroke-width="2" />
+                <Arrow origin={theta} target={phi} trimStart=0 trimEnd=0.01 color="#fff" stroke-width="2" />
                 {/each}
 
                 <VariableHandleWithReference bind:position={theta} value="\theta" offset={[0, -15]}
@@ -25,25 +24,25 @@
 </div>
 <div class="columns">
     <div class="column is-half">
-        <Slider min="10" max="50" bind:value={lr_slide} label="Learning Rate" output={(lr_slide / 1000).toPrecision(2)} />
-        <p class="caption">The two loss spaces displayed comprise the true parameters on the top of each plot,
-            10 random samples
-            and the corresponding <i>Mean Squared Error (MSE)</i> as the loss function. A darker color corresponds to a
+        <Slider min="10" max="50" bind:value={lr_slide} label="Learning Rate" output={(lr_slide /
+            1000).toPrecision(2)} />
+        <p class="caption">The two loss spaces represent two non-linear regression tasks, comprising a task distribution
+            \(p(\tau)\). A darker color corresponds to a
             lower loss. Discounted by a learning rate, vectors \(\phi_0, \phi_1\) represent
-            the gradient descent directions of tasks \(0, 1\), when starting at \(\theta\), respectively.
-            You can manipulate the slider for the learning rate, as well as move the \(\theta\) arround to see how the
-            descent directions
-            change in each plot.
+            the gradient descent directions of tasks \(0, 1\), when starting at \(\theta\) and fine-tuning on each task
+            respectively.
         </p>
     </div>
     <div class="column is-half">
-        <p class="caption">Let us do the following experiment.
-            You, slipping into the role of the <i>pretrained</i> model, might observe loss space
-            \(0\) first and then descent according to \(\phi_0\) (just how the model suggests). After you
-            move \(\theta\) to where \(\phi_0\) points, you are observing loss space \(1\). Following \(\phi_1\) will
-            again lead you away from the local optimum of loss space \(0\). This ping-pong game is repeated until the
-            algorithm ends (involving possibly a lot more tasks). As a result you, the model, will never converge to anything meaningful, because previously
-            observed information is discarded as soon as a new task is presented.
+        <p class="caption">
+            You can manipulate the slider for the learning rate, as well as move the \(\theta\) arround to see how the
+            descent directions
+            change in each plot. If MAML had control over moving the \(\theta\) it would optimize on the sum of the task
+            losses
+            \({loss_0_string}(\phi_0)\) and \({loss_1_string}(\phi_1),\) hence, the closer \(\phi_0\) and \(\phi_1\)
+            point to the respective minimum of their
+            task loss space, the better \(\theta\) through the eyes of MAML. Can you find a \(\theta\) that MAML would
+            regard "optimal"?
         </p>
     </div>
 </div>
@@ -73,6 +72,9 @@
     let lossSpaces = means.map(mean => new Random2DLinearRegressionLossSpace(mean))
 
     let selected_task = 0
+
+    let loss_0_string = `\\mathcal{L}_0`
+    let loss_1_string = `\\mathcal{L}_1`
 
     //let lr = 0.03
     let lr_slide = 40
