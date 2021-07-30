@@ -7,6 +7,18 @@
     </div>
 </div>
 <Slider min="0" max="20" bind:value={steps} label="Update steps" output={steps} />
+<div class="caption">
+    Above you see the meta loss space 
+    			
+			The loss spaces displayed stem from a curve fitting (toy) problem,
+			where
+			we are interested in parameters \(a, b\)
+			and the task requires the prediction of
+
+			\[g(x) = \xi(ax + b),\]
+
+			where \(\xi\) is a non-linearity we applied to make the resulting loss spaces a bit more interesting.
+</div>
 <div class="columns">
     {#each tasks as loss, i}
     <div class="column is-4 is-offset-1">
@@ -17,6 +29,7 @@
     </div>
     {/each}
 </div>
+
 
 <style>
     .column {
