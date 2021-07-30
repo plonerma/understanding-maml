@@ -62,13 +62,13 @@ export class Random2DLinearRegressionLossSpace {
      */
     constructor(mean = [.5, .5], N = 10) {
         this.trueParameters = tf.tensor1d(mean)//sampleIndependentMultivariateGaussian(mean, variance)
-        this.trueParameters.print()
+        //this.trueParameters.print()
 
         var x = tf.randomUniform([N], -3, 3)
         var z = tf.stack([x, tf.ones([N])])
         var y = tf.dot(this.trueParameters, z).softplus()
 
-        x.print()
+        //x.print()
 
         this.loss = tf.tidy(() => parameters => {
             var estimates = tf.matMul(parameters, z).softplus()
